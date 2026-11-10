@@ -25,22 +25,22 @@ export function nextLine(b: PlanBlock | null, now: string, tz: string): string {
 
 export function buildTimeline(blocks: PlanBlock[], now: string, tz: string): TimelineItem[] {
   const next = nextBlock(blocks);
-  const items: (TimelineItem & { at: string })[] = [
-    { kind: "now", key: "now", time: formatHm(now, tz), at: now },
-    ...blocks.map((b) => {
+  const items: [string, TimelineItem][] = [
+    [now, { kind: "now", key: "now", time: formatHm(now, tz) }],
+    ...blocks.map((b): [string, TimelineItem] => {
       const done = b.status === "done";
       const isNext = next?.id === b.id;
       const t = formatHm(b.start, tz);
-      return {
-        kind: "block" as const, key: b.id, time: t, at: b.start, block: b, done, isNext,
+      return [b.start, {
+        kind: "block", key: b.id, time: t, block: b, done, isNext,
         pill: done ? "Concluída" : isNext ? `Próxima · ${t}` : `Hoje ${t}`,
         duration: formatDuration(minutesBetween(b.start, b.end)),
-      };
+      }];
     }),
   ];
   // O "Agora" vem antes de um bloco que começa no mesmo instante (protótipo).
-  items.sort((a, b) => a.at.localeCompare(b.at) || (a.kind === "now" ? -1 : 1));
-  return items.map(({ at: _at, ...i }) => i as TimelineItem);
+  items.sort(([a, x], [b]) => a.localeCompare(b) || (x.kind === "now" ? -1 : 1));
+  return items.map(([, i]) => i);
 }
 
 /** Saudação do protótipo (texto fixo; ver pendências do relatório B4). */
