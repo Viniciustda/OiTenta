@@ -14,7 +14,7 @@ const PROGRESS = [10, 40, 70, 100];
 
 function BrotoSays({ mood = "ok", children }: { mood?: BrotoMood; children: ReactNode }) {
   return (
-    <div className="flex items-end gap-2">
+    <div className="flex animate-[riseIn_.3s] items-end gap-2">
       <Broto size={48} mood={mood} />
       <div className="max-w-[560px] rounded-[20px_20px_20px_6px] border border-border bg-surface px-4 py-3 text-[16px]/[24px]">{children}</div>
     </div>
@@ -101,7 +101,7 @@ export default function OnboardingPage() {
           </>
         )}
         {step === 1 && (
-          <div className="ml-14 flex flex-col gap-5 rounded-[16px] border border-border bg-surface p-6">
+          <div className="ml-14 flex animate-[riseIn_.3s] flex-col gap-5 rounded-[16px] border border-border bg-surface p-6">
             <AvailGrid grid={grid} onChange={setGrid} cellHeight={26} />
             <button
               type="button"
@@ -120,7 +120,7 @@ export default function OnboardingPage() {
           </>
         )}
         {step === 2 && (
-          <div className="ml-14 flex flex-col gap-5 rounded-[16px] border border-border bg-surface p-6">
+          <div className="ml-14 flex animate-[riseIn_.3s] flex-col gap-5 rounded-[16px] border border-border bg-surface p-6">
             <div className="flex items-baseline justify-between">
               <span className="text-[14px]/[20px] font-extrabold">Máximo por dia</span>
               <b className="font-fredoka text-[28px]/[36px] font-semibold text-pri">{limitLabel}</b>

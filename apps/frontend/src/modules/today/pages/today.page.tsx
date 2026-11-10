@@ -226,7 +226,7 @@ export default function TodayPage() {
                   <span className="block h-full rounded-full transition-[width] duration-500" style={{ width: `${g.progressPct}%`, background: objColor(g.colorIndex) }} />
                 </span>
                 <span className="flex items-center gap-1.5 text-[12px]/[16px] font-semibold text-tx2">
-                  <i className={`ph-bold ${late ? "ph-warning-circle text-[var(--danger)]" : "ph-check-circle text-pri"} text-[14px]`} />
+                  <i className={`ph-bold ${late ? "ph-warning-circle text-danger" : "ph-check-circle text-pri"} text-[14px]`} />
                   {goalMeta(g)}
                 </span>
               </button>

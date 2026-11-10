@@ -14,7 +14,7 @@ import { FIRST_MINUTE, GRID_HOURS_COUNT, HOUR_HEIGHT, blockDetail, blockGeometry
 // W15 calendário semana (Execução) e W16 detalhe do bloco, só leitura (AppCalendario.dc.html).
 // Fora da fatia e sem ação: navegação entre semanas, Dia/Mês, Prazos, arrastar, Mover, Marcar parcial,
 // Não vou conseguir. Sem faixas de ocupado: não há compromissos no MVP (P8).
-const FREE_BG = "color-mix(in srgb, var(--fill) 13%, transparent)";
+const FREE_BG = "var(--free)";
 const BLOCK_BORDER = "1px solid color-mix(in srgb, var(--tx) 8%, transparent)";
 const BODY_H = HOUR_HEIGHT * GRID_HOURS_COUNT;
 
@@ -111,7 +111,7 @@ export default function CalendarPage() {
         </div>
         <div className="flex gap-4 text-[12px]/[16px] font-bold text-tx2">
           <span className="flex items-center gap-1.5"><span className="h-3.5 w-3.5 rounded-[4px] border border-border" style={{ background: FREE_BG }} />Livre</span>
-          <span className="flex items-center gap-1.5"><span className="h-3.5 w-3.5 rounded-[4px] border border-border bg-[repeating-linear-gradient(135deg,var(--border)_0_2px,transparent_2px_6px)]" />Ocupado</span>
+          <span className="flex items-center gap-1.5"><span className="h-3.5 w-3.5 rounded-[4px] border border-border bg-[repeating-linear-gradient(135deg,var(--hatch)_0_2px,transparent_2px_6px)]" />Ocupado</span>
           <span className="flex items-center gap-1.5"><i className="ph-bold ph-hand-grabbing text-[14px]" />Arraste os blocos</span>
         </div>
       </div>
@@ -202,7 +202,7 @@ export default function CalendarPage() {
         </div>
 
         {selB && (
-          <aside className="sticky top-6 box-border flex w-[360px] flex-none flex-col gap-4 rounded-[16px] border border-border bg-surface p-5 shadow-[0_8px_24px_color-mix(in_srgb,var(--tx)_10%,transparent)]">
+          <aside className="sticky top-6 box-border flex w-[360px] animate-[riseIn_.25s] flex-none flex-col gap-4 rounded-[16px] border border-border bg-surface p-5 shadow-[0_8px_24px_color-mix(in_srgb,var(--tx)_10%,transparent)]">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2 text-[13px]/[16px] font-bold text-tx2">
                 <span className="h-2 w-2 rounded-full" style={{ background: objColor(selB.colorIndex) }} />

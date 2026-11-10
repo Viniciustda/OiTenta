@@ -131,7 +131,7 @@ export default function LoginPage({ mode }: { mode: AuthMode }) {
           <Field id="email" label="E-mail" icon="envelope-simple" value={email} onChange={setEmail} placeholder="voce@faculdade.edu.br" />
           <Field id="senha" label="Senha" icon="lock-simple" type="password" value={senha} onChange={setSenha} placeholder="••••••••" />
           {error && (
-            <p role="alert" className="m-0 text-[14px]/[20px] font-bold text-[var(--danger)]">{error}</p>
+            <p role="alert" className="m-0 text-[14px]/[20px] font-bold text-danger">{error}</p>
           )}
           <button type="button" onClick={submit} className={`mt-2 ${PRIMARY_BTN}`}>
             {t.cta}

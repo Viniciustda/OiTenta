@@ -9,10 +9,10 @@ export const TERTIARY_BTN =
   "flex h-9 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[14px]/none font-extrabold text-blue hover:bg-blue-soft";
 export const ICON_BTN =
   "flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-tx2 hover:bg-s2";
-/** Fundo escurecido dos modais: --tx a 40% (o protótipo usa --scrim, ainda não está no globals.css). */
-export const SCRIM = "bg-[color-mix(in_srgb,var(--tx)_40%,transparent)]";
+/** Fundo escurecido dos modais (--scrim). */
+export const SCRIM = "bg-scrim";
 
-/** Cor do objetivo pelo índice (P4): --obj1…--obj4. O --obj4 ainda falta no globals.css. */
+/** Cor do objetivo pelo índice (P4): --obj1…--obj4. */
 export const objColor = (colorIndex: number) => `var(--obj${colorIndex})`;
 /** Cor do texto do % de cada objetivo (protótipo: verde, azul, verde, texto). */
 export const objInk = (colorIndex: number) =>

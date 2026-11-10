@@ -50,8 +50,8 @@ export default function NewGoalModal({ onClose, onCreated }: NewGoalModalProps) 
   };
 
   return (
-    <div className={`fixed inset-0 z-[60] box-border flex items-center justify-center p-8 ${SCRIM}`}>
-      <div role="dialog" aria-label="Novo objetivo" className="box-border flex max-h-full w-[960px] max-w-full flex-col overflow-auto rounded-[24px] border border-border bg-surface">
+    <div className={`fixed inset-0 z-[60] box-border flex animate-[fadeIn_.2s] items-center justify-center p-8 ${SCRIM}`}>
+      <div role="dialog" aria-label="Novo objetivo" className="box-border flex max-h-full w-[960px] animate-[riseIn_.3s_cubic-bezier(.3,1.4,.5,1)] max-w-full flex-col overflow-auto rounded-[24px] border border-border bg-surface">
         <div className="flex items-start justify-between gap-4 pt-6 pr-6 pl-8">
           <div className="flex items-center gap-3.5">
             <Broto size={56} mood="animado" />
@@ -70,7 +70,7 @@ export default function NewGoalModal({ onClose, onCreated }: NewGoalModalProps) 
             <label htmlFor="goal-title" className="flex flex-col gap-1.5">
               <span className="text-[13px]/[16px] font-extrabold">Objetivo</span>
               <span className="box-border flex h-[52px] items-center gap-2.5 rounded-[12px] border-2 border-border bg-surface px-3.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-[var(--obj4)]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-obj4" />
                 <input
                   id="goal-title"
                   value={form.title}
@@ -136,8 +136,8 @@ export default function NewGoalModal({ onClose, onCreated }: NewGoalModalProps) 
           <span className="flex items-center gap-2 text-[15px]/[22px] font-bold">
             {error && (
               <>
-                <i className="ph-bold ph-warning-circle text-[20px] text-[var(--danger)]" />
-                <span role="alert" className="text-[var(--danger)]">{error}</span>
+                <i className="ph-bold ph-warning-circle text-[20px] text-danger" />
+                <span role="alert" className="text-danger">{error}</span>
               </>
             )}
           </span>

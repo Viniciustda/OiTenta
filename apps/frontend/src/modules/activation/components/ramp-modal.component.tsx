@@ -105,7 +105,7 @@ function Ramp({ ramp, info, target, energy, onClose, onToast, onRecorded }: Ramp
     <div
       role="dialog"
       aria-label="Rampa até o foco"
-      className={`box-border flex max-h-full w-[880px] max-w-full flex-col gap-6 overflow-auto rounded-[24px] border border-border px-8 pt-6 pb-8 transition-[background] duration-300 ${isFocus ? "bg-blue-soft" : "bg-surface"}`}
+      className={`box-border flex max-h-full w-[880px] animate-[riseIn_.3s_cubic-bezier(.3,1.4,.5,1)] max-w-full flex-col gap-6 overflow-auto rounded-[24px] border border-border px-8 pt-6 pb-8 transition-[background] duration-300 ${isFocus ? "bg-focus-bg" : "bg-surface"}`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -195,7 +195,7 @@ function Ramp({ ramp, info, target, energy, onClose, onToast, onRecorded }: Ramp
                 size={isFocus ? 260 : 148}
                 fraction={1 - Math.max(0, s.remainingSeconds) / total}
                 color={isFocus ? "var(--blueFill)" : "var(--fill)"}
-                track="var(--surface)"
+                track="var(--ringTrack)"
                 transition="stroke-dashoffset .25s linear"
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -228,7 +228,7 @@ function Ramp({ ramp, info, target, energy, onClose, onToast, onRecorded }: Ramp
       )}
 
       {s.phase === "register" && (
-        <div className="flex flex-col items-center gap-5 py-2 text-center">
+        <div className="flex animate-[riseIn_.3s] flex-col items-center gap-5 py-2 text-center">
           <Broto size={110} />
           <p className="m-0 max-w-[560px] font-fredoka text-[28px]/[36px] font-semibold text-balance">Quanto você avançou em “{info.stepTitle}”?</p>
           <div className="flex gap-3">
@@ -247,7 +247,7 @@ function Ramp({ ramp, info, target, energy, onClose, onToast, onRecorded }: Ramp
             </button>
           </div>
           {s.partialOpen && (
-            <div className="flex w-[420px] flex-col gap-3 rounded-[16px] border border-border bg-surface p-4">
+            <div className="flex w-[420px] animate-[riseIn_.2s] flex-col gap-3 rounded-[16px] border border-border bg-surface p-4">
               <div className="flex items-baseline justify-between">
                 <b className="text-[14px]/[20px] font-extrabold">Quanto foi?</b>
                 <b className="font-fredoka text-[24px]/none font-semibold text-pri">{s.partialPct}%</b>
@@ -262,8 +262,11 @@ function Ramp({ ramp, info, target, energy, onClose, onToast, onRecorded }: Ramp
       )}
 
       {s.phase === "celebrate" && (
-        <div className="relative flex flex-col items-center gap-2.5 py-2 text-center">
-          <Broto size={150} mood="comemorando" />
+        <div className="relative flex animate-[riseIn_.35s_cubic-bezier(.3,1.6,.5,1)] flex-col items-center gap-2.5 py-2 text-center">
+          <div className="relative">
+            <i className="ph-fill ph-drop absolute -top-1.5 left-1/2 -ml-2.5 animate-[dropFall_1.2s_ease-in_forwards] text-[22px] text-blue-fill" />
+            <Broto size={150} mood="comemorando" />
+          </div>
           <span className="flex items-center gap-2.5">
             <i className="ph-fill ph-drop text-[36px] text-blue-fill" />
             <b className="font-fredoka text-[44px]/[52px] font-bold">+{s.outcome === "partial" ? CELEBRATION.dropsPartial : CELEBRATION.dropsDone} gotas</b>
@@ -304,7 +307,7 @@ export default function RampModal(props: RampModalProps) {
   }, [target.goalId, target.stepId]);
 
   return (
-    <div className={`fixed inset-0 z-[60] box-border flex items-center justify-center p-8 ${SCRIM}`}>
+    <div className={`fixed inset-0 z-[60] box-border flex animate-[fadeIn_.2s] items-center justify-center p-8 ${SCRIM}`}>
       {data && <Ramp {...props} ramp={data.ramp} info={data.info} />}
     </div>
   );

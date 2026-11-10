@@ -100,7 +100,7 @@ export default function GoalTrailPage({ goalId }: { goalId: string }) {
               </div>
               <div className="rounded-[12px] border border-border bg-bg p-3">
                 <span className={KICKER}>Folga</span>
-                <b className={`mt-1 block font-fredoka text-[20px]/[26px] font-semibold ${item?.slackDays != null && item.slackDays < 0 ? "text-[var(--danger)]" : "text-tx"}`}>
+                <b className={`mt-1 block font-fredoka text-[20px]/[26px] font-semibold ${item?.slackDays != null && item.slackDays < 0 ? "text-danger" : "text-tx"}`}>
                   {slackShort(item?.slackDays ?? null)}
                 </b>
                 <span className="text-[12px]/[16px] font-semibold text-tx2">{formatDuration(totalMinutes)} no total</span>
