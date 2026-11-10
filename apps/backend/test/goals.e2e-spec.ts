@@ -135,7 +135,10 @@ describe('goals (integração)', () => {
       .get(`/goals/${goalId}`)
       .set('Authorization', `Bearer ${otherToken}`);
 
-    expect(res.status).toBe(404);
+    expect(res.body).toMatchObject({
+      statusCode: 404,
+      message: 'Objetivo não encontrado.',
+    });
   });
 
   it('GET /goals/:goalId inexistente → 404', async () => {
@@ -143,7 +146,10 @@ describe('goals (integração)', () => {
       .get(`/goals/${randomUUID()}`)
       .set('Authorization', `Bearer ${ownerToken}`);
 
-    expect(res.status).toBe(404);
+    expect(res.body).toMatchObject({
+      statusCode: 404,
+      message: 'Objetivo não encontrado.',
+    });
   });
 
   it('GET /goals/:goalId sem token → 401', async () => {
