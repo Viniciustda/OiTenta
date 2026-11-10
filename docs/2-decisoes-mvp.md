@@ -114,6 +114,10 @@ Aceito como proposto:
   - **Mobile `Bora App`**: protótipo navegável com as 4 abas, a rampa completa, novo objetivo (chat e preenchimento à mão), plano inviável, trilha, calendário, tarefas leves, pausa, pedir ajuda e perfil. Não tem login, cadastro nem onboarding.
   - **Mobile `Bora Telas`**: onboarding (boas-vindas, horários livres por período, limite diário), marcado como "bloco 1 de 3, aguardando aprovação"; os blocos 2 e 3 não vieram.
   - Tokens extraídos em `design/tokens.md`, com as divergências em relação a `docs/0-design-system.md` (o design system não foi alterado).
+- **Visual (decidido em 10/11):** cada app segue **exatamente o próprio protótipo**, inclusive onde ele diverge do `0-design-system.md` (ex.: fundo branco no mobile, 4º objetivo roxo na web, check-in de 3 níveis na web).
+- **Telas sem design (decidido em 10/11):** telas necessárias que não têm design (ex.: login, cadastro e onboarding no mobile) são feitas como **placeholder**: só o nome da tela e um botão que avança no fluxo, para o fluxo ficar visível.
+  - Não adaptar o visual do web para elas; a sugestão de adaptar foi recusada.
+  - O design dessas telas será feito primeiro no Claude Design, e só então elas serão implementadas de verdade.
 
 ## 4j. Repositório
 
@@ -186,5 +190,5 @@ Aceito como proposto:
 4. Provedor de LLM entre os parceiros (5.8).
 5. Escopo do web app: o export web traz o app completo (ver `design/web/SCREENS.md`); confirmar quais telas entram no MVP.
 6. Divergências de tokens (`design/tokens.md`): decidir a cor de fundo do mobile (`#FFFFFF` × `#F6FAF8`), a cor do 4º objetivo (roxo na web × verde no mobile), os estágios do Broto e o check-in de 3 × 4 níveis na web.
-7. Mobile: login, cadastro e os blocos 2 e 3 do onboarding não têm design.
+7. Mobile: login, cadastro e os blocos 2 e 3 do onboarding não têm design; ficam como placeholder (4i) até o design ser feito no Claude Design.
 8. Cronograma revisado e divisão de tarefas entre as 4 pessoas.
