@@ -1,8 +1,8 @@
 # OiTenta (Bora)
 
-App de planejamento adaptativo com IA para quem trava ao começar tarefas (Hack Brasil 2026). O `README.md` chama o produto de **OiTenta** e os docs de **Bora**; o nome ainda está em aberto (`docs/passo-a-passo.md`).
+App de planejamento adaptativo com IA para quem trava ao começar tarefas (Hack Brasil 2026). O `README.md` chama o produto de **OiTenta** e os docs de **Bora**; o nome ainda está em aberto (`docs/1-passo-a-passo.md`).
 
-**Antes de implementar qualquer caso de uso, leia `docs/casos-de-uso.md` e `docs/passo-a-passo.md`.** Fluxos em `docs/fluxos.md`, visual em `docs/design-system.md`, arquitetura em `docs/prompt-base-arquitetura_1.md`.
+**Antes de implementar qualquer caso de uso, leia `docs/0-casos-de-uso.md` e `docs/1-passo-a-passo.md`.** Fluxos em `docs/0-fluxos.md`, visual em `docs/0-design-system.md`, arquitetura em `docs/0-prompt-base-arquitetura_1.md`.
 
 ## Mapa
 
@@ -39,6 +39,7 @@ cd apps/mobile && flutter run                    # mobile
 - `.agents/rules/nomenclatura-e-estrutura.md`: nomes, sufixos e onde cada arquivo mora.
 - `.agents/rules/arquitetura-limpa.md`: domínio sem framework, posse pelo token, erros → HTTP.
 - `.agents/rules/testes-e-cobertura.md`: 100% no domínio, sem banco, teste negativo de posse.
+- `.agents/rules/mobile-flutter.md`: telas só com dados e callbacks, backend em `data/`, um `ChangeNotifier` por tela, rotas no go_router, URL por `--dart-define-from-file`.
 
 ## Skills, na ordem de uso
 
@@ -52,6 +53,7 @@ Não há skills de mobile nem de web. O passo a passo explica como criá-las.
 ## Não faça
 
 - Não altere `README.md`, `design/` nem os docs originais de `docs/` sem pedido.
+- Todo documento novo em `docs/` recebe o prefixo `N-` com o próximo número da ordem de criação (o maior prefixo existente + 1): `0-` são os docs originais, `1-` os da estrutura inicial.
 - Não crie dependência direta entre módulos de negócio antes da decisão registrada no passo a passo.
 
 <!-- BEGIN:turborepo-agent-rules -->

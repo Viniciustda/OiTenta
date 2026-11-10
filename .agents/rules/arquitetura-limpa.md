@@ -1,6 +1,6 @@
 # Regra: arquitetura limpa
 
-Vale sempre que mexer em `modules/`, `packages/shared` ou `apps/backend`. Adaptação de `docs/prompt-base-arquitetura_1.md` (Seções 1, 4 e 5) à estrutura de módulos do curso.
+Vale sempre que mexer em `modules/`, `packages/shared` ou `apps/backend`. Adaptação de `docs/0-prompt-base-arquitetura_1.md` (Seções 1, 4 e 5) à estrutura de módulos do curso.
 
 ## Fronteira do domínio
 
@@ -9,7 +9,7 @@ Vale sempre que mexer em `modules/`, `packages/shared` ou `apps/backend`. Adapta
 - Portas são **assíncronas** (`Promise<...>`), incluindo criptografia, token, IA e e-mail.
 - Casos de uso recebem as dependências **pelo construtor** e implementam `UseCase<In, Out>`.
 - Regra de **processo** (posse, unicidade) mora no caso de uso; regra de **cálculo** (motor do plano, gotas, XP, sequência) mora em classe de domínio pura, sem portas e sem async.
-- Um módulo de negócio não importa outro diretamente. Enquanto a decisão em `docs/passo-a-passo.md` (Decisões em aberto) não for tomada, não crie dependência entre módulos.
+- Um módulo de negócio não importa outro diretamente. Enquanto a decisão em `docs/1-passo-a-passo.md` (Decisões em aberto) não for tomada, não crie dependência entre módulos.
 
 ## Posse e autenticação
 

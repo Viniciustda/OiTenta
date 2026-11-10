@@ -5,7 +5,7 @@
 **Como usar:** siga as fases em ordem e marque as caixas. Cada passo traz o **objetivo**, a **skill** (nome exato de `.agents/skills`), um **prompt** para colar no Claude Code, **como verificar** e o **critério de pronto**. Não pule a verificação: o resultado de uma skill varia de uma execução para outra.
 
 **Legenda de origem:**
-- `[curso]`: vem do curso (aulas, skills ou `docs/curso-arquitetura-limpa-hexagonal_1.md` / `docs/prompt-base-arquitetura_1.md`).
+- `[curso]`: vem do curso (aulas, skills ou `docs/0-curso-arquitetura-limpa-hexagonal_1.md` / `docs/0-prompt-base-arquitetura_1.md`).
 - `[complemento]`: sugestão que não veio do curso. Discuta antes de adotar.
 
 > ⚠️ **Ordem real de execução:** 0 → 1 → 2 → 3 → **6** → 4 → 5 → 7 → 8 e 9 (em paralelo) → 10.
@@ -113,7 +113,7 @@ Sugestão `[complemento]`: **A** para o hackathon (menor custo e explícita), co
   - Sugestão `[complemento]`: **UC29 → UC01 → UC02/UC04 → UC05 → UC06/UC07 → UC14/UC15/UC20/UC21 → UC08/UC09**. É o caminho "entrar → dizer a rotina → pedir um objetivo → ver o plano → começar → focar → registrar → replanejar".
   - Prompt:
     ```
-    Leia docs/casos-de-uso.md, docs/fluxos.md e docs/passo-a-passo.md (Seções 2 e 4).
+    Leia docs/0-casos-de-uso.md, docs/0-fluxos.md e docs/1-passo-a-passo.md (Seções 2 e 4).
     Proponha a fatia vertical do MVP para a demo do hackathon, considerando [data da demo]
     e que o time se encontra às sextas. Liste o que entra, o que fica de fora e por quê.
     Não escreva código. Responda em uma tabela.
@@ -123,7 +123,7 @@ Sugestão `[complemento]`: **A** para o hackathon (menor custo e explícita), co
 - [ ] **1.3 Mapear UC → módulo → agregado.** Sem skill.
   - Prompt:
     ```
-    Para cada caso de uso da fatia aprovada, indique módulo (Seção 4 de docs/passo-a-passo.md),
+    Para cada caso de uso da fatia aprovada, indique módulo (Seção 4 de docs/1-passo-a-passo.md),
     agregado e nome do caso de uso em inglês no padrão da skill module-use-case
     (ex.: CreateGoal, GeneratePlan). Aponte casos de uso que tocam mais de um módulo
     (decisão D3). Não escreva código.
@@ -138,19 +138,19 @@ Sem código. O resultado é uma tabela por módulo: agregados, entidades, atribu
   - Prompt (um por módulo):
     ```
     Modele o domínio do módulo <modulo> do OiTenta, só para os casos de uso <lista>.
-    Leia docs/casos-de-uso.md, docs/fluxos.md e docs/design-system.md (seção Gamificação).
+    Leia docs/0-casos-de-uso.md, docs/0-fluxos.md e docs/0-design-system.md (seção Gamificação).
     Para cada agregado: entidades, atributos com tipos, regras de validação, invariantes
     e quais regras são de cálculo (classe pura) ou de processo (caso de uso).
     Cite a seção do doc de onde veio cada regra. Marque como PERGUNTA o que os docs não definem.
     Não escreva código.
     ```
   - Regras que **já estão definidas** nos docs (aponte para elas, não copie):
-    - Limite de horas por dia e horários livres: UC01; `docs/fluxos.md` §1.
-    - Folga antes do prazo e soma de todos os objetivos no limite diário: UC05, UC12; `docs/fluxos.md` §5.
-    - Tabela energia → degrau inicial e os 5 degraus: `docs/fluxos.md` §3.
-    - Gotas (+5, +20, +10, +3), XP = minutos de foco, sequência (≥ 1 degrau no dia), guarda-chuva (50 gotas): `docs/design-system.md` → Gamificação.
-    - Estágios do Broto por nível (1–2, 3–5, 6–9, 10–14, 15+): `docs/design-system.md` → Mascote.
-    - Exemplo de referência para testar o motor (7 etapas, 8h15, entrega 24/11): `docs/fluxos.md` §4.
+    - Limite de horas por dia e horários livres: UC01; `docs/0-fluxos.md` §1.
+    - Folga antes do prazo e soma de todos os objetivos no limite diário: UC05, UC12; `docs/0-fluxos.md` §5.
+    - Tabela energia → degrau inicial e os 5 degraus: `docs/0-fluxos.md` §3.
+    - Gotas (+5, +20, +10, +3), XP = minutos de foco, sequência (≥ 1 degrau no dia), guarda-chuva (50 gotas): `docs/0-design-system.md` → Gamificação.
+    - Estágios do Broto por nível (1–2, 3–5, 6–9, 10–14, 15+): `docs/0-design-system.md` → Mascote.
+    - Exemplo de referência para testar o motor (7 etapas, 8h15, entrega 24/11): `docs/0-fluxos.md` §4.
   - **Não definido nos docs** (decisão D12): a fórmula de XP → nível; o tamanho da folga (o exemplo mostra 1 dia); o que o "tempo disponível agora" do check-in altera; o que acontece com a sequência quando a meta é parcial.
   - Pronto quando: há uma tabela por módulo da fatia, revisada por quem vai implementar.
 
@@ -244,7 +244,7 @@ Para cada agregado da Fase 2:
   ```
   Crie em modules/scheduling/src/plan/ a classe pura PlanCalculator (sem portas, sem async)
   que distribui etapas nos horários livres até o prazo, respeitando o limite diário somado
-  de todos os objetivos e deixando folga. Teste com o exemplo de docs/fluxos.md §4
+  de todos os objetivos e deixando folga. Teste com o exemplo de docs/0-fluxos.md §4
   (7 etapas, 8h15, entrega 24/11) e com o caso inviável. 100% de cobertura.
   ```
   - O mesmo vale para `gamification` (ex.: `RewardCalculator`, `StreakCalculator`).
@@ -313,20 +313,20 @@ O curso **não** tem skills de mobile (os prefixos `mobile-*` ficaram para o fut
 
 - [ ] **8.1 Tema.** Sem skill.
   ```
-  Em apps/mobile/lib/core/theme, crie o tema claro e escuro a partir de docs/design-system.md:
+  Em apps/mobile/lib/core/theme, crie o tema claro e escuro a partir de docs/0-design-system.md:
   cores (tokens), Fredoka para títulos e números e Nunito para o corpo (Google Fonts),
   raios 12/16/24/pílula, grade de 8pt, botão primário com "lábio" de 3px. Respeite a seção
   "Não fazer". Mostre uma tela de amostra com os componentes básicos.
   ```
 - [ ] **8.2 Cliente HTTP e erros** em `lib/core/` (URL do backend por configuração; 401 → volta ao login; mensagens em português).
-- [ ] **8.3 Telas na ordem dos fluxos** (`docs/fluxos.md`): onboarding (§1) → Hoje (§2) → rampa (§3) → novo objetivo (§4) → calendário (§5). Uma tela por vez, em `lib/features/<funcionalidade>/presentation`, consumindo `data/`. Use os prompts de `design/mobile/` como referência visual.
+- [ ] **8.3 Telas na ordem dos fluxos** (`docs/0-fluxos.md`): onboarding (§1) → Hoje (§2) → rampa (§3) → novo objetivo (§4) → calendário (§5). Uma tela por vez, em `lib/features/<funcionalidade>/presentation`, consumindo `data/`. Use os prompts de `design/mobile/` como referência visual.
 - [ ] **8.4 Criar skills `mobile-*`** `[complemento]`. Quando o primeiro fluxo (ex.: onboarding) estiver bom, extraia as skills por **engenharia reversa**, com o método das aulas 14 e 36 do curso: peça ao agente para ler o código pronto e escrever um `SKILL.md` com entradas obrigatórias, leituras obrigatórias, convenções e verificação. Candidatas: `mobile-feature`, `mobile-screen`, `mobile-api-client`.
 - Pronto quando: o fluxo da fatia roda no simulador contra o backend local.
 
 ### Fase 9 — Web (Next.js)
 
-- [ ] **9.1 Tokens CSS** do `docs/design-system.md` (bloco "Tokens CSS") no CSS global de `apps/frontend`, com Fredoka e Nunito.
-- [ ] **9.2 Landing page** a partir de `design/web/promptWeb.md` (estrutura em `docs/fluxos.md` §9).
+- [ ] **9.1 Tokens CSS** do `docs/0-design-system.md` (bloco "Tokens CSS") no CSS global de `apps/frontend`, com Fredoka e Nunito.
+- [ ] **9.2 Landing page** a partir de `design/web/promptWeb.md` (estrutura em `docs/0-fluxos.md` §9).
 - [ ] **9.3 App com sidebar de 240px** (Hoje, Calendário, Objetivos, Tarefas leves, Jardim, Configurações), usando as rotas `app/(private)/<modulo>` já criadas.
 - Como em 8.4, quando uma tela ficar boa, extraia skills `web-*` por engenharia reversa `[complemento]`.
 
@@ -338,7 +338,7 @@ O curso **não** tem skills de mobile (os prefixos `mobile-*` ficaram para o fut
   - `grep -rnE "@nestjs|@prisma/client|from ['\"]express|bcrypt|jsonwebtoken" modules/*/src packages/shared/src` → zero;
   - teste negativo de posse presente em cada recurso de usuário (domínio e `.http`);
   - nenhum segredo commitado (`git grep -n "JWT_SECRET=\|API_KEY="`);
-  - critérios de `docs/prompt-base-arquitetura_1.md` §7.
+  - critérios de `docs/0-prompt-base-arquitetura_1.md` §7.
 - [ ] **10.2 Cobertura** 100% no domínio (`modules/*` e `packages/shared`).
 - [ ] **10.3 README do projeto:** setup, `.env`, banco, como rodar e testar.
 - [ ] **10.4 Roteiro da demo** (até 5 minutos), seguindo a fatia: onboarding → objetivo pelo chat → plano no calendário → "Vamos começar?" → foco → registrar → "Plano recalculado".
