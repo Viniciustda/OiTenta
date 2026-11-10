@@ -1,6 +1,6 @@
 # Contrato da API — mínimo obrigatório do MVP
 
-**Status:** proposta da Etapa A (10/11/2026), aguardando aprovação. Os casos de uso e as perguntas (P#) estão em `docs/3-modelagem-dominio.md`.
+**Status:** aprovado em 10/11/2026 (decisões P1–P28 em `docs/2-decisoes-mvp.md`). Os casos de uso e as perguntas (P#) estão em `docs/3-modelagem-dominio.md`.
 
 ## Regras gerais
 
@@ -23,20 +23,22 @@
 | 409 | Conflito (e-mail já cadastrado) |
 | 422 | Regra de domínio violada (`ValidationException`), com `details` listando os códigos |
 
-**PERGUNTA P19 — 400 × 422:** hoje o backend responde **422** para qualquer erro de validação do domínio, e não há validação de formato na borda. Por isso, um campo ausente cai em 422 (ou 500, se o tipo vier errado).
-- Proposta: acrescentar validação de formato na borda para os 400 (exige `class-validator` + `class-transformer`, dependências novas) e manter 422 para regra de domínio.
-- Alternativa: sem dependência nova, validar o formato à mão no controller.
+**Validação de formato (P19):** `ValidationPipe` global com `class-validator` + `class-transformer` (`whitelist: true`, `forbidNonWhitelisted: true`, `transform: true`).
+- Os corpos (classes do Swagger) recebem os decorators de validação.
+- Formato ou tipo inválido, ou campo não previsto → **400**.
+- Regra de domínio → **422**.
+- Consequência: um `userId` enviado no corpo responde **400** (campo não previsto), e nunca é usado.
 
 ---
 
-## 1. Auth (já existe; sem mudanças nesta fase, exceto **P1**)
+## 1. Auth (já existe; muda só o fuso, P1, tarefa C0)
 
 | Método e rota | Corpo | Resposta | Erros | Caso de uso | Web | Mobile |
 |---|---|---|---|---|---|---|
-| `POST /auth/register` | `{ name, email, password }` (+ `timezone` se **P1**) | 201 `{ user{id,name,email} }` | 409, 422 | `RegisterUser` | W04 | placeholder (sem design) |
+| `POST /auth/register` | `{ name, email, password, timezone? }` (`timezone` IANA, padrão `America/Sao_Paulo`, P1) | 201 `{ user{id,name,email,timezone} }` | 400, 409, 422 (senha fraca, fuso inválido) | `RegisterUser` | W04 | placeholder (sem design) |
 | `POST /auth/login` | `{ email, password }` | 200 `{ token, user }` | 401 | `LoginUser` | W03 | placeholder |
 | `POST /auth/demo` | — | 200 `{ token, user }` | 404 (seed não rodado) | `LoginDemoUser` | W03 "Entrar direto como Arthur (demo)" | placeholder com o botão de demo |
-| `GET /auth/me` | — | 200 `{ user }` | 401 | `GetAuthenticatedUser` | todas as telas logadas | todas as telas logadas |
+| `GET /auth/me` | — | 200 `{ user{id,name,email,timezone} }` | 401 | `GetAuthenticatedUser` | todas as telas logadas | todas as telas logadas |
 
 ---
 
@@ -62,7 +64,7 @@ Resposta 200:
 }
 ```
 
-- **Erros:** 400 (formato), 401, 422 (zero janelas; janela inválida; limite fora da faixa, **P7**).
+- **Erros:** 400 (formato), 401, 422 (zero janelas; janela inválida; limite fora de 60–480 ou não múltiplo de 30, P7).
 - **Caso de uso:** `SetWeeklyAvailability` → `GeneratePlan`.
 - **Telas:**
   - web: W07–W10 (onboarding: grade, sugestão, limite, pronto);
@@ -73,7 +75,7 @@ Resposta 200:
 2. Sem token → 401.
 3. Zero janelas → 422.
 4. Limite 25 → 422.
-5. O corpo traz `userId` de outro usuário → ignorado; grava para o dono do token.
+5. O corpo traz `userId` → 400 (campo não previsto, P19); nada é gravado.
 
 ### `GET /scheduling/availability`
 
@@ -120,25 +122,22 @@ Resposta 201:
 }
 ```
 
-- **Erros:** 400, 401, 404 (sem disponibilidade, **P12**), 422 (título vazio, zero etapas, estimativa inválida).
+- **Erros:** 400, 401, 404 (sem disponibilidade, P12), 422 (título vazio, zero etapas, estimativa inválida).
 - **Caso de uso:** `CreateGoal` → `GeneratePlan`.
-- **Telas:** **PERGUNTA P20** — "objetivo manual com etapas" não tem design em nenhum dos dois apps:
-  - web: só existe o fluxo com IA (W27–W31), e a lista de etapas editáveis (W30) e o objetivo encaixado (W31) seriam os mais próximos;
-  - mobile: "Preencher à mão" (M16) é uma **tarefa única** (`kind 'single'`); a lista de etapas editáveis é a da resposta da IA (M15);
-  - opções: (a) usar as telas W30/M15 começando vazias, com "Adicionar etapa", o que já é uma adaptação; (b) placeholder (nome da tela + botão), como as outras telas sem design; (c) só a tarefa única (M16) nesta fase.
+- **Telas (P20):** as telas de etapas editáveis, começando **vazias**: **W30** no web e **M15** no mobile (título, prazo, etapas com tempo e total, "Adicionar etapa", encaixar no calendário), sem os elementos da IA. No mobile, a tarefa única usa também **M16** ("Preencher à mão", `kind 'single'`).
 
 **Integração:**
 1. Corpo válido → 201 e blocos criados.
 2. Sem token → 401.
 3. Zero etapas → 422.
-4. O corpo traz `userId` de outro → ignorado.
-5. Usuário sem disponibilidade → 404 (**P12**).
+4. O corpo traz `userId` → 400 (P19).
+5. Usuário sem disponibilidade → 404 (P12).
 
 ### `GET /goals`
 
 - **Resposta:** 200 `{ goals[{id, title, deadline, colorIndex, progressPct, done, total, status, slackDays}] }`.
 - **Erros:** 401.
-- **Caso de uso:** `ListGoals` + `GetGoalsFeasibility` (folga de cada objetivo no plano atual), montado pelo orquestrador `goals-view` (**P17**).
+- **Caso de uso:** `ListGoals` + `GetGoalsFeasibility` (folga de cada objetivo no plano atual), montado pelo orquestrador `goals-view` (P17).
 - **Telas:** web W12 (coluna "objetivos" do Hoje); mobile M02 (aba Objetivos).
 
 **Integração:**
@@ -207,7 +206,7 @@ As visões Prazos, Mês e Dia (W17–W20, M20–M21) e as ações do detalhe do 
   - web W12–W14 (check-in no Hoje), W32–W36 (modal da rampa).
 
 **Integração:**
-1. `energy=high` → `suggested: 'micro'` (**P14**).
+1. `energy=high` → `suggested: 'micro'`; `energy=electric` → `suggested: 'focus'` (P14).
 2. Etapa de outro usuário → 404.
 3. `energy=xyz` → 400.
 4. Sem token → 401.
@@ -239,7 +238,7 @@ Resposta 201:
 - **Erros:** 400, 401, 404 (objetivo, etapa ou bloco inexistente ou de outro usuário), 422 (`partial` sem %).
 - **Caso de uso:** `RecordFocusSession` → `UpdateStepProgress` → `RecordBlockOutcome` → `GeneratePlan`.
 - **Telas:**
-  - mobile M11 (registro: Concluí / Parcial / Não rolou) e M12 (celebração; números de gamificação conforme **P18**);
+  - mobile M11 (registro: Concluí / Parcial / Não rolou) e M12 (celebração; números de gamificação conforme P18);
   - web W38 (registrar), W39 (parcial), W40 (não rolou), W41 (celebração).
 
 **Integração:**
@@ -262,7 +261,7 @@ Resposta 201:
 | `GET /auth/me` | `GetAuthenticatedUser` | todas logadas | todas logadas |
 | `PUT /scheduling/availability` | `SetWeeklyAvailability` → `GeneratePlan` | W07–W10 | T02–T03 (+ placeholders dos passos sem design) |
 | `GET /scheduling/availability` | `GetWeeklyAvailability` | decisão W11 | decisão pós-login |
-| `POST /goals` | `CreateGoal` → `GeneratePlan` | **P20** | **P20** |
+| `POST /goals` | `CreateGoal` → `GeneratePlan` | W30 vazia (P20) | M15 vazia, M16 (P20) |
 | `GET /goals` | `ListGoals` + `GetGoalsFeasibility` | W12 | M02 |
 | `GET /goals/:goalId` | `GetGoal` | W22 | M18 |
 | `GET /scheduling/plan/day` | `GetDayPlan` + `ListGoals` | W12–W14 | M01 |
@@ -270,9 +269,9 @@ Resposta 201:
 | `GET /activation/ramp` | `GetGoal` → `BuildRamp` | W12–W14, W32–W36 | M05–M10 |
 | `POST /activation/sessions` | `RecordFocusSession` → `UpdateStepProgress` → `RecordBlockOutcome` → `GeneratePlan` | W38–W41 | M11–M12 |
 
-## 7. Perguntas deste documento
+## 7. Decisões deste documento
 
-| # | Pergunta | Proposta |
+| # | Assunto | Decisão |
 |---|---|---|
-| P19 | 400 (formato) × 422 (domínio): validar o formato na borda com dependência nova ou à mão? | `class-validator` + `class-transformer` (padrão do Nest), mantendo 422 para o domínio |
-| P20 | Telas do objetivo manual com etapas (não há design) | Decisão sua: (a) adaptar W30/M15 vazias, (b) placeholder, (c) só a tarefa única M16 |
+| P19 | 400 × 422 | `class-validator` + `class-transformer`; formato → 400, domínio → 422 |
+| P20 | Telas do objetivo manual | W30 / M15 começando vazias; M16 para a tarefa única |

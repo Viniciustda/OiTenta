@@ -1,6 +1,6 @@
 # Modelagem do domínio — mínimo obrigatório do MVP
 
-**Status:** proposta da Etapa A (10/11/2026), aguardando aprovação. Os itens marcados **PERGUNTA** precisam de resposta antes da Etapa B.
+**Status:** aprovada em 10/11/2026. As perguntas P1–P28 foram respondidas; cada decisão, com contexto e motivo, está em `docs/2-decisoes-mvp.md` (seção "Decisões da Etapa A"). Neste documento, a marca **(P#)** indica a decisão que define a regra.
 
 **Escopo:** o mínimo obrigatório de `docs/2-decisoes-mvp.md` (4a):
 - onboarding (grade de horários livres + limite diário);
@@ -50,10 +50,14 @@ Fora desta fase: IA, gamificação, notificações e tudo o que está fora em `d
 
 Entidade `User` (`name`, `email`, `password` em hash) e casos de uso `RegisterUser`, `LoginUser`, `GetAuthenticatedUser`, `LoginDemoUser`, com cenários e testes já existentes (`modules/auth/test`).
 
-- **PERGUNTA P1 — fuso do usuário:** D 4c e 4d dizem que o fuso fica no usuário (`User.timezone`), mas a entidade atual não tem esse campo.
-  - Proposta: acrescentar `timezone: string` (IANA, obrigatório, padrão `America/Sao_Paulo`), enviado pelo cliente no cadastro (lido do aparelho ou navegador).
-  - Isso muda `RegisterUser`, a tabela `users` (migration) e o contrato de `POST /auth/register`.
-  - Alternativa: fixar `America/Sao_Paulo` para todos no MVP, sem campo novo.
+**Mudança decidida (P1):** a entidade `User` ganha `timezone: string` (identificador IANA, obrigatório na entidade). No cadastro ele é opcional na requisição, com padrão `America/Sao_Paulo`. Tarefa C0.
+
+**Cenários novos (C0):**
+1. `User` com `timezone = 'America/Sao_Paulo'` → `validate()` ok.
+2. `User` com `timezone = 'Lua/Base'` (inexistente) → `ValidationException` com `user.timezone.invalid`.
+3. `RegisterUser` com `timezone = 'America/Manaus'` → o usuário gravado tem esse fuso.
+4. `RegisterUser` sem `timezone` → o usuário gravado tem `America/Sao_Paulo`.
+5. `GetAuthenticatedUser` → a saída inclui o `timezone`.
 
 ---
 
@@ -66,10 +70,10 @@ Entidade `User` (`name`, `email`, `password` em hash) e casos de uso `RegisterUs
 | Atributo | Tipo | Regra | Origem |
 |---|---|---|---|
 | `userId` | `string` (UUID) | obrigatório | D 4d |
-| `title` | `string` | obrigatório, 1–120 caracteres (**PERGUNTA P2**: limite não definido) | UC02, UC30 |
-| `deadline` | `string` (data local `YYYY-MM-DD`) ou `null` | opcional (**PERGUNTA P3**) | M16 "prazo opcional"; DATA (Portfólio sem prazo) |
+| `title` | `string` | obrigatório, 1–120 caracteres sem os espaços das pontas (P2) | UC02, UC30 |
+| `deadline` | `string` (data local `YYYY-MM-DD`) ou `null` | opcional (P3); sem prazo = entra no plano depois dos com prazo | M16 "prazo opcional"; DATA (Portfólio sem prazo) |
 | `kind` | `'goal' \| 'single'` | `single` = tarefa à mão com 1 etapa | D 4d |
-| `colorIndex` | `1 \| 2 \| 3 \| 4` | **PERGUNTA P4**: como é atribuída | DATA `OBJ`; W31 (4º objetivo roxo) |
+| `colorIndex` | `1 \| 2 \| 3 \| 4` | sequencial entre os objetivos **ativos** do usuário (1→4, depois volta ao 1), definido na criação e fixo (P4) | DATA `OBJ`; W31 (4º objetivo roxo) |
 | `source` | `'manual' \| 'ai'` | `manual` nesta fase | D 4f |
 | `status` | `'active' \| 'done'` | `done` quando o progresso chega a 100% | F §6 |
 | `steps` | `Step[]` | pelo menos 1; `single` tem exatamente 1 | D 4h |
@@ -80,12 +84,12 @@ Entidade `User` (`name`, `email`, `password` em hash) e casos de uso `RegisterUs
 |---|---|---|---|
 | `goalId` | `string` | obrigatório | — |
 | `order` | `number` (inteiro ≥ 1) | único dentro do objetivo | F §6 "etapas em ordem" |
-| `title` | `string` | obrigatório, 1–120 (**P2**) | F §4 |
-| `estimatedMinutes` | `number` | inteiro ≥ 15 e múltiplo de 15 (**PERGUNTA P5**) | D 4c; M16 chips 15 min…2h |
+| `title` | `string` | obrigatório, 1–120 (P2) | F §4 |
+| `estimatedMinutes` | `number` | inteiro ≥ 15 e múltiplo de 15 (P5) | D 4c; M16 chips 15 min…2h |
 | `aiEstimatedMinutes` | `number \| null` | `null` nesta fase | D 4f |
 | `progressPct` | `number` | inteiro 0–100 | D 4h |
 | `status` | `'pending' \| 'done' \| 'superseded'` | `done` ⇔ `progressPct = 100` | D 4h |
-| `microSteps` | `string[]` | textos do degrau Micro-passo (**PERGUNTA P6**) | DATA `ETAPAS[].micro`; F §3 |
+| `microSteps` | `string[]` | textos do degrau Micro-passo; opcional (vazio → texto genérico provisório, P6) | DATA `ETAPAS[].micro`; F §3 |
 
 **Invariantes:**
 - `kind = 'single'` ⇒ exatamente 1 etapa;
@@ -131,7 +135,7 @@ Arquivo: `modules/goals/src/goal/model/goal-progress.calculator.ts`.
 2. Dado título vazio, quando `validate()`, então lança `ValidationException` com `goal.title.required`.
 3. Dado `kind='single'` com 2 etapas, quando `validate()`, então lança `ValidationException`.
 4. Dado zero etapas, quando `validate()`, então lança `ValidationException`.
-5. Dado uma etapa com `estimatedMinutes = 20`, quando `validate()`, então lança erro de múltiplo de 15 (depende de **P5**).
+5. Dado uma etapa com `estimatedMinutes = 20`, quando `validate()`, então lança erro de múltiplo de 15 (P5).
 6. Dado `progressPct = 101` ou `-1`, quando `validate()`, então lança erro de faixa.
 7. Dado dados inválidos, quando o objeto é construído, então não lança erro (validação só no `validate()`).
 
@@ -145,6 +149,7 @@ Arquivo: `modules/goals/src/goal/model/goal-progress.calculator.ts`.
 7. Dado uma etapa `superseded`, quando `remainingMinutes`, então 0.
 
 **`CreateGoal`**
+0. **Cor (P4):** dado um usuário com 2 objetivos ativos (cores 1 e 2), quando criar outro, então `colorIndex = 3`; com 4 ativos (1–4), o próximo recebe 1.
 1. Dado um usuário e 7 etapas (o exemplo de F §4, total 8h15 = 495 min), quando executar, então grava 1 objetivo com 7 etapas na ordem 1..7, `progressPct` 0 e `status 'active'`.
 2. Dado `kind='single'` com 1 etapa, quando executar, então grava.
 3. Dado título vazio, quando executar, então lança `ValidationException` e não grava nada.
@@ -180,7 +185,7 @@ Arquivo: `modules/goals/src/goal/model/goal-progress.calculator.ts`.
 |---|---|---|---|
 | `userId` | `string` | obrigatório, único | D 4c |
 | `windows` | `AvailabilityWindow[]` | pelo menos 1 janela (W09 bloqueia "continuar" sem horário) | D 4c; W07 |
-| `dailyLimitMinutes` | `number` | múltiplo de 30, faixa **PERGUNTA P7** | W09 (60–300, passo 30, padrão 180); T03 (1h–8h) |
+| `dailyLimitMinutes` | `number` | 60–480, múltiplo de 30 (P7) | W09 (60–300, passo 30, padrão 180); T03 (1h–8h) |
 
 **Tipo `AvailabilityWindow`** (valor, sem identidade): `{ weekday: 0–6, startMinute, endMinute }`.
 - Minutos desde 00:00 locais, múltiplos de 15, com `start < end`.
@@ -200,9 +205,7 @@ Arquivo: `modules/goals/src/goal/model/goal-progress.calculator.ts`.
 | `startMinute`, `durationMinutes` | `number` | múltiplos de 15, duração > 0 |
 | `recurrence` | `{ weekdays: (0–6)[], endDate?: data }` ou `null` | sem recorrência = evento único |
 
-- **PERGUNTA P8 — compromissos sem tela:** nenhum design permite cadastrar compromissos. A grade do onboarding web (W07) mostra "Aula" e "Estágio" **fixos no código do protótipo** (`AvailGrid.dc.html`), não vindos de dados.
-  - Proposta: nesta fase, criar só a entidade, o `RecurrenceExpander` e o `CommitmentBusySource` (testados), sem endpoint nem tela.
-  - A grade do onboarding web mostraria as células de ocupado só se houver compromissos (no MVP, nenhuma).
+- **Decidido (P8):** nenhum design permite cadastrar compromissos (a "Aula" e o "Estágio" da grade W07 são fixos no código do protótipo). Nesta fase existem só a entidade, o `RecurrenceExpander` e o `CommitmentBusySource`, testados, sem endpoint, sem tabela e sem tela. A grade do onboarding web mostra ocupados só se houver compromissos (no MVP, nenhum).
 
 ### 3.3 Agregado `plan`
 
@@ -243,10 +246,10 @@ Entrada:
 - `slackDays = 1`, `minBlockMinutes = 30`, `granularity = 15`.
 
 Algoritmo, guloso por prazo mais cedo (D 4g):
-1. Ordenar os objetivos por `deadline` (os sem prazo por último, **P3**), depois por `createdAt`.
+1. Ordenar os objetivos por `deadline` (os sem prazo por último, P3), depois por `createdAt`.
 2. Para cada objetivo, distribuir as etapas **em ordem**: a etapa n só começa depois de a n−1 estar toda alocada.
-3. Preencher os intervalos livres do mais cedo para o mais tarde, até o **último dia permitido** (**PERGUNTA P9**), respeitando o limite diário **somado entre todos os objetivos**, incluindo `fixedBlocks`.
-4. Uma etapa pode ser dividida em vários blocos, cada um com pelo menos `minBlockMinutes`, exceto quando o que falta da etapa é menor que isso (**PERGUNTA P10**).
+3. Preencher os intervalos livres do mais cedo para o mais tarde, até o **último dia permitido = prazo − 1 − folga** (o prazo é o dia da entrega e não recebe trabalho; P9), respeitando o limite diário **somado entre todos os objetivos**, incluindo `fixedBlocks`.
+4. Uma etapa pode ser dividida em vários blocos, cada um com pelo menos `minBlockMinutes`, exceto quando a etapa (ou o resto dela) é menor que isso: aí vira um bloco do próprio tamanho (P10).
 5. Se não couber com folga: tentar de novo **sem a folga**. Se ainda não couber: alocar o que der e marcar o objetivo como **inviável**, com os minutos que faltaram.
 
 Saída:
@@ -283,7 +286,7 @@ Saída:
 2. Dado zero janelas, então `ValidationException`.
 3. Dado uma janela com `start ≥ end`, então erro.
 4. Dado minutos que não são múltiplos de 15, então erro.
-5. Dado limite fora da faixa (**P7**), então erro; dado limite não múltiplo de 30, então erro.
+5. Dado limite 25 ou 490 (fora de 60–480), então erro; dado 45 (não múltiplo de 30), então erro; dado 60 e 480, então ok (P7).
 6. Dado janelas sobrepostas no mesmo dia, então erro (ou união; ver a implementação de `SetWeeklyAvailability`, cenário 3).
 
 **`ScheduledBlock`**
@@ -306,13 +309,13 @@ Saída:
 
 **`PlanCalculator`**
 1. **Exemplo de F §4 e §5:** dado as 7 etapas do trabalho de Algoritmos (30, 60, 45, 90, 90, 60, 120 = 495 min), prazo 24/11, `now` na manhã de 10/11, livre seg–dom 19:00–23:00 e limite de 120 min, quando calcular, então:
-   - aloca os 495 min, todos antes do último dia permitido (**P9**);
+   - aloca os 495 min, nenhum depois de 22/11 (prazo 24/11 − 1 − folga de 1 dia; P9);
    - etapas em ordem (nenhum bloco da etapa n antes do fim da n−1);
    - nenhum dia passa de 120 min;
-   - nenhum bloco tem menos de 30 min, exceto o resto de etapa (**P10**);
+   - nenhum bloco tem menos de 30 min, exceto etapa ou resto menor que 30 (P10);
    - `feasible = true`, `usedSlack = true`.
 
-   O resumo "6 dias · folga de 1 dia" do design depende da disponibilidade usada no protótipo, que não está definida (**PERGUNTA P11**). O teste verifica as invariantes acima.
+   O resumo "6 dias · folga de 1 dia" do design depende da disponibilidade usada no protótipo, que não está definida (P11). O teste verifica as invariantes acima.
 2. **Limite somado:** dado dois objetivos que caberiam sozinhos no mesmo dia, quando calcular, então a soma do dia não passa do limite e o de prazo mais cedo é alocado primeiro.
 3. **Prioridade por prazo:** dado o objetivo A com prazo 20/11 e o B com prazo 15/11, então os blocos de B vêm primeiro.
 4. **Sem a folga:** dado um objetivo que só cabe usando o dia da folga, então `feasible = true` e `usedSlack = false`.
@@ -321,7 +324,7 @@ Saída:
 7. **Fixado:** dado um bloco `pinned` no futuro, então o intervalo dele não é usado por outra etapa e ele conta para o limite.
 8. **Determinismo:** dada a mesma entrada duas vezes, então a mesma saída.
 9. **Etapa parcial:** dado `remainingMinutes = 30` numa etapa de 60 min a 50%, então aloca só 30 min dela.
-10. **Sem prazo** (depende de **P3**): dado um objetivo sem prazo e outro com prazo, então o sem prazo vai depois.
+10. **Sem prazo** (P3): dado um objetivo sem prazo e outro com prazo, então o sem prazo vai depois.
 11. **Nada a fazer:** dado nenhum objetivo, então `blocks = []`.
 
 **`SetWeeklyAvailability`**
@@ -338,12 +341,12 @@ Saída:
 **`GeneratePlan`**
 1. Dado a disponibilidade e 1 objetivo, quando gerar, então grava os blocos novos e devolve o resumo.
 2. **Recálculo preserva o passado:** dado blocos de ontem (`missed`), de hoje (`done`) e um futuro `pinned`, quando gerar de novo, então esses 3 continuam iguais e só os futuros `planned`/`auto` são trocados.
-3. Dado um usuário sem disponibilidade, então `NotFoundError` (**PERGUNTA P12**: ou plano vazio?).
+3. Dado um usuário sem disponibilidade, então `NotFoundError` (P12).
 4. **Posse:** dado os blocos de B, quando A gera o plano, então os blocos de B não são tocados.
 
 **`GetDayPlan` / `GetWeekPlan`**
 1. Dado blocos em 06/11 e 07/11, quando pedir o dia 06/11, então só os de 06/11, em ordem de início.
-2. Dado o fuso de São Paulo e um bloco 23:30–00:30 locais, quando pedir o dia, então o bloco aparece no dia em que começa (**PERGUNTA P13**).
+2. Dado o fuso de São Paulo e um bloco 23:30–00:30 locais, quando pedir o dia, então o bloco aparece no dia em que começa (P13).
 3. Dado uma semana, então 7 dias de segunda a domingo, com os minutos usados e o limite de cada dia.
 4. **Posse:** dado blocos de A e de B no mesmo dia, quando A pede, então só os de A.
 
@@ -367,10 +370,10 @@ Saída:
 
 **Energia** (`EnergyLevel`): `'low' | 'medium' | 'high' | 'electric'`.
 - O mobile usa os 4 níveis (M05; F §3).
-- O web usa 3 (W12–W14: Baixa, Média, Alta). (**PERGUNTA P14**)
+- O web também usa os 4 níveis (P14): o check-in do Hoje web ganha o chip "Elétrico", diferença intencional em relação ao protótipo web (3 níveis).
 
 **Tempo disponível agora** (`AvailableTime`): `'15m' | '30m' | '1h' | '2h+'` (M05; F §3).
-- O efeito dele não está definido (D 2 Pendências / D12 antigo). (**PERGUNTA P15**)
+- Nesta fase ele é só gravado na sessão, sem efeito (P15). O web não pergunta (`null`).
 
 **Degraus** (`RampStepKind`), em ordem: `warmup` (Aquecer), `challenge` (Desafio mental), `micro` (Micro-passo), `focus` (Foco), `log` (Registrar). (F §3; DATA `STEPS`)
 
@@ -381,9 +384,9 @@ Saída:
 | `warmup` | 5: Alongamento de 3 min; Água e 5 respirações (2 min); Arrumar a mesa (3 min); Volta pela casa (2 min); Tarefa leve de 5 min | DATA `ALTS.aquecer` |
 | `challenge` | 4: soma, subtração, tabuada, misturadas, com as 5 contas de `PROBS` | DATA `ALTS.desafio`, `PROBS` |
 | `focus` | 4: 25, 15, 10 e 45 min (25 é o padrão) | DATA `ALTS.foco` |
-| `micro` | textos da etapa atual (`Step.microSteps`, **P6**) | — |
+| `micro` | textos da etapa atual (`Step.microSteps`); se vazio, 1 opção genérica: "Abra o material desta etapa e faça só a primeira linha: o título ou a primeira frase." (**provisório, a validar com o time**, P6) | D P6 |
 
-A "Tarefa leve de 5 min" do aquecimento cita "Renomear os PDFs de Cálculo", que é um dado de exemplo. **PERGUNTA P16**: manter o texto literal do protótipo ou um genérico.
+A "Tarefa leve de 5 min" do aquecimento mantém o texto literal do protótipo (P16), até as tarefas leves do usuário (UC13) entrarem como outra `RampOptionSource`.
 
 ### 4.2 Entidade `FocusSession`
 
@@ -409,7 +412,7 @@ Arquivo: `modules/activation/src/session/model/focus-session.entity.ts`.
 - `high` → `micro`;
 - `electric` → `focus`.
 
-**PERGUNTA P14 — divergência:** no web, "Alta" leva **direto ao desafio** (W14; landing: "Pula direto pro desafio"), e não há "Elétrico". O domínio tem uma regra só: qual vale para o web?
+**Decidido (P14):** web e mobile usam esta tabela (F §3). A regra do protótipo web ("Alta → direto pro desafio") não é seguida.
 
 ### 4.4 Interface `RampOptionSource` (D 4a)
 
@@ -438,7 +441,7 @@ Arquivo: `modules/activation/src/session/model/focus-session.entity.ts`.
 5. Dado uma sessão válida, então ok.
 
 **`RampSuggestion`**
-1. `low` → `warmup`; 2. `medium` → `challenge`; 3. `high` → `micro`; 4. `electric` → `focus` (F §3; ajustar conforme **P14**).
+1. `low` → `warmup`; 2. `medium` → `challenge`; 3. `high` → `micro`; 4. `electric` → `focus` (F §3; P14).
 
 **`FixedRampOptionSource`**
 1. `warmup` → as 5 opções do catálogo, na ordem do protótipo.
@@ -448,7 +451,7 @@ Arquivo: `modules/activation/src/session/model/focus-session.entity.ts`.
 
 **`BuildRamp`**
 1. Dado `energy = 'high'` e 3 micro-passos, quando montar, então 5 degraus em ordem, `suggested = 'micro'`, e as opções do micro-passo são os 3 textos.
-2. Dado `microSteps` vazio, então o micro-passo fica sem opções (**P6**).
+2. Dado `microSteps` vazio, então o micro-passo tem 1 opção com o texto genérico provisório (P6).
 3. Dado uma energia inválida, então `ValidationException`.
 
 **`RecordFocusSession`**
@@ -474,39 +477,41 @@ Um arquivo por fluxo; eles só encadeiam casos de uso e nunca calculam.
 | `goals-view.orchestrator.ts` | `ListGoals` → `GetGoalsFeasibility` (folga de cada objetivo) | lista de objetivos, coluna do Hoje |
 
 O `GeneratePlan` sempre recebe do orquestrador:
-- o `timezone` do usuário (**P1**);
+- o `timezone` do usuário (P1);
 - os objetivos ativos com as etapas e os `remainingMinutes` calculados em `goals`.
 
-**Ponto de atenção:** `day-view`, `week-view` e `goals-view` juntam os títulos dos objetivos aos blocos. É composição de dados, não cálculo, mas é o limite do que a regra 5.9 permite. **PERGUNTA P17**: aceita?
+**Ponto de atenção:** `day-view`, `week-view` e `goals-view` juntam os títulos dos objetivos aos blocos. É composição de dados, não cálculo, mas é o limite do que a regra 5.9 permite. Aceito como composição, não cálculo (P17).
 
 ---
 
 ## 6. Espaços reservados (fora desta fase)
 
-- **`gamification`:** gotas, XP, nível, sequência, conquistas e estágios do Broto (D "Fora do MVP"). Os designs mostram a barra gamificada (M01, W12) e a celebração (M12, W41) com números. **PERGUNTA P18**: nesta fase, mostrar os números fixos do protótipo, esconder, ou placeholder?
+- **`gamification`:** gotas, XP, nível, sequência, conquistas e estágios do Broto (D "Fora do MVP"). Os designs mostram a barra gamificada (M01, W12) e a celebração (M12, W41) com números. Decidido (P18): as telas mostram os valores fixos do protótipo, sem lógica e sem endpoint.
 - **`notifications`:** e-mails (UC23, UC24). Nada nesta fase.
 - **IA (`GoalAssistantProvider` em `goals`):** contrato neutro definido na Fase 7 do passo a passo, quando o fornecedor for escolhido entre os parceiros.
 
 ---
 
-## 7. PERGUNTAS (resumo)
+## 7. Decisões que fecharam as perguntas
 
-| # | Pergunta | Proposta |
+Todas as perguntas P1–P18 deste documento foram respondidas em 10/11/2026 com a proposta abaixo (detalhes, motivos e consequências em `docs/2-decisoes-mvp.md`). A coluna "Proposta" passou a ser a decisão.
+
+| # | Assunto | Decisão |
 |---|---|---|
 | P1 | Onde fica o fuso do usuário? | `User.timezone` (IANA), enviado no cadastro; padrão `America/Sao_Paulo` |
 | P2 | Limite de tamanho do título do objetivo e da etapa | 1–120 caracteres |
 | P3 | Prazo opcional? (M16 "prazo opcional"; o Portfólio do protótipo não tem prazo) | Opcional; sem prazo = alocado depois de todos os com prazo |
 | P4 | Como a cor (1–4) do objetivo é escolhida? | Sequencial entre os objetivos ativos, voltando ao 1 depois do 4 |
 | P5 | Estimativa da etapa: mínimo e múltiplo | Mínimo 15, múltiplo de 15 |
-| P6 | De onde vem o texto do micro-passo no objetivo **manual**? (no protótipo vem da IA) | Campo opcional na etapa; sem texto → um texto genérico **a definir por você** |
+| P6 | Texto do micro-passo no objetivo manual | Campo opcional; vazio → "Abra o material desta etapa e faça só a primeira linha: o título ou a primeira frase." (**provisório, a validar com o time**) |
 | P7 | Faixa do limite diário: web 1h–5h (passo 30) × mobile 1h–8h | Domínio aceita 60–480, múltiplo de 30; cada cliente mostra a faixa do seu design |
-| P8 | Compromissos (aula/estágio) não têm tela | Só domínio nesta fase; grade sem ocupados |
+| P8 | Compromissos sem tela | Só domínio nesta fase (sem endpoint, tabela ou tela); grade sem ocupados |
 | P9 | "Folga de 1 dia antes do prazo": qual é o último dia de trabalho? | Prazo = dia da entrega (não se trabalha nele); último dia = prazo − 1 − folga |
 | P10 | Bloco mínimo de 30 min × etapa de 15 min | O mínimo vale para dividir uma etapa; uma etapa (ou resto) menor que 30 vira um bloco do seu tamanho |
 | P11 | Disponibilidade do exemplo "8h15 em 6 dias · folga de 1 dia" | O teste verifica invariantes; se quiser o número exato, informe a disponibilidade |
 | P12 | Gerar plano sem disponibilidade cadastrada | `NotFoundError` (o onboarding é obrigatório antes) |
 | P13 | Bloco que atravessa a meia-noite | Pertence ao dia em que começa (as janelas vão até 23:00 nos designs, então é raro) |
-| P14 | Energia: web 3 níveis com Alta → Desafio × mobile 4 níveis com Alta → Micro-passo | Domínio com 4 níveis e a tabela de F §3; o web segue o protótipo dele e manda o degrau sugerido do jeito dele |
+| P14 | Níveis de energia | Web **e** mobile com os 4 níveis do mobile e a tabela de F §3; o web só diverge do protótipo nesse ponto (chip "Elétrico" no check-in do Hoje) |
 | P15 | Efeito do "tempo disponível agora" no check-in mobile | Só é gravado na sessão nesta fase, sem efeito |
 | P16 | Texto da "Tarefa leve de 5 min" do aquecimento (cita um PDF de exemplo) | Manter o texto literal do protótipo |
 | P17 | Orquestradores de leitura juntam títulos aos blocos | Aceitar como composição, não cálculo |

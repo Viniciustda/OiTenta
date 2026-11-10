@@ -1,6 +1,6 @@
 # Plano de execução — Etapas B a E
 
-**Status:** proposta da Etapa A (10/11/2026), aguardando aprovação. O processo está em `.agents/rules/processo-desenvolvimento.md`; a modelagem e os cenários em `docs/3-modelagem-dominio.md`; o contrato em `docs/4-contrato-api.md`.
+**Status:** aprovado em 10/11/2026 (decisões P1–P28 em `docs/2-decisoes-mvp.md`). O processo está em `.agents/rules/processo-desenvolvimento.md`; a modelagem e os cenários em `docs/3-modelagem-dominio.md`; o contrato em `docs/4-contrato-api.md`.
 
 ## Como cada tarefa roda
 
@@ -10,7 +10,7 @@
 - **Preparação de cada worktree (agente principal, antes de entregar ao subagente):**
   - `npm ci` na worktree: só instala o que já está no `package-lock.json`, não acrescenta dependência;
   - `flutter pub get` para o mobile.
-  - Motivo: worktree nova não tem `node_modules` e o subagente não pode rodar `npm install`. **PERGUNTA P28**: aprova esse procedimento?
+  - Motivo: worktree nova não tem `node_modules` e o subagente não pode rodar `npm install`. Aprovado (P28).
 - **Arquivos que só o agente principal altera:** `package.json`/`package-lock.json` da raiz, `turbo.json`, `apps/backend/src/app.module.ts`, `apps/backend/prisma/**`, `packages/contracts/openapi.json`, `docs/**`, `.agents/**`. Também `apps/frontend/package.json` e `apps/mobile/pubspec.yaml`, que mudam só com dependência aprovada.
 
 ## Dependências novas
@@ -18,12 +18,12 @@
 | Dependência | Onde | Situação | Para quê |
 |---|---|---|---|
 | `go_router` | `apps/mobile` | **já decidida** (D 5.7) | rotas centralizadas |
-| teste de unidade do web | `apps/frontend` | **PERGUNTA P21** | o frontend não tem nenhum executor de teste. Proposta: `vitest` + `@testing-library/react` + `jsdom` |
-| fontes no Flutter | `apps/mobile` | **PERGUNTA P22** | Fredoka e Nunito. Opções: pacote `google_fonts`, ou baixar os `.ttf` para `assets/fonts` (sem pacote) |
-| ícones no Flutter | `apps/mobile` | **PERGUNTA P23** | os protótipos usam Phosphor. Proposta: pacote `phosphor_flutter` |
-| cliente HTTP do mobile | `apps/mobile` | **PERGUNTA P26** (Etapa D) | `http` (oficial do Dart) ou `dio` |
-| validação de formato no backend | `apps/backend` | **PERGUNTA P19** (Etapa C) | `class-validator` + `class-transformer` |
-| teste de ponta a ponta do web | raiz ou `apps/frontend` | **PERGUNTA P25** (Etapa E) | `@playwright/test` |
+| teste de unidade do web | `apps/frontend` | **aprovada (P21)** | `vitest` + `@testing-library/react` + `jsdom` |
+| fontes no Flutter | `apps/mobile` | **aprovada (P22)** | `google_fonts` (Fredoka e Nunito); testes sem busca na rede |
+| ícones no Flutter | `apps/mobile` | **aprovada (P23)** | `phosphor_flutter` |
+| cliente HTTP do mobile | `apps/mobile` | **aprovada (P26)**, usada na Etapa D | `http` |
+| validação de formato no backend | `apps/backend` | **aprovada (P19)**, usada na Etapa C | `class-validator` + `class-transformer` |
+| teste de ponta a ponta do web | `apps/frontend` | **aprovada (P25)**, usada na Etapa E | `@playwright/test` |
 | `integration_test` | `apps/mobile` | do próprio SDK do Flutter, sem pacote externo | Etapa E |
 
 Quem instala cada dependência aprovada é o agente principal, numa branch `chore/...` integrada antes da tarefa que a usa.
@@ -69,7 +69,7 @@ Quem instala cada dependência aprovada é o agente principal, numa branch `chor
   - `apps/frontend/src/modules/**` (inclusive ligar "Entrar" e "Começar grátis" da landing às rotas de login e cadastro);
   - as rotas novas da fatia em `apps/frontend/src/app/**`;
   - **não** pode alterar `globals.css` nem `layout.tsx`: tokens novos são pedidos ao agente principal.
-- **Rotas:** **PERGUNTA P24** — os protótipos não definem URLs (usam `#login`, `#cadastro`). Proposta: `/entrar`, `/cadastro`, `/onboarding`, `/hoje`, `/calendario`, `/objetivos/[goalId]`; rampa e novo objetivo como modais sobre `/hoje`.
+- **Rotas (P24):** `/entrar`, `/cadastro`, `/onboarding`, `/hoje`, `/calendario`, `/objetivos/[id]`; rampa e novo objetivo como modais sobre `/hoje`.
 - **Telas** (fonte: `design/web/source` + `design/web/screens` + `SCREENS.md`):
   - W03 login, W04 cadastro;
   - W05–W11 onboarding;
@@ -77,10 +77,11 @@ Quem instala cada dependência aprovada é o agente principal, numa branch `chor
   - W15–W16 calendário semana e detalhe do bloco (só leitura);
   - W22 trilha;
   - W32–W41 rampa;
-  - novo objetivo conforme **P20**;
+  - novo objetivo: **W30 começando vazia** (P20), registrada como adaptação intencional;
+  - check-in do Hoje com **4 níveis** (P14: chip "Elétrico" acrescentado, diferença intencional em relação ao screenshot);
   - sidebar com os itens do protótipo; os destinos fora da fatia ficam sem ação e são listados.
 - **Repositórios de exemplo:** classes em `apps/frontend/src/modules/<x>/data/` que seguem os tipos do `docs/4-contrato-api.md` e devolvem dados do protótipo. Trocados por HTTP na Etapa D.
-- **TDD:** testes dos repositórios e da lógica de tela antes das telas (depende de **P21**).
+- **TDD:** testes dos repositórios e da lógica de tela antes das telas (Vitest + Testing Library, P21).
 - **Visual:** comparar cada tela com o screenshot de referência, no máximo 3 rodadas; listar as diferenças restantes.
 - **Pronto quando:** testes verdes, lint ok, build ok, comparações registradas em `docs/frontend/comparacoes/`.
 
@@ -91,13 +92,13 @@ Quem instala cada dependência aprovada é o agente principal, numa branch `chor
 - **Regras:** `.agents/rules/mobile-flutter.md` (as 4 regras e o go_router).
 - **Telas** (fonte: `design/mobile/app/source` + `design/mobile/telas/source` + screens + `SCREENS.md`):
   - login e cadastro: **placeholder**;
-  - onboarding T02 (grade por período) e T03 (limite); os passos sem design (1, 3 e 6 de 6) como **placeholder** (**PERGUNTA P27**: confirmar);
-  - M01 Hoje (barra gamificada conforme **P18**);
+  - onboarding T02 (grade por período) e T03 (limite); os passos sem design (1, 3 e 6 de 6) como **placeholder** (P27);
+  - M01 Hoje (barra gamificada com os valores fixos do protótipo, P18);
   - M02 Objetivos;
   - M03 Semana;
   - M05–M12 rampa (check-in, escada, aquecimento, desafio, micro-passo, foco, registro, celebração);
   - M18 trilha;
-  - novo objetivo conforme **P20**;
+  - novo objetivo: **M15 começando vazia** e **M16** (tarefa única) (P20);
   - aba Jardim: **placeholder**.
   - Fora: pausa, pedir ajuda, bloquear apps, mês, prazos, perfil.
 - **Dados de exemplo:** repositórios em `lib/features/<x>/data/` com os dados do `bora-data.js`, seguindo os tipos do contrato.
@@ -121,7 +122,7 @@ Para cada módulo: testes de integração (supertest) dos endpoints → `backend
 
 | Ordem | Branch | Escopo |
 |---|---|---|
-| C0 | `feat/auth-timezone` | só se **P1** = acrescentar `timezone` |
+| C0 | `feat/auth-timezone` | `User.timezone` (P1): entidade, `RegisterUser`, migration, `POST /auth/register`, `GET /auth/me`, seed |
 | C1 | `feat/backend-goals` | migration `goals`, `PrismaGoalRepository`, `GET /goals/:goalId` |
 | C2 | `feat/backend-scheduling` | migration `scheduling`, repositórios Prisma, `GET/PUT /scheduling/availability`, `GET /scheduling/plan/day` e `/week` |
 | C3 | `feat/backend-activation` | migration `activation`, `PrismaFocusSessionRepository`, `FixedRampOptionSource` no Nest |
@@ -137,7 +138,7 @@ Para cada módulo: testes de integração (supertest) dos endpoints → `backend
 | Tarefa | Branch | Pode alterar | O que faz |
 |---|---|---|---|
 | D1 | `feat/web-integracao-api` | `apps/frontend/src/modules/**/data/**` (+ um cliente HTTP em `apps/frontend/src/modules/core/`) | troca os repositórios de exemplo por `fetch` ao backend, com token e tratamento de 401 |
-| D2 | `feat/mobile-integracao-api` | `apps/mobile/lib/**/data/**`, `apps/mobile/lib/core/**`, `apps/mobile/test/**` | troca os repositórios por HTTP (**P26**), usando `AppConfig.apiUrl` |
+| D2 | `feat/mobile-integracao-api` | `apps/mobile/lib/**/data/**`, `apps/mobile/lib/core/**`, `apps/mobile/test/**` | troca os repositórios por HTTP (pacote `http`, P26), usando `AppConfig.apiUrl` |
 
 - **Regra:** as telas não mudam, e os testes de comportamento existentes continuam passando.
 
@@ -147,22 +148,13 @@ Para cada módulo: testes de integração (supertest) dos endpoints → `backend
 
 - **Branch:** `feat/e2e-fluxo-principal`.
 - **Teste primeiro:**
-  - Playwright (web, **P25**);
+  - Playwright (web, P25);
   - `integration_test` no simulador iOS (mobile).
 - **Fluxo:** login demo → onboarding → objetivo → plano → Hoje → rampa → registrar → plano recalculado, contra o backend local.
 - **Depois:** os ajustes até passar e a atualização dos `COMO-TESTAR.md` (agente principal).
 
 ---
 
-## Perguntas deste documento
+## Decisões deste documento
 
-| # | Pergunta | Proposta |
-|---|---|---|
-| P21 | Executor de testes do web | `vitest` + `@testing-library/react` + `jsdom` |
-| P22 | Fontes no Flutter | `.ttf` em `assets/fonts` (sem pacote) ou `google_fonts` |
-| P23 | Ícones Phosphor no Flutter | `phosphor_flutter` |
-| P24 | URLs das telas web | `/entrar`, `/cadastro`, `/onboarding`, `/hoje`, `/calendario`, `/objetivos/[goalId]` |
-| P25 | Ponta a ponta do web | `@playwright/test` |
-| P26 | Cliente HTTP do mobile | `http` (oficial, mais simples) |
-| P27 | Passos do onboarding mobile sem design | Placeholder (nome + botão que avança) |
-| P28 | `npm ci` e `flutter pub get` em cada worktree, feitos pelo agente principal | Aprovar |
+P21 (Vitest), P22 (`google_fonts`), P23 (`phosphor_flutter`), P24 (rotas), P25 (Playwright), P26 (`http`), P27 (placeholder) e P28 (`npm ci` + `flutter pub get` nas worktrees): todas aprovadas como proposto em 10/11/2026. Detalhes em `docs/2-decisoes-mvp.md`.
