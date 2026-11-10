@@ -198,7 +198,7 @@ As visões Prazos, Mês e Dia (W17–W20, M20–M21) e as ações do detalhe do 
 
 ### `GET /activation/ramp?goalId=…&stepId=…&energy=…&availableTime=…`
 
-- **Resposta:** 200 `{ steps[5]{kind, options[{id, title, durationLabel, durationSeconds, description, icon, steps?, problems?}]}, suggested }`.
+- **Resposta:** 200 `{ steps[5]{kind, options[{id, title, durationLabel, durationSeconds?, description, icon, steps?, problems?}]}, suggested }`.
 - **Erros:** 400 (`energy` inválida), 401, 404 (objetivo ou etapa inexistente ou de outro usuário).
 - **Caso de uso:** `GetGoal` → `BuildRamp` (orquestrador `ramp`).
 - **Telas:**

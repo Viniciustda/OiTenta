@@ -14,6 +14,7 @@ describe("GetAuthenticatedUser", () => {
     const output = await new GetAuthenticatedUser(userRepository).execute({ userId: user.id });
 
     expect(output.user).toEqual(user);
+    expect(output.user.timezone).toBe("America/Sao_Paulo"); // C0-5
     expect(output.user).not.toHaveProperty("password");
   });
 
