@@ -1,10 +1,11 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { seedDemoUser } from './tasks/demo-user.seed';
 
 type SeedTask = (prisma: PrismaClient) => Promise<void>;
 
-const seedTasks: SeedTask[] = [];
+const seedTasks: SeedTask[] = [seedDemoUser];
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL ?? '',

@@ -1,0 +1,81 @@
+@baseUrl = http://localhost:4000
+@email = ana.{{$timestamp}}@bora.app
+@password = Senha@123
+
+### Cadastro → 201 com o usuário (sem senha)
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ana Souza",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Cadastro com o mesmo e-mail → 409
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ana Souza",
+  "email": "{{register.request.body.$.email}}",
+  "password": "{{password}}"
+}
+
+### Cadastro com senha fraca → 422
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ana Souza",
+  "email": "fraca.{{$timestamp}}@bora.app",
+  "password": "123456"
+}
+
+### Login → 200 com token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{register.request.body.$.email}}",
+  "password": "{{password}}"
+}
+
+### Login com senha errada → 401 (mensagem única)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{register.request.body.$.email}}",
+  "password": "Errada@123"
+}
+
+### Login com e-mail inexistente → 401 (mesma mensagem)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "ninguem@bora.app",
+  "password": "{{password}}"
+}
+
+### /auth/me com token → 200 com o próprio usuário
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{login.response.body.$.token}}
+
+### /auth/me sem token → 401
+GET {{baseUrl}}/auth/me
+
+### /auth/me com token inválido → 401
+GET {{baseUrl}}/auth/me
+Authorization: Bearer token-invalido
+
+### Entrar como demo → 200 com token do usuário demo (rode antes o prisma:seed)
+# @name demo
+POST {{baseUrl}}/auth/demo
+
+### /auth/me com o token demo → 200 com o usuário demo
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{demo.response.body.$.token}}
