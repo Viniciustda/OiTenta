@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="min-height:100vh;background:var(--bg);display:flex;flex-direction:column">
+  <div style="height:4px;background:var(--s2)"><div style="height:100%;width:{{ progress }}%;background:var(--fill);transition:width .4s"></div></div>
+  <header style="height:72px;padding:0 40px;display:flex;align-items:center;justify-content:space-between">
+    <span style="display:flex;align-items:center;gap:10px"><dc-import name="Broto" size="{{ 36 }}" hint-size="36px,36px"></dc-import><span style="font:700 26px/1 Fredoka,sans-serif;letter-spacing:-0.01em">bora</span></span>
+    <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Passo {{ stepNum }} de 4</span>
+  </header>
+  <div style="flex:1;width:100%;max-width:800px;margin:0 auto;box-sizing:border-box;padding:24px 24px 96px;display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;align-items:flex-end;gap:8px;animation:riseIn .3s"><dc-import name="Broto" size="{{ 48 }}" mood="animado" hint-size="48px,48px"></dc-import><div style="max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 20px 6px;padding:12px 16px;font:400 16px/24px Nunito,sans-serif">Oi! Eu sou o <b style="font-family:Fredoka,sans-serif;font-weight:600">Broto</b>. Vamos montar seu plano sem drama?</div></div>
+    <sc-if value="{{ moreInfo }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;justify-content:flex-end"><span style="padding:9px 14px;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 15px/1 Nunito,sans-serif">Me conta mais</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;animation:riseIn .3s"><dc-import name="Broto" size="{{ 48 }}" hint-size="48px,48px"></dc-import><div style="max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 20px 6px;padding:12px 16px;font:400 16px/24px Nunito,sans-serif">Eu quebro seus trabalhos em degraus pequenos e encaixo nos seus horários livres. Você só precisa começar. Cada degrau rende gotas, e as gotas me regam.</div></div>
+    </sc-if>
+    <sc-if value="{{ s0 }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;justify-content:flex-end;gap:6px">
+        <sc-if value="{{ showMore }}" hint-placeholder-val="{{ true }}"><button onClick="{{ more }}" style="height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer">Me conta mais</button></sc-if>
+        <button onClick="{{ go1 }}" style="height:44px;padding:0 20px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 15px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer" style-active="transform:translateY(3px);box-shadow:none">Bora!</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ past0 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;justify-content:flex-end"><span style="padding:9px 14px;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 15px/1 Nunito,sans-serif">Bora!</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;animation:riseIn .3s"><dc-import name="Broto" size="{{ 48 }}" hint-size="48px,48px"></dc-import><div style="max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 20px 6px;padding:12px 16px;font:400 16px/24px Nunito,sans-serif">Primeiro, me mostra quando você tá livre. <b>Pinta os horários arrastando o mouse.</b> Aula e estágio eu já marquei como ocupados.</div></div>
+    </sc-if>
+    <sc-if value="{{ s1 }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-left:56px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:20px;animation:riseIn .3s">
+        <dc-import name="AvailGrid" avail="{{ avail }}" on-change="{{ setAvail }}" cell-h="{{ 26 }}" hint-size="100%,460px"></dc-import>
+        <button onClick="{{ go2 }}" disabled="{{ noAvail }}" style="align-self:flex-end;height:52px;padding:0 24px;border:0;border-radius:999px;background:{{ btnBg }};color:{{ btnTx }};font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 {{ btnLip }};cursor:{{ btnCursor }}" style-active="transform:translateY(3px);box-shadow:none">Pronto, esses são meus horários</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ past1 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;justify-content:flex-end"><span style="padding:9px 14px;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 15px/1 Nunito,sans-serif">{{ availAnswer }}</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;animation:riseIn .3s"><dc-import name="Broto" size="{{ 48 }}" hint-size="48px,48px"></dc-import><div style="max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 20px 6px;padding:12px 16px;font:400 16px/24px Nunito,sans-serif">Boa. E quanto tempo por dia você aguenta estudar sem fritar? Eu nunca passo desse limite.</div></div>
+    </sc-if>
+    <sc-if value="{{ s2 }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-left:56px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:20px;animation:riseIn .3s">
+        <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:800 14px/20px Nunito,sans-serif">Máximo por dia</span><b style="font:600 28px/36px Fredoka,sans-serif;color:var(--pri)">{{ limitLabel }}</b></div>
+        <div ref="{{ trackRef }}" onPointerDown="{{ trackDown }}" style="position:relative;height:28px;cursor:pointer;touch-action:none">
+          <div style="position:absolute;left:0;right:0;top:10px;height:8px;border-radius:999px;background:var(--s2)"></div>
+          <div style="position:absolute;left:0;top:10px;height:8px;width:{{ limitPct }}%;border-radius:999px;background:var(--fill)"></div>
+          <div style="position:absolute;top:0;left:calc({{ limitPct }}% - 14px);width:28px;height:28px;box-sizing:border-box;border-radius:50%;background:#FFFFFF;border:2px solid var(--pri);box-shadow:0 2px 0 var(--lip)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><span>1h</span><span>5h</span></div>
+        <button onClick="{{ go3 }}" style="align-self:flex-end;height:52px;padding:0 24px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer" style-active="transform:translateY(3px);box-shadow:none">Esse é meu limite</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ past2 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;justify-content:flex-end"><span style="padding:9px 14px;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 15px/1 Nunito,sans-serif">{{ limitLabel }} por dia</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;animation:riseIn .3s"><dc-import name="Broto" size="{{ 48 }}" mood="comemorando" hint-size="48px,48px"></dc-import><div style="max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 20px 6px;padding:12px 16px;font:400 16px/24px Nunito,sans-serif">Fechado. Já encaixei Eng. Software, Cálculo II e Portfólio nos seus horários verdes, sem passar de {{ limitLabel }} por dia. Bora pro seu dia?</div></div>
+      <div style="display:flex;justify-content:flex-end"><button onClick="{{ finish }}" style="height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;gap:10px" style-active="transform:translateY(3px);box-shadow:none">Ir pro meu dia<i class="ph-bold ph-arrow-right" style="font-size:18px"></i></button></div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  state = { step: 0, more: false };
+  trackRef = React.createRef();
+  componentDidUpdate(pp, ps) { if (ps.step !== this.state.step || ps.more !== this.state.more) setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 60); }
+  setFromX(x) {
+    const r = this.trackRef.current.getBoundingClientRect();
+    const f = Math.max(0, Math.min(1, (x - r.left) / r.width));
+    const v = Math.round((60 + f * 240) / 30) * 30;
+    if (v !== this.props.app.s.limit) this.props.app.a.setLimit(v);
+  }
+  renderVals() {
+    const app = this.props.app || { s: {}, a: {}, u: {} }; const { s, a, u } = app;
+    const st = this.state.step;
+    const total = (s.avail || []).reduce((x, d) => x + d.length, 0);
+    const lim = s.limit || 180;
+    const no = total === 0;
+    return {
+      progress: [10, 40, 70, 100][st], stepNum: st + 1,
+      s0: st === 0, s1: st === 1, s2: st === 2, past0: st >= 1, past1: st >= 2, past2: st >= 3,
+      moreInfo: this.state.more, showMore: !this.state.more,
+      more: () => this.setState({ more: true }), go1: () => this.setState({ step: 1 }), go2: () => { if (!no) this.setState({ step: 2 }); }, go3: () => this.setState({ step: 3 }),
+      avail: s.avail, setAvail: a.setAvail, noAvail: no,
+      btnBg: no ? 'var(--s2)' : 'var(--pri)', btnTx: no ? 'var(--tx2)' : 'var(--priTx)', btnLip: no ? 'var(--border)' : 'var(--lip)', btnCursor: no ? 'not-allowed' : 'pointer',
+      availAnswer: `${total}h livres por semana`,
+      limitLabel: u.dur ? u.dur(lim) : '3h', limitPct: Math.round((lim - 60) / 240 * 100),
+      trackRef: this.trackRef,
+      trackDown: e => {
+        this.setFromX(e.clientX);
+        const mv = ev => this.setFromX(ev.clientX);
+        const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); };
+        window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+      },
+      finish: a.finishOnboarding
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -44,3 +44,6 @@ yarn-error.log*
 .pub-cache/
 .pub/
 *.iml
+
+# Zips de design (originais do Claude Design)
+design/_inbox/

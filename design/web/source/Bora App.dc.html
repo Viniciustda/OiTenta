@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>body{margin:0;-webkit-font-smoothing:antialiased}a{color:#0369A1;text-decoration:none}a:hover{color:#065F46}button,input,textarea{font:inherit;margin:0}input,textarea{color:inherit}@keyframes brotoWave{0%,55%,100%{transform:rotate(0deg)}8%{transform:rotate(-12deg)}18%{transform:rotate(10deg)}28%{transform:rotate(-10deg)}38%{transform:rotate(8deg)}47%{transform:rotate(-3deg)}}@keyframes popIn{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}@keyframes toastIn{0%{opacity:0;transform:translate(-50%,-8px) scale(.85)}25%{opacity:1;transform:translate(-50%,0) scale(1)}85%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-6px) scale(.96)}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes riseIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}@keyframes confetti{0%{opacity:1;transform:translateY(-20px) rotate(0)}100%{opacity:0;transform:translateY(360px) rotate(540deg)}}@keyframes noticeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}@keyframes dropFall{0%{opacity:0;transform:translateY(-30px)}40%{opacity:1}100%{opacity:0;transform:translateY(20px)}}</style>
+</helmet>
+<div lang="pt-BR" style="{{ themeVars }}min-height:100vh;background:var(--bg);color:var(--tx);font-family:Nunito,sans-serif;transition:background .2s">
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+    <dc-import name="AppLogin" app="{{ app }}" hint-size="100%,100vh"></dc-import>
+  </sc-if>
+  <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ false }}">
+    <dc-import name="AppOnboarding" app="{{ app }}" hint-size="100%,100vh"></dc-import>
+  </sc-if>
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;min-height:100vh;min-width:1200px">
+      <aside style="width:240px;flex:none;box-sizing:border-box;height:100vh;position:fixed;top:0;left:0;z-index:20;display:flex;flex-direction:column;padding:20px 12px 12px;background:var(--surface);border-right:1px solid var(--border)">
+        <a href="Bora Landing Web.dc.html" style="display:flex;align-items:center;gap:8px;padding:0 8px;color:var(--tx)"><dc-import name="Broto" size="{{ 36 }}" hint-size="36px,36px"></dc-import><span style="font:700 26px/1 Fredoka,sans-serif;letter-spacing:-0.01em">bora</span></a>
+        <nav style="margin-top:28px;display:flex;flex-direction:column;gap:4px">
+          <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+            <button onClick="{{ n.go }}" style="height:44px;display:flex;align-items:center;gap:12px;padding:0 14px;border:0;border-radius:999px;background:{{ n.bg }};color:{{ n.color }};font:{{ n.weight }} 15px/1 Nunito,sans-serif;cursor:pointer;text-align:left;transition:background .12s">
+              <i class="{{ n.icon }}" style="font-size:22px;color:{{ n.iconColor }}"></i>{{ n.label }}
+            </button>
+          </sc-for>
+        </nav>
+        <button onClick="{{ openNovo }}" style="margin-top:16px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 15px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--border);cursor:pointer;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;background:var(--s2)"><i class="ph-bold ph-plus" style="font-size:16px"></i>Novo objetivo</button>
+        <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding:12px 0 0;border-top:1px solid var(--border)">
+          <button onClick="{{ goJardim }}" style="display:flex;align-items:center;gap:10px;padding:0 4px;border:0;background:transparent;cursor:pointer;text-align:left;color:var(--tx)">
+            <dc-import name="Broto" size="{{ 40 }}" stage="{{ brotoStage }}" mood="{{ brotoMood }}" hint-size="40px,40px"></dc-import>
+            <span style="display:flex;flex-direction:column"><b style="font:800 15px/20px Nunito,sans-serif">Arthur</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ stageLabel }}</span></span>
+          </button>
+          <div style="display:flex;align-items:center;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--border);border-radius:999px;width:fit-content">
+            <span title="Dias regados" style="display:flex;align-items:center;gap:4px;padding:6px 7px"><i class="ph-fill ph-leaf" style="font-size:18px;color:var(--streak)"></i><b style="font:600 16px/1 Fredoka,sans-serif">{{ streak }}</b></span>
+            <span title="Gotas" style="display:flex;align-items:center;gap:4px;padding:6px 7px"><i class="ph-fill ph-drop" style="font-size:18px;color:var(--blueFill)"></i><b style="font:600 16px/1 Fredoka,sans-serif">{{ drops }}</b></span>
+            <span title="{{ xpTitle }}" style="display:flex;align-items:center;gap:8px;padding:6px 10px 6px 8px;background:var(--s2);border-radius:999px;flex:none"><b style="font:600 14px/1 Fredoka,sans-serif;color:var(--pri);white-space:nowrap">Nv {{ level }}</b><span style="width:36px;height:6px;border-radius:999px;background:var(--border);overflow:hidden"><span style="display:block;width:{{ xpPct }}%;height:100%;background:var(--fill);transition:width .4s"></span></span></span>
+          </div>
+        </div>
+      </aside>
+      <main style="flex:1;min-width:0;position:relative;margin-left:240px">
+        <sc-if value="{{ pg.hoje }}" hint-placeholder-val="{{ false }}"><dc-import name="AppHoje" app="{{ app }}" hint-size="100%,900px"></dc-import></sc-if>
+        <sc-if value="{{ pg.calendario }}" hint-placeholder-val="{{ false }}"><dc-import name="AppCalendario" app="{{ app }}" hint-size="100%,900px"></dc-import></sc-if>
+        <sc-if value="{{ pg.objetivos }}" hint-placeholder-val="{{ false }}"><dc-import name="AppObjetivos" app="{{ app }}" hint-size="100%,900px"></dc-import></sc-if>
+        <sc-if value="{{ pg.tarefas }}" hint-placeholder-val="{{ false }}"><dc-import name="AppTarefas" app="{{ app }}" hint-size="100%,900px"></dc-import></sc-if>
+        <sc-if value="{{ pg.jardim }}" hint-placeholder-val="{{ false }}"><dc-import name="AppJardim" app="{{ app }}" hint-size="100%,900px"></dc-import></sc-if>
+        <sc-if value="{{ pg.config }}" hint-placeholder-val="{{ false }}"><dc-import name="AppConfig" app="{{ app }}" hint-size="100%,900px"></dc-import></sc-if>
+      </main>
+    </div>
+  </sc-if>
+  <sc-if value="{{ modalNovo }}" hint-placeholder-val="{{ false }}"><dc-import name="ModalNovoObjetivo" app="{{ app }}" hint-size="100%,100%"></dc-import></sc-if>
+  <sc-if value="{{ modalRampa }}" hint-placeholder-val="{{ false }}"><dc-import name="ModalRampa" app="{{ app }}" hint-size="100%,100%"></dc-import></sc-if>
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;top:24px;left:calc(50% + 120px);z-index:80;display:flex;align-items:center;gap:12px;padding:10px 20px 10px 10px;border-radius:999px;background:var(--tx);color:var(--bg);box-shadow:0 8px 24px rgba(14,31,26,.18);animation:toastIn 1.5s cubic-bezier(.3,1.6,.5,1) forwards;pointer-events:none;white-space:nowrap">
+      <span style="width:36px;height:36px;border-radius:50%;background:rgba(56,189,248,.16);display:flex;align-items:center;justify-content:center"><i class="{{ toast.icon }}" style="font-size:20px;color:{{ toast.iconColor }}"></i></span>
+      <span style="display:flex;flex-direction:column"><b style="font:700 18px/22px Fredoka,sans-serif">{{ toast.title }}</b><span style="font:600 12px/16px Nunito,sans-serif;opacity:.8">{{ toast.sub }}</span></span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasCelebrate }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCelebrate }}" style="position:fixed;inset:0;z-index:90;background:var(--scrim);display:flex;align-items:center;justify-content:center;animation:fadeIn .2s">
+      <div style="position:relative;width:440px;box-sizing:border-box;padding:40px 32px 32px;border-radius:24px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:riseIn .35s cubic-bezier(.3,1.6,.5,1);overflow:hidden">
+        <sc-for list="{{ confetti }}" as="c" hint-placeholder-count="0"><span style="position:absolute;top:0;left:{{ c.x }}%;width:10px;height:6px;border-radius:2px;background:{{ c.color }};animation:confetti 2.6s {{ c.delay }}s ease-in forwards;opacity:0"></span></sc-for>
+        <dc-import name="Broto" size="{{ 150 }}" stage="{{ brotoStage }}" mood="comemorando" hint-size="150px,150px"></dc-import>
+        <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--streakInk)">{{ celebrate.kicker }}</span>
+        <b style="font:700 44px/52px Fredoka,sans-serif">{{ celebrate.title }}</b>
+        <span style="font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">{{ celebrate.sub }}</span>
+        <button onClick="{{ closeCelebrate }}" style="margin-top:12px;height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer" style-active="transform:translateY(3px);box-shadow:none">Bora!</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  static LIGHT = '--bg:#F6FAF8;--surface:#FFFFFF;--s2:#EAF5F0;--border:#D5E6DF;--tx:#0E1F1A;--tx2:#4A5D57;--pri:#047857;--priTx:#FFFFFF;--lip:#065F46;--fill:#10B981;--priSoft:#D1FAE5;--blue:#0369A1;--blueFill:#0EA5E9;--blueSoft:#E0F2FE;--streak:#F59E0B;--streakInk:#B45309;--streakSoft:#FEF3C7;--danger:#DC2626;--obj1:#10B981;--obj2:#0EA5E9;--obj3:#2DD4BF;--obj4:#A78BFA;--toastIcon:#38BDF8;--focusBg:#E0F2FE;--ringTrack:#FFFFFF;--shadow:0 1px 2px rgba(14,31,26,.04);--free:rgba(16,185,129,.13);--hatch:#D5E6DF;--scrim:rgba(14,31,26,.4);';
+  static DARK = '--bg:#0B1512;--surface:#12201C;--s2:#1A2C27;--border:#24413A;--tx:#E6F2EE;--tx2:#9FB8B0;--pri:#34D399;--priTx:#052E22;--lip:#0F8A63;--fill:#34D399;--priSoft:#123A2E;--blue:#38BDF8;--blueFill:#38BDF8;--blueSoft:#0E2A3A;--streak:#FBBF24;--streakInk:#FBBF24;--streakSoft:#3A2E10;--danger:#F87171;--obj1:#34D399;--obj2:#38BDF8;--obj3:#2DD4BF;--obj4:#A78BFA;--toastIcon:#0369A1;--focusBg:#12201C;--ringTrack:#1A2C27;--shadow:none;--free:rgba(52,211,153,.10);--hatch:#24413A;--scrim:rgba(0,0,0,.6);';
+  static NOW = 19 * 60 + 40;
+  static LIMIT_DEF = 180;
+  static WD = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+  static WDF = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+  static AVDEF = [[20, 21, 22], [20, 21, 22], [20, 21, 22], [20, 21, 22], [20, 21, 22], [9, 10, 11, 14, 15, 16, 17], [14, 15, 16]];
+
+  state = this.initState();
+
+  initState() {
+    const E = (id, title, dur, done) => ({ id, title, dur, done: !!done, partial: 0 });
+    const objs = [
+      { id: 'eng', name: 'Trabalho de Eng. Software', short: 'Eng. Software', color: 'var(--obj1)', ink: 'var(--pri)', deadline: 4, kind: 'Entrega', etapas: [E('e1', 'Definir escopo', 45, 1), E('e2', 'Levantar requisitos', 90, 1), E('e3', 'Modelar classes', 90, 1), E('e4', 'Protótipo das telas', 75, 1), E('e5', 'Diagrama de casos de uso', 90), E('e6', 'Revisar documento', 60), E('e7', 'Montar PDF final', 30)] },
+      { id: 'calc', name: 'Prova de Cálculo II', short: 'Cálculo II', color: 'var(--obj2)', ink: 'var(--blue)', deadline: 11, kind: 'Prova', etapas: [E('c1', 'Revisar derivadas', 60, 1), E('c2', 'Integrais imediatas', 60, 1), E('c3', 'Substituição', 60, 1), E('c4', 'Lista de integrais por partes', 45), E('c5', 'Frações parciais', 90), E('c6', 'Integrais trigonométricas', 90), E('c7', 'Lista de áreas', 75), E('c8', 'Simulado 1', 90), E('c9', 'Revisar erros do simulado', 90), E('c10', 'Simulado 2', 60)] },
+      { id: 'port', name: 'Portfólio', short: 'Portfólio', color: 'var(--obj3)', ink: 'var(--pri)', deadline: 19, kind: 'Publicar', etapas: [E('p1', 'Escolher projetos', 60, 1), E('p2', 'Escrever o case do app', 45), E('p3', 'Fotos e prints', 60), E('p4', 'Montar a página', 90), E('p5', 'Revisão com um amigo', 30), E('p6', 'Publicar', 15)] }
+    ];
+    const hash = (typeof location !== 'undefined' && location.hash) || '';
+    const avail = Component.AVDEF.map(a => [...a]);
+    return {
+      route: hash.includes('cadastro') ? 'cadastro' : 'login', page: 'hoje', objId: 'eng', theme: 'light',
+      drops: 340, streak: 6, watered: false, xp: 410, level: 7, umbrellas: 1, energy: null,
+      avail, limit: Component.LIMIT_DEF, emailOn: true, objs, pins: [], lost: [],
+      blocks: this.plan(objs, [], [], avail, Component.LIMIT_DEF), doneBlocks: [], fresh: {},
+      notice: null, toast: null, celebrate: null, pendingMarco: null, modal: null, rampaEid: null, calFocus: null,
+      tarefas: [
+        { id: 't1', name: 'Lavar a louça', meta: '10 min · ideal p/ energia baixa', done: false },
+        { id: 't2', name: 'Arrumar o guarda-roupa', meta: '20 min', done: false },
+        { id: 't3', name: 'Separar a roupa de amanhã', meta: '5 min', done: false },
+        { id: 't4', name: 'Responder o e-mail do estágio', meta: '10 min', done: false },
+        { id: 't5', name: 'Organizar a pasta da faculdade', meta: '15 min', done: false }
+      ],
+      ach: { primeiro: true, rampa: true, pausa: true, sete: false, folga: false }
+    };
+  }
+
+  componentDidMount() {
+    this.onHash = () => { const h = location.hash; if (h.includes('cadastro') && this.state.route !== 'app') this.setState({ route: 'cadastro' }); else if (h.includes('login') && this.state.route !== 'app') this.setState({ route: 'login' }); };
+    window.addEventListener('hashchange', this.onHash);
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this.onHash); clearTimeout(this.tT); clearTimeout(this.fT); clearTimeout(this.cT); }
+
+  // ---------- scheduling ----------
+  windows(d, lost, avail) {
+    const hrs = [...(avail[d % 7] || [])].sort((a, b) => a - b); const w = [];
+    hrs.forEach(h => { const s = h * 60, e = s + 60; if (w.length && w[w.length - 1][1] === s) w[w.length - 1][1] = e; else w.push([s, e]); });
+    let res = w;
+    if (d === 0) res = res.map(([s, e]) => [Math.max(s, Component.NOW), e]).filter(([s, e]) => e - s > 0);
+    res = res.map(([s, e]) => [Math.ceil(s / 15) * 15, e]).filter(([s, e]) => e - s > 0);
+    (lost || []).filter(l => l.day === d).forEach(l => { res = res.flatMap(([s, e]) => (l.e <= s || l.s >= e) ? [[s, e]] : [[s, Math.min(e, l.s)], [Math.max(s, l.e), e]].filter(([a, b]) => b - a > 0)); });
+    return res;
+  }
+  plan(objs, pins, lost, avail, limit, H = 28) {
+    const live = pins.filter(p => { const o = objs.find(x => x.id === p.oid); const e = o && o.etapas.find(x => x.id === p.eid); return e && !e.done; });
+    const blocks = live.map(p => ({ ...p }));
+    const rem = {};
+    objs.forEach(o => {
+      rem[o.id] = o.etapas.filter(e => !e.done).map(e => {
+        const mine = live.filter(p => p.eid === e.id);
+        return { e, r: Math.round(e.dur * (1 - (e.partial || 0)) / 15) * 15 - mine.reduce((a, p) => a + p.dur, 0), part: mine.reduce((m, p) => Math.max(m, p.part + 1), 0) };
+      }).filter(x => x.r > 0);
+    });
+    const sorted = [...objs].sort((a, b) => a.deadline - b.deadline);
+    for (let d = 0; d < H; d++) {
+      const win = this.windows(d, lost, avail);
+      const dayB = () => blocks.filter(b => b.day === d);
+      let cap = limit - dayB().reduce((a, b) => a + b.dur, 0);
+      let prog = true;
+      while (prog && cap >= 30) {
+        prog = false;
+        for (const o of sorted) {
+          const reps = (o.deadline - d <= 2) ? 2 : 1;
+          for (let k = 0; k < reps; k++) {
+            const q = rem[o.id]; if (!q.length || cap < 30) break;
+            const it = q[0];
+            const occ = dayB().map(b => [b.start, b.start + b.dur]).sort((a, b) => a[0] - b[0]);
+            let gap = null;
+            for (const [s, e] of win) { let cur = s; for (const [os, oe] of occ) { if (oe <= cur || os >= e) continue; if (os - cur >= 30) { gap = gap || [cur, os]; } cur = Math.max(cur, oe); } if (!gap && e - cur >= 30) gap = [cur, e]; if (gap) break; }
+            if (!gap) break;
+            let size = Math.min(it.r, cap, gap[1] - gap[0]);
+            if (size < it.r) { if (size < 30 || it.r - size < 30) { size = it.r - 30; if (size > Math.min(cap, gap[1] - gap[0]) || size < 30) break; } }
+            blocks.push({ id: it.e.id + '#' + it.part, eid: it.e.id, oid: o.id, title: it.e.title, day: d, start: gap[0], dur: size, part: it.part });
+            it.r -= size; it.part++; cap -= size; prog = true;
+            if (it.r <= 0) q.shift();
+          }
+        }
+      }
+    }
+    return blocks;
+  }
+  folga(o, blocks, lost, avail, limit) {
+    const pend = o.etapas.filter(e => !e.done);
+    if (!pend.length) return { v: o.deadline - 1, done: true };
+    const bs = blocks.filter(b => b.oid === o.id);
+    if (!bs.length) return { v: -1 };
+    const last = bs.reduce((a, b) => (b.day * 2000 + b.start + b.dur > a.day * 2000 + a.start + a.dur) ? b : a);
+    const w = this.windows(last.day, lost, avail); const wend = w.length ? w[w.length - 1][1] : 0;
+    const frac = Math.max(0, Math.min(1, (wend - (last.start + last.dur)) / limit));
+    return { v: o.deadline - last.day - 1 + Math.round(frac * 2) / 2, lastDay: last.day };
+  }
+  folgaLabel(v) {
+    if (v == null) return '';
+    if (v < 0) return 'não cabe até o prazo';
+    if (v === 0) return 'sem folga';
+    const n = String(v).replace('.', ',');
+    return `folga de ${n} ${v > 1 ? 'dias' : 'dia'}`;
+  }
+  freezeToday(blocks, exclude) { return blocks.filter(b => b.day === 0 && !(exclude && exclude(b))); }
+  mergePins(a, b) { const m = {}; [...a, ...b].forEach(p => { m[p.id] = p; }); return Object.values(m); }
+
+  // ---------- helpers ----------
+  date(d) { return new Date(2026, 10, 16 + d); }
+  dnum(d) { const x = this.date(d); return `${String(x.getDate()).padStart(2, '0')}/${String(x.getMonth() + 1).padStart(2, '0')}`; }
+  hm(m) { return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; }
+  dur(m) { const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h${String(r).padStart(2, '0')}` : `${h}h`) : `${r} min`; }
+  dayLabel(d) { return d === 0 ? 'Hoje' : d === 1 ? 'Amanhã' : `${Component.WD[d % 7]}, ${this.dnum(d)}`; }
+  pct(o) { const t = o.etapas.reduce((a, e) => a + e.dur, 0); const dn = o.etapas.reduce((a, e) => a + (e.done ? e.dur : e.dur * (e.partial || 0)), 0); return Math.floor(dn / t * 100); }
+
+  toast(title, sub, icon = 'ph-fill ph-drop', iconColor = 'var(--toastIcon)') {
+    clearTimeout(this.tT); clearTimeout(this.tT2);
+    this.setState({ toast: null });
+    this.tT2 = setTimeout(() => {
+      this.setState({ toast: { title, sub, icon, iconColor, k: Date.now() } });
+      this.tT = setTimeout(() => this.setState({ toast: null }), 1500);
+    }, 30);
+  }
+  markFresh(ids) {
+    const f = {}; ids.forEach((id, i) => { f[id] = i; });
+    clearTimeout(this.fT);
+    this.setState({ fresh: f });
+    this.fT = setTimeout(() => this.setState({ fresh: {} }), 2600);
+  }
+  water(st) {
+    if (st.watered) return {};
+    const ch = { watered: true, streak: st.streak + 1 };
+    if (st.streak + 1 >= 7 && !st.ach.sete) { ch.ach = { ...st.ach, sete: true }; ch.pendingMarco = { kicker: 'Conquista rara', title: '7 dias regados', sub: 'Uma semana inteira cuidando do Broto. Ele tá orgulhoso de você.' }; }
+    return ch;
+  }
+  addXp(st, min) {
+    let xp = st.xp + min, level = st.level, need = 480 + (level - 7) * 40;
+    while (xp >= need) { xp -= need; level++; need = 480 + (level - 7) * 40; }
+    return { xp, level };
+  }
+  showMarco(m) {
+    clearTimeout(this.cT);
+    this.setState({ celebrate: m, pendingMarco: null });
+    this.cT = setTimeout(() => this.setState({ celebrate: null }), 3000);
+  }
+
+  // ---------- actions ----------
+  get A() {
+    if (this._A) return this._A;
+    const S = () => this.state;
+    this._A = {
+      login: () => { this.setState({ route: 'app', page: 'hoje' }); },
+      goCadastro: () => this.setState({ route: 'cadastro' }),
+      goLogin: () => this.setState({ route: 'login' }),
+      cadastrar: () => this.setState({ route: 'onboarding', avail: [[], [], [], [], [], [], []] }),
+      finishOnboarding: () => { const s = S(); this.setState({ route: 'app', page: 'hoje', blocks: this.plan(s.objs, [], s.lost, s.avail, s.limit) }); },
+      nav: (page, objId) => this.setState(s => ({ page, objId: objId || s.objId, calFocus: page === 'calendario' ? s.calFocus : null })),
+      setTheme: t => this.setState({ theme: t }),
+      setEnergy: e => { this.setState({ energy: e }); },
+      setAvail: av => { const s = S(); const pins = this.mergePins(s.pins, s.route === 'app' ? this.freezeToday(s.blocks) : []); this.setState({ avail: av, blocks: this.plan(s.objs, s.route === 'app' ? pins : [], s.lost, av, s.limit) }); },
+      setLimit: n => { const s = S(); const pins = s.route === 'app' ? this.mergePins(s.pins, this.freezeToday(s.blocks)) : []; this.setState({ limit: n, blocks: this.plan(s.objs, pins, s.lost, s.avail, n) }); },
+      setEmail: on => this.setState({ emailOn: on }),
+      openNovo: () => this.setState({ modal: 'novo' }),
+      closeModal: () => { const pm = S().pendingMarco; this.setState({ modal: null, rampaEid: null }); if (pm) setTimeout(() => this.showMarco(pm), 250); },
+      dismissNotice: () => this.setState({ notice: null }),
+      previewObjective: obj => {
+        const s = S(); const objs = [...s.objs.filter(o => o.id !== obj.id), obj];
+        const blocks = this.plan(objs, this.mergePins(s.pins, this.freezeToday(s.blocks)), s.lost, s.avail, s.limit);
+        const f = this.folga(obj, blocks, s.lost, s.avail, s.limit);
+        return { folga: f.v, label: this.folgaLabel(f.v), last: f.lastDay != null ? this.dnum(f.lastDay) : null, blocks: blocks.filter(b => b.oid === obj.id).length };
+      },
+      addObjective: obj => {
+        const s = S(); const objs = [...s.objs.filter(o => o.id !== obj.id), obj];
+        const pins = this.mergePins(s.pins, this.freezeToday(s.blocks));
+        const blocks = this.plan(objs, pins, s.lost, s.avail, s.limit);
+        const mine = blocks.filter(b => b.oid === obj.id).sort((a, b) => a.day - b.day || a.start - b.start);
+        const f = this.folga(obj, blocks, s.lost, s.avail, s.limit);
+        const first = mine[0] ? mine[0].day : 0;
+        this.setState({ objs, blocks, modal: null, page: 'calendario', calFocus: { week: Math.floor(first / 7), k: Date.now() }, notice: { kind: 'ok', icon: 'ph-bold ph-sparkle', text: `Encaixei ${obj.etapas.length} etapas de ${obj.short} até ${mine.length ? this.dnum(mine[mine.length - 1].day) : '—'}, respeitando ${this.dur(s.limit)} por dia. ${this.folgaLabel(f.v).replace(/^f/, 'F')}.` } });
+        this.markFresh(mine.map(b => b.id));
+      },
+      moveBlock: (id, day, start) => {
+        const s = S(); const b = s.blocks.find(x => x.id === id); if (!b) return { ok: false };
+        const end = start + b.dur;
+        const warn = msg => { this.setState({ notice: { kind: 'warn', icon: 'ph-bold ph-warning-circle', text: msg } }); return { ok: false, msg }; };
+        if (day < 0 || (day === 0 && start < Component.NOW)) return warn('Esse horário já passou. Solta num horário verde.');
+        if (day % 7 < 5) { const busy = [[480, 720, 'Aula'], [780, 1080, 'Estágio']].find(([bs, be]) => start < be && end > bs); if (busy) return warn(`Esse horário tá ocupado (${busy[2]}). Solta num horário verde.`); }
+        const win = this.windows(day, s.lost, s.avail);
+        if (!win.some(([ws, we]) => start >= ws && end <= we)) return warn('Fora da sua disponibilidade. Solta num horário verde.');
+        if (s.blocks.some(x => x.id !== id && x.day === day && start < x.start + x.dur && end > x.start)) return warn('Já tem uma etapa nesse horário.');
+        const used = s.blocks.filter(x => x.id !== id && x.day === day).reduce((a, x) => a + x.dur, 0);
+        if (used + b.dur > s.limit) return warn(`Passaria do seu limite de ${this.dur(s.limit)} nesse dia.`);
+        const nb = { ...b, day, start };
+        const pins = this.mergePins(this.mergePins(s.pins.filter(p => p.id !== id), this.freezeToday(s.blocks, x => x.id === id)), [nb]);
+        const blocks = this.plan(s.objs, pins, s.lost, s.avail, s.limit);
+        this.setState({ pins: [...s.pins.filter(p => p.id !== id), nb], blocks, notice: { kind: 'ok', icon: 'ph-bold ph-check-circle', text: `Movi “${b.title}” pra ${this.dayLabel(day).toLowerCase()} às ${this.hm(start)}.` } });
+        return { ok: true };
+      },
+      skipBlock: id => {
+        const s = S(); const t = s.blocks.find(x => x.id === id); if (!t) return;
+        const lw = { day: t.day, s: 0, e: 1440 };
+        const lost = [...s.lost, lw];
+        const inWin = x => x.day === t.day && x.start < lw.e && x.start + x.dur > lw.s;
+        const pinsBase = s.blocks.filter(x => !inWin(x) && (x.day < t.day || (x.day === t.day)));
+        const manual = s.pins.filter(p => !inWin(p) && p.day > t.day);
+        const blocks = this.plan(s.objs, this.mergePins(pinsBase, manual), lost, s.avail, s.limit);
+        const o = s.objs.find(x => x.id === t.oid);
+        const moved = new Set();
+        blocks.forEach(b => { if (b.oid !== t.oid) return; const old = s.blocks.find(x => x.id === b.id); if (!old || old.day !== b.day || old.start !== b.start) moved.add(b.eid); });
+        const f = this.folga(o, blocks, lost, s.avail, s.limit);
+        const n = Math.max(1, moved.size);
+        const fl = f.v < 0 ? 'não cabe mais até o prazo' : `folga agora: ${String(f.v).replace('.', ',')} ${f.v > 1 ? 'dias' : 'dia'}`;
+        this.setState({ lost, blocks, pins: manual, notice: { kind: 'info', icon: 'ph-bold ph-arrows-clockwise', text: `Tudo bem. Reorganizei ${n} ${n > 1 ? 'etapas' : 'etapa'}, ${fl}.` } });
+        this.markFresh(blocks.filter(b => b.oid === t.oid && moved.has(b.eid)).map(b => b.id));
+      },
+      partialBlock: (id, pct) => {
+        const s = S(); const t = s.blocks.find(x => x.id === id); if (!t) return;
+        this.A.registrar(t.eid, 'parcial', pct, true);
+      },
+      startRampa: eid => this.setState({ modal: 'rampa', rampaEid: eid }),
+      degrauDone: () => {
+        this.setState(s => ({ drops: s.drops + 5, ...this.water(s) }));
+        this.toast('+5 gotas', 'Degrau concluído');
+      },
+      focusDone: min => this.setState(s => this.addXp(s, min)),
+      registrar: (eid, kind, pct, fromPanel) => {
+        const s = S();
+        const o = s.objs.find(x => x.etapas.some(e => e.id === eid)); if (!o) return;
+        const etapa = o.etapas.find(e => e.id === eid);
+        const myBlocks = s.blocks.filter(b => b.eid === eid).sort((a, b) => a.day - b.day || a.start - b.start);
+        if (kind === 'nao') { this.toast('Tudo bem', 'Fica pra próxima, sem drama', 'ph-fill ph-plant', 'var(--fill)'); return; }
+        const done = kind === 'concluí';
+        const objs = s.objs.map(x => x.id !== o.id ? x : { ...x, etapas: x.etapas.map(e => e.id !== eid ? e : done ? { ...e, done: true, partial: 0 } : { ...e, partial: Math.min(.95, (e.partial || 0) + (1 - (e.partial || 0)) * pct / 100) }) });
+        let doneBlocks = s.doneBlocks;
+        if (done && myBlocks[0]) doneBlocks = [...doneBlocks, { ...myBlocks[0], id: eid + '#done', dur: Math.max(30, myBlocks.reduce((a, b) => a + b.dur, 0)) > 180 ? myBlocks[0].dur : myBlocks[0].dur, done: true }];
+        const freeze = this.freezeToday(s.blocks, b => b.eid === eid);
+        const pins = this.mergePins(s.pins.filter(p => p.eid !== eid), freeze);
+        const blocks = this.plan(objs, pins, s.lost, s.avail, s.limit);
+        let movedEarlier = 0;
+        blocks.forEach(b => { const old = s.blocks.find(x => x.id === b.id); if (old && (b.day * 2000 + b.start) < (old.day * 2000 + old.start)) movedEarlier++; });
+        const ch = { objs, blocks, doneBlocks, pins: s.pins.filter(p => p.eid !== eid), drops: s.drops + (done ? 20 : 10) };
+        const wasFuture = myBlocks[0] && myBlocks[0].day > 0;
+        if (done && wasFuture && movedEarlier > 0) ch.notice = { kind: 'ok', icon: 'ph-bold ph-rocket-launch', text: `${movedEarlier} ${movedEarlier > 1 ? 'etapas foram adiantadas' : 'etapa foi adiantada'} porque você fez antes do previsto 🎉` };
+        else if (!done) ch.notice = { kind: 'info', icon: 'ph-bold ph-arrows-clockwise', text: `Anotei ${pct}% de “${etapa.title}”. O resto já tá encaixado no calendário.` };
+        const no = objs.find(x => x.id === o.id);
+        if (done && no.etapas.every(e => e.done)) {
+          const f = this.folga(o, s.blocks, s.lost, s.avail, s.limit);
+          if (!s.ach.folga) { ch.ach = { ...(ch.ach || s.ach), folga: true }; ch.pendingMarco = { kicker: 'Conquista rara', title: 'Entregue com folga', sub: `${o.name} pronto antes do prazo. O Broto ganhou flores novas.` }; }
+        }
+        this.setState(ch);
+        if (fromPanel) this.toast(done ? '+20 gotas' : '+10 gotas', done ? 'Etapa concluída' : 'Avanço registrado');
+      },
+      updateEtapas: (oid, etapas) => {
+        const s = S();
+        const objs = s.objs.map(o => o.id !== oid ? o : { ...o, etapas: etapas.map(e => ({ id: e.id, title: e.title, dur: e.dur, done: !!e.done, partial: e.done ? 0 : (e.partial || 0) })) });
+        const no = objs.find(o => o.id === oid);
+        const keepDone = new Set(no.etapas.filter(e => e.done).map(e => e.id));
+        const pins = s.pins.filter(p => p.oid !== oid);
+        const doneBlocks = s.doneBlocks.filter(b => b.oid !== oid || keepDone.has(b.eid)).map(b => { const e = no.etapas.find(x => x.id === b.eid); return e ? { ...b, title: e.title } : b; });
+        const blocks = this.plan(objs, this.mergePins(pins, this.freezeToday(s.blocks, b => b.oid === oid)), s.lost, s.avail, s.limit);
+        this.setState({ objs, blocks, pins, doneBlocks, notice: { kind: 'ok', icon: 'ph-bold ph-check-circle', text: `Plano recalculado ✓ As etapas de ${no.short} foram realocadas no calendário.` } });
+        this.markFresh(blocks.filter(b => b.oid === oid).map(b => b.id));
+      },
+      toggleTarefa: id => {
+        const s = S(); const t = s.tarefas.find(x => x.id === id); const on = !t.done;
+        this.setState({ tarefas: s.tarefas.map(x => x.id === id ? { ...x, done: on } : x), drops: s.drops + (on ? 3 : -3) });
+        if (on) this.toast('+3 gotas', 'Tarefa leve feita');
+      },
+      addTarefa: name => { if (!name.trim()) return; this.setState(s => ({ tarefas: [...s.tarefas, { id: 't' + Date.now(), name: name.trim(), meta: '10 min', done: false }] })); },
+      buyUmbrella: () => { const s = S(); if (s.drops < 50) return; this.setState({ drops: s.drops - 50, umbrellas: s.umbrellas + 1 }); this.toast('Guarda-chuva', '1 dia de sequência protegido', 'ph-fill ph-umbrella', 'var(--toastIcon)'); },
+      closeCelebrate: () => { clearTimeout(this.cT); this.setState({ celebrate: null }); },
+      logout: () => this.setState({ route: 'login' })
+    };
+    return this._A;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const all = [...s.blocks, ...s.doneBlocks];
+    const objs = s.objs.map(o => {
+      const f = this.folga(o, s.blocks, s.lost, s.avail, s.limit);
+      const total = o.etapas.reduce((a, e) => a + e.dur, 0);
+      return { ...o, pct: this.pct(o), total, totalLabel: this.dur(total), folga: f.v, folgaLabel: this.folgaLabel(f.v), deadlineLabel: this.dnum(o.deadline), deadlineDay: o.deadline, late: f.v < 0, doneAll: !!f.done };
+    });
+    const omap = {}; objs.forEach(o => { omap[o.id] = o; });
+    const blocks = all.map(b => ({ ...b, color: (omap[b.oid] || {}).color, oShort: (omap[b.oid] || {}).short, timeLabel: `${this.hm(b.start)}–${this.hm(b.start + b.dur)}`, dayLabel: this.dayLabel(b.day), durLabel: this.dur(b.dur), fresh: s.fresh[b.id] != null, freshIdx: s.fresh[b.id] || 0 }));
+    const pending = s.blocks.slice().sort((a, b) => a.day - b.day || a.start - b.start);
+    const next = pending[0] || null;
+    const need = 480 + (s.level - 7) * 40;
+    const stage = s.level >= 25 ? 'arvore' : s.level >= 15 ? 'arbusto' : s.level >= 9 ? 'muda' : s.level >= 4 ? 'broto' : 'semente';
+    const stageName = { semente: 'Semente', broto: 'Broto', muda: 'Muda', arbusto: 'Arbusto', arvore: 'Árvore jovem' }[stage];
+    const mood = s.energy === 'baixa' ? 'sonolento' : s.energy === 'alta' ? 'animado' : 'ok';
+    const u = { hm: m => this.hm(m), dur: m => this.dur(m), dnum: d => this.dnum(d), dayLabel: d => this.dayLabel(d), wd: d => Component.WD[d % 7], wdf: d => Component.WDF[d % 7], windows: (d, lost) => this.windows(d, lost || s.lost, s.avail), NOW: Component.NOW };
+    const app = { s, a: this.A, u, d: { objs, omap, blocks, next, need, stage, stageName, mood, xpPct: Math.round(s.xp / need * 100) } };
+    const nav = [['hoje', 'Hoje', 'sun'], ['calendario', 'Calendário', 'calendar-blank'], ['objetivos', 'Objetivos', 'flag-banner'], ['tarefas', 'Tarefas leves', 'broom'], ['jardim', 'Jardim', 'plant'], ['config', 'Configurações', 'gear-six']];
+    const curPage = s.page === 'objetivo' ? 'objetivos' : s.page;
+    const navItems = nav.map(([id, label, icon]) => { const on = curPage === id; return { label, icon: (on ? 'ph-fill ph-' : 'ph ph-') + icon, bg: on ? 'var(--priSoft)' : 'transparent', color: on ? 'var(--tx)' : 'var(--tx2)', iconColor: on ? 'var(--pri)' : 'var(--tx2)', weight: on ? 800 : 600, go: () => this.A.nav(id) }; });
+    const confetti = Array.from({ length: 22 }, (_, i) => ({ x: (i * 37) % 100, delay: ((i * 7) % 10) / 20, color: ['#F59E0B', '#0EA5E9', '#34D399'][i % 3] }));
+    return {
+      app, themeVars: s.theme === 'dark' ? Component.DARK : Component.LIGHT,
+      isLogin: s.route === 'login' || s.route === 'cadastro', isOnboarding: s.route === 'onboarding', isApp: s.route === 'app',
+      pg: { hoje: s.page === 'hoje', calendario: s.page === 'calendario', objetivos: s.page === 'objetivos' || s.page === 'objetivo', tarefas: s.page === 'tarefas', jardim: s.page === 'jardim', config: s.page === 'config' },
+      navItems, openNovo: this.A.openNovo, goJardim: () => this.A.nav('jardim'),
+      streak: s.streak, drops: s.drops, level: s.level, xpPct: Math.round(s.xp / need * 100), xpTitle: `${s.xp} / ${need} XP`,
+      brotoStage: stage, brotoMood: mood, stageLabel: `${stageName} · Nv ${s.level}`,
+      modalNovo: s.modal === 'novo', modalRampa: s.modal === 'rampa',
+      hasToast: !!s.toast, toast: s.toast || {},
+      hasCelebrate: !!s.celebrate, celebrate: s.celebrate || {}, closeCelebrate: this.A.closeCelebrate, confetti
+    };
+  }
+}
+</script>
+</body>
+</html>

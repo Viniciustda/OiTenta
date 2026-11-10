@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="padding:32px 32px 48px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+    <div>
+      <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ rangeLabel }}</span>
+      <h1 style="margin:6px 0 0;font:600 40px/48px Fredoka,sans-serif">Calendário</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <button onClick="{{ prev }}" aria-label="Anterior" style="width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:{{ prevColor }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph-bold ph-caret-left" style="font-size:18px"></i></button>
+        <button onClick="{{ goToday }}" style="height:36px;padding:0 14px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer">Hoje</button>
+        <button onClick="{{ next }}" aria-label="Próximo" style="width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:{{ nextColor }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph-bold ph-caret-right" style="font-size:18px"></i></button>
+      </div>
+      <div style="display:flex;padding:4px;border-radius:999px;background:var(--s2);gap:2px">
+        <sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+          <button onClick="{{ v.pick }}" style="height:36px;padding:0 18px;border-radius:999px;border:1px solid {{ v.border }};background:{{ v.bg }};color:var(--tx);font:{{ v.weight }} 14px/1 Nunito,sans-serif;cursor:pointer">{{ v.label }}</button>
+        </sc-for>
+      </div>
+      <div role="tablist" aria-label="Modo do calendário" style="display:flex;padding:4px;border-radius:999px;background:var(--s2);gap:2px">
+        <sc-for list="{{ modes }}" as="md" hint-placeholder-count="2">
+          <button role="tab" aria-selected="{{ md.on }}" onClick="{{ md.pick }}" style="height:36px;padding:0 16px 0 12px;display:flex;align-items:center;gap:6px;border-radius:999px;border:1px solid {{ md.border }};background:{{ md.bg }};color:var(--tx);font:{{ md.weight }} 14px/1 Nunito,sans-serif;cursor:pointer"><i class="{{ md.icon }}" style="font-size:16px;color:{{ md.iconColor }}"></i>{{ md.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+        <button onClick="{{ f.toggle }}" style="height:36px;padding:0 12px;display:flex;align-items:center;gap:8px;border-radius:999px;border:2px solid {{ f.border }};background:{{ f.bg }};color:{{ f.tx }};font:800 13px/1 Nunito,sans-serif;cursor:pointer"><span style="width:10px;height:10px;border-radius:50%;background:{{ f.color }};opacity:{{ f.dotOp }}"></span>{{ f.short }}<b style="font:600 14px/1 Fredoka,sans-serif;color:{{ f.ink }}">{{ f.pct }}%</b></button>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:16px;font:700 12px/16px Nunito,sans-serif;color:var(--tx2)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:4px;background:var(--free);border:1px solid var(--border)"></span>Livre</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:4px;border:1px solid var(--border);background:repeating-linear-gradient(135deg, var(--hatch) 0 2px, transparent 2px 6px)"></span>Ocupado</span>
+      <span style="display:flex;align-items:center;gap:6px"><i class="{{ hintIcon }}" style="font-size:14px"></i>{{ hintLabel }}</span>
+    </div>
+  </div>
+
+  <sc-if value="{{ hasNotice }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 8px 12px 16px;border-radius:16px;background:{{ notice.bg }};border:1px solid {{ notice.border }};animation:noticeIn .3s">
+      <i class="{{ notice.icon }}" style="font-size:20px;color:{{ notice.ic }}"></i>
+      <span style="flex:1;font:700 15px/22px Nunito,sans-serif;color:var(--tx)">{{ notice.text }}</span>
+      <button onClick="{{ dismiss }}" aria-label="Fechar aviso" style="width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph-bold ph-x" style="font-size:16px"></i></button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ moving }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 8px 10px 16px;border-radius:16px;background:var(--blueSoft)">
+      <i class="ph-bold ph-arrows-out-cardinal" style="font-size:20px;color:var(--blue)"></i>
+      <span style="flex:1;font:700 15px/22px Nunito,sans-serif">Clique num horário verde pra mover “{{ movingTitle }}”, ou arraste o bloco.</span>
+      <button onClick="{{ cancelMove }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer">Cancelar</button>
+    </div>
+  </sc-if>
+
+  <div style="display:flex;gap:24px;align-items:flex-start">
+    <div style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)">
+      <sc-if value="{{ isGridPrazos }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:56px repeat({{ n }}, minmax(0,1fr));border-bottom:1px solid var(--border)">
+          <span></span>
+          <sc-for list="{{ heads }}" as="h" hint-placeholder-count="7">
+            <button onClick="{{ h.open }}" style="padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;border:0;border-left:1px solid var(--border);background:transparent;cursor:pointer;color:var(--tx)">
+              <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ h.wd }}</span>
+              <span style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ h.numBg }};color:{{ h.numTx }};font:600 20px/1 Fredoka,sans-serif">{{ h.num }}</span>
+              <span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ h.dl }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:56px repeat({{ n }}, minmax(0,1fr));min-height:{{ prazoH }}px">
+          <div style="display:flex;justify-content:center;padding-top:16px;color:var(--tx2)"><i class="ph-bold ph-flag-checkered" style="font-size:20px"></i></div>
+          <sc-for list="{{ pcols }}" as="pc" hint-placeholder-count="7">
+            <div style="border-left:1px solid var(--border);padding:12px 6px;display:flex;flex-direction:column;gap:8px;background:{{ pc.bg }}">
+              <sc-for list="{{ pc.items }}" as="pi" hint-placeholder-count="0">
+                <button onClick="{{ pi.open }}" title="{{ pi.tip }}" style="width:100%;box-sizing:border-box;text-align:left;border:1px solid rgba(14,31,26,.08);outline:{{ pi.outline }};outline-offset:1px;border-radius:12px;padding:10px;background:{{ pi.bg }};color:#0E1F1A;display:flex;flex-direction:column;gap:6px;cursor:pointer;overflow:hidden;min-width:0;animation:popIn .4s cubic-bezier(.3,1.6,.5,1) both">
+                  <span style="display:flex;align-items:center;gap:6px;font:800 12px/16px Nunito,sans-serif"><i class="ph-fill ph-flag-checkered" style="font-size:14px"></i>{{ pi.kind }}</span>
+                  <b style="font:600 16px/20px Fredoka,sans-serif;text-wrap:balance;overflow-wrap:anywhere">{{ pi.name }}</b>
+                  <span style="display:flex;align-items:center;gap:8px"><span style="flex:1;height:6px;border-radius:999px;background:rgba(14,31,26,.15);overflow:hidden"><span style="display:block;height:100%;width:{{ pi.pct }}%;background:#0E1F1A;border-radius:999px"></span></span><b style="font:600 14px/1 Fredoka,sans-serif">{{ pi.pct }}%</b></span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ pEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;border-top:1px solid var(--border);font:700 14px/20px Nunito,sans-serif;color:var(--tx2)"><i class="ph-bold ph-flag-checkered" style="font-size:16px"></i>{{ pEmptyLabel }}</div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ isGridExec }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:56px repeat({{ n }}, minmax(0,1fr));border-bottom:1px solid var(--border)">
+          <span></span>
+          <sc-for list="{{ heads }}" as="h" hint-placeholder-count="7">
+            <button onClick="{{ h.open }}" style="padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;border:0;border-left:1px solid var(--border);background:transparent;cursor:pointer;color:var(--tx)">
+              <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ h.wd }}</span>
+              <span style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ h.numBg }};color:{{ h.numTx }};font:600 20px/1 Fredoka,sans-serif">{{ h.num }}</span>
+              <span style="font:600 12px/16px Nunito,sans-serif;color:{{ h.loadColor }}">{{ h.load }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex">
+          <div style="width:56px;flex:none;position:relative;height:{{ bodyH }}px">
+            <sc-for list="{{ hourLabels }}" as="hl" hint-placeholder-count="15"><span style="position:absolute;right:8px;top:{{ hl.top }}px;font:600 12px/1 Nunito,sans-serif;color:var(--tx2);transform:translateY(-50%)">{{ hl.label }}</span></sc-for>
+          </div>
+          <div style="flex:1;min-width:0;position:relative;height:{{ bodyH }}px">
+            <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat({{ n }}, minmax(0,1fr))">
+              <sc-for list="{{ cols }}" as="c" hint-placeholder-count="7">
+                <div style="position:relative;border-left:1px solid var(--border);background:{{ c.bg }}">
+                  <sc-for list="{{ c.rects }}" as="r" hint-placeholder-count="2">
+                    <div style="position:absolute;left:0;right:0;top:{{ r.top }}px;height:{{ r.h }}px;background:{{ r.bg }};opacity:{{ r.op }};display:flex;align-items:flex-start;padding:6px 8px;box-sizing:border-box;font:700 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ r.label }}</div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ hourLines }}" as="ln" hint-placeholder-count="15"><div style="position:absolute;left:0;right:0;top:{{ ln.top }}px;height:1px;background:var(--border);opacity:.6;pointer-events:none"></div></sc-for>
+            <sc-if value="{{ showNow }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:{{ nowTop }}px;left:calc({{ nowCol }} * 100% / {{ n }});width:calc(100% / {{ n }});height:2px;background:var(--blueFill);z-index:3;pointer-events:none"><span style="position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--blueFill)"></span></div>
+            </sc-if>
+            <div ref="{{ layerRef }}" onClick="{{ layerClick }}" style="position:absolute;inset:0;z-index:4;pointer-events:{{ layerPE }};cursor:{{ layerCursor }}">
+              <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="0">
+                <div onPointerDown="{{ b.down }}" title="{{ b.tip }}" style="position:absolute;left:calc({{ b.col }} * 100% / {{ n }} + 3px);width:calc(100% / {{ n }} - 6px);top:{{ b.top }}px;height:{{ b.h }}px;box-sizing:border-box;border-radius:8px;padding:{{ b.pad }};background:{{ b.bg }};border:{{ b.border }};color:{{ b.tx }};outline:{{ b.outline }};outline-offset:1px;opacity:{{ b.op }};cursor:{{ b.cursor }};overflow:hidden;pointer-events:auto;touch-action:none;user-select:none;transition:top .45s cubic-bezier(.3,1.3,.5,1), left .45s cubic-bezier(.3,1.3,.5,1), height .3s, opacity .2s;animation:{{ b.anim }};display:flex;flex-direction:column;gap:2px;z-index:{{ b.z }}">
+                  <span style="display:flex;align-items:center;gap:4px;font:800 12px/16px Nunito,sans-serif;text-decoration:{{ b.deco }};overflow:hidden;white-space:{{ b.ws }};text-overflow:ellipsis"><i class="{{ b.icon }}" style="font-size:12px;flex:none"></i><span style="overflow:hidden;text-overflow:ellipsis">{{ b.title }}</span></span>
+                  <span style="font:600 12px/16px Nunito,sans-serif;opacity:.8;display:{{ b.showTime }}">{{ b.timeLabel }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ hasGhost }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;left:calc({{ ghost.col }} * 100% / {{ n }} + 3px);width:calc(100% / {{ n }} - 6px);top:{{ ghost.top }}px;height:{{ ghost.h }}px;box-sizing:border-box;border-radius:8px;border:2px dashed {{ ghost.border }};background:{{ ghost.bg }};pointer-events:none;padding:4px 8px;font:800 12px/16px Nunito,sans-serif;color:{{ ghost.tx }};z-index:9">{{ ghost.label }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isMonth }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-bottom:1px solid var(--border)">
+          <sc-for list="{{ monthHeads }}" as="mh" hint-placeholder-count="7"><span style="padding:12px;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ mh }}</span></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr))">
+          <sc-for list="{{ monthCells }}" as="m" hint-placeholder-count="42">
+            <button onClick="{{ m.open }}" style="min-height:124px;padding:8px;display:flex;flex-direction:column;gap:4px;border:0;border-top:1px solid var(--border);border-left:1px solid var(--border);background:{{ m.bg }};text-align:left;cursor:{{ m.cursor }};color:var(--tx);opacity:{{ m.op }}">
+              <span style="display:flex;justify-content:space-between;align-items:center"><span style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ m.numBg }};color:{{ m.numTx }};font:600 15px/1 Fredoka,sans-serif">{{ m.num }}</span><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ m.load }}</span></span>
+              <sc-for list="{{ m.flags }}" as="fl" hint-placeholder-count="0"><span style="display:flex;align-items:center;gap:4px;font:800 12px/16px Nunito,sans-serif;color:var(--tx)"><i class="ph-fill ph-flag-checkered" style="font-size:12px;color:{{ fl.color }}"></i>{{ fl.label }}</span></sc-for>
+              <sc-for list="{{ m.bars }}" as="mb" hint-placeholder-count="0"><span style="display:block;padding:2px 6px;border-radius:6px;background:{{ mb.color }};color:#0E1F1A;font:700 12px/16px Nunito,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:{{ mb.anim }}">{{ mb.title }}</span></sc-for>
+              <sc-for list="{{ m.prazos }}" as="mp" hint-placeholder-count="0"><span role="button" onClick="{{ mp.open }}" title="{{ mp.tip }}" style="display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:{{ mp.bg }};outline:{{ mp.outline }};outline-offset:1px;color:#0E1F1A;font:800 12px/16px Nunito,sans-serif;cursor:pointer;overflow:hidden"><i class="ph-fill ph-flag-checkered" style="font-size:12px;flex:none"></i><span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ mp.name }}</span><b style="font:600 13px/1 Fredoka,sans-serif">{{ mp.pct }}%</b></span></sc-for>
+              <sc-if value="{{ m.hasMore }}" hint-placeholder-val="{{ false }}"><span style="font:700 12px/16px Nunito,sans-serif;color:var(--tx2)">+{{ m.more }}</span></sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+      <aside style="width:360px;flex:none;box-sizing:border-box;position:sticky;top:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 24px rgba(14,31,26,.10);animation:riseIn .25s">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="display:flex;align-items:center;gap:8px;font:700 13px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:{{ sel.color }}"></span>{{ sel.oName }}</span>
+          <button onClick="{{ closeSel }}" aria-label="Fechar" style="width:44px;height:44px;margin:-10px -10px -10px 0;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph ph-x" style="font-size:22px"></i></button>
+        </div>
+        <div>
+          <h2 style="margin:0;font:600 28px/36px Fredoka,sans-serif;text-wrap:balance">{{ sel.title }}</h2>
+          <span style="display:block;margin-top:4px;font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ sel.partLabel }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;font:700 14px/20px Nunito,sans-serif">
+          <span style="display:flex;align-items:center;gap:8px"><i class="ph ph-calendar-blank" style="font-size:20px;color:var(--tx2)"></i>{{ sel.when }}</span>
+          <span style="display:flex;align-items:center;gap:8px"><i class="ph ph-clock" style="font-size:20px;color:var(--tx2)"></i>{{ sel.durLabel }}</span>
+          <span style="display:flex;align-items:center;gap:8px"><i class="ph-fill ph-drop" style="font-size:20px;color:var(--blueFill)"></i>+20 gotas ao concluir</span>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <span style="display:flex;justify-content:space-between;align-items:baseline"><b style="font:800 14px/20px Nunito,sans-serif">{{ sel.oName }}</b><b style="font:600 18px/1 Fredoka,sans-serif;color:{{ sel.ink }}">{{ sel.pct }}%</b></span>
+          <span style="height:10px;border-radius:999px;background:var(--s2);overflow:hidden"><span style="display:block;height:100%;width:{{ sel.pct }}%;background:{{ sel.color }};border-radius:999px"></span></span>
+          <span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><i class="ph-bold ph-check-circle" style="font-size:14px;color:var(--pri)"></i>{{ sel.folga }}</span>
+        </div>
+        <sc-if value="{{ selDone }}" hint-placeholder-val="{{ false }}">
+          <span style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:16px;background:var(--priSoft);color:var(--pri);font:800 15px/20px Nunito,sans-serif"><i class="ph-bold ph-check" style="font-size:16px"></i>Etapa concluída</span>
+        </sc-if>
+        <sc-if value="{{ selOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <button onClick="{{ startNow }}" style="height:52px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)"><i class="ph-fill ph-play" style="font-size:18px"></i>Começar agora</button>
+            <button onClick="{{ startMove }}" style="height:52px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;background:var(--s2)"><i class="ph-bold ph-arrows-out-cardinal" style="font-size:18px"></i>Mover</button>
+            <div style="display:flex;gap:4px">
+              <button onClick="{{ togglePartial }}" style="flex:1;height:44px;border:0;border-radius:999px;background:{{ partialBg }};color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-circle-half" style="font-size:16px"></i>Marcar parcial</button>
+              <button onClick="{{ skip }}" style="flex:1;height:44px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-calendar-x" style="font-size:16px"></i>Não vou conseguir</button>
+            </div>
+            <sc-if value="{{ partialOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;border:1px solid var(--border);animation:riseIn .2s">
+                <b style="font:800 13px/16px Nunito,sans-serif">Quanto você avançou?</b>
+                <div style="display:flex;gap:6px">
+                  <sc-for list="{{ pctChips }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="flex:1;height:36px;border-radius:999px;border:2px solid {{ p.border }};background:{{ p.bg }};color:var(--tx);font:800 13px/1 Nunito,sans-serif;cursor:pointer">{{ p.label }}</button></sc-for>
+                </div>
+                <button onClick="{{ confirmPartial }}" style="height:44px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer">Registrar parcial · +10 gotas</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </aside>
+    </sc-if>
+    <sc-if value="{{ hasSelObj }}" hint-placeholder-val="{{ false }}">
+      <aside style="width:360px;flex:none;box-sizing:border-box;position:sticky;top:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 24px rgba(14,31,26,.10);animation:riseIn .25s">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="display:flex;align-items:center;gap:8px;font:700 13px/16px Nunito,sans-serif;color:var(--tx2)"><i class="ph-fill ph-flag-checkered" style="font-size:16px;color:{{ so.color }}"></i>Prazo final</span>
+          <button onClick="{{ closeSelObj }}" aria-label="Fechar" style="width:44px;height:44px;margin:-10px -10px -10px 0;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph ph-x" style="font-size:22px"></i></button>
+        </div>
+        <div>
+          <h2 style="margin:0;font:600 28px/36px Fredoka,sans-serif;text-wrap:balance">{{ so.name }}</h2>
+          <span style="display:block;margin-top:4px;font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ so.when }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;font:700 14px/20px Nunito,sans-serif">
+          <span style="display:flex;align-items:center;gap:8px"><i class="ph ph-list-checks" style="font-size:20px;color:var(--tx2)"></i>{{ so.etapas }}</span>
+          <span style="display:flex;align-items:center;gap:8px"><i class="ph ph-clock" style="font-size:20px;color:var(--tx2)"></i>{{ so.restante }}</span>
+          <span style="display:flex;align-items:center;gap:8px"><i class="{{ so.folgaIcon }}" style="font-size:20px;color:{{ so.folgaColor }}"></i>{{ so.folga }}</span>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <span style="display:flex;justify-content:space-between;align-items:baseline"><b style="font:800 14px/20px Nunito,sans-serif">Concluído</b><b style="font:600 18px/1 Fredoka,sans-serif;color:{{ so.ink }}">{{ so.pct }}%</b></span>
+          <span style="height:10px;border-radius:999px;background:var(--s2);overflow:hidden"><span style="display:block;height:100%;width:{{ so.pct }}%;background:{{ so.color }};border-radius:999px"></span></span>
+          <span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:{{ so.color }}"></span>{{ so.next }}</span>
+        </div>
+        <button onClick="{{ verExecucao }}" style="height:52px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)"><i class="ph-bold ph-puzzle-piece" style="font-size:18px"></i>Ver execução</button>
+      </aside>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'semana', week: 0, day: 0, sel: null, hidden: {}, ghost: null, moving: null, partialOpen: false, pct: 50, focusK: null, mode: 'exec', selObj: null };
+  layerRef = React.createRef();
+  static HH = 40;
+  componentDidMount() { this.syncFocus(); this.esc = e => { if (e.key === 'Escape') this.setState({ moving: null, sel: null }); }; window.addEventListener('keydown', this.esc); }
+  componentDidUpdate() { this.syncFocus(); }
+  componentWillUnmount() { window.removeEventListener('keydown', this.esc); this.endDrag && this.endDrag(); }
+  syncFocus() { const f = this.props.app && this.props.app.s.calFocus; if (f && f.k !== this.state.focusK) this.setState({ focusK: f.k, week: f.week || 0, view: 'semana', sel: null, mode: 'exec', selObj: null }); }
+  days() { const { view, week, day } = this.state; return view === 'dia' ? [day] : Array.from({ length: 7 }, (_, i) => week * 7 + i); }
+  validate(id, day, start) {
+    const { s, u, d } = this.props.app; const b = d.blocks.find(x => x.id === id); const end = start + b.dur;
+    if (day === 0 && start < u.NOW) return 'Esse horário já passou';
+    if (day % 7 < 5 && [[480, 720, 'Aula'], [780, 1080, 'Estágio']].some(([bs, be]) => start < be && end > bs)) return 'Ocupado';
+    if (!u.windows(day).some(([ws, we]) => start >= ws && end <= we)) return 'Fora da disponibilidade';
+    if (s.blocks.some(x => x.id !== id && x.day === day && start < x.start + x.dur && end > x.start)) return 'Já tem etapa aqui';
+    if (s.blocks.filter(x => x.id !== id && x.day === day).reduce((a, x) => a + x.dur, 0) + b.dur > s.limit) return 'Passa do limite do dia';
+    return null;
+  }
+  posFromEvent(ev, off, dur) {
+    const r = this.layerRef.current.getBoundingClientRect(); const days = this.days();
+    const col = Math.max(0, Math.min(days.length - 1, Math.floor((ev.clientX - r.left) / r.width * days.length)));
+    let start = Math.round((480 + (ev.clientY - r.top) / r.height * 900 - off) / 15) * 15;
+    start = Math.max(480, Math.min(1380 - dur, start));
+    return { col, day: days[col], start };
+  }
+  startDrag(e, b) {
+    if (e.button !== 0) return;
+    e.preventDefault(); e.stopPropagation();
+    if (b.done) { this.setState({ sel: b.id, partialOpen: false }); return; }
+    const r = this.layerRef.current.getBoundingClientRect();
+    const off = 480 + (e.clientY - r.top) / r.height * 900 - b.start;
+    const info = { x0: e.clientX, y0: e.clientY, moved: false };
+    const mv = ev => {
+      if (!info.moved && Math.hypot(ev.clientX - info.x0, ev.clientY - info.y0) < 5) return;
+      info.moved = true;
+      const p = this.posFromEvent(ev, off, b.dur);
+      const err = this.validate(b.id, p.day, p.start);
+      this.setState({ ghost: { id: b.id, ...p, dur: b.dur, err } });
+    };
+    const up = () => {
+      this.endDrag();
+      const g = this.state.ghost;
+      if (info.moved && g) { this.setState({ ghost: null, moving: null }); if (g.day !== b.day || g.start !== b.start) this.props.app.a.moveBlock(b.id, g.day, g.start); }
+      else this.setState({ sel: b.id, partialOpen: false, ghost: null });
+    };
+    this.endDrag = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); this.endDrag = null; };
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+  }
+  renderVals() {
+    const app = this.props.app || { s: {}, a: {}, u: {}, d: { objs: [], blocks: [], omap: {} } };
+    const { s, a, u, d } = app; const HH = Component.HH;
+    const st = this.state; const days = this.days(); const n = days.length;
+    const isGrid = st.view !== 'mes';
+    const isPrazos = st.mode === 'prazos';
+    const visible = d.blocks.filter(b => !st.hidden[b.oid]);
+    const freeRects = day => { const hrs = [...(s.avail[day % 7] || [])].sort((x, y) => x - y); const w = []; hrs.forEach(h => { const a0 = h * 60; if (w.length && w[w.length - 1][1] === a0) w[w.length - 1][1] = a0 + 60; else w.push([a0, a0 + 60]); }); return w; };
+    const toTop = m => (m - 480) / 60 * HH;
+    const cols = days.map(day => {
+      const rects = [];
+      freeRects(day).forEach(([x, y]) => rects.push({ top: toTop(x), h: (y - x) / 60 * HH, bg: 'var(--free)', op: 1, label: '' }));
+      if (day % 7 < 5) [[480, 720, 'Aula'], [780, 1080, 'Estágio']].forEach(([x, y, l]) => rects.push({ top: toTop(x), h: (y - x) / 60 * HH, bg: 'repeating-linear-gradient(135deg, var(--hatch) 0 2px, transparent 2px 8px)', op: 1, label: l }));
+      (s.lost || []).filter(l => l.day === day).map(l => ({ s: Math.max(480, l.s), e: Math.min(1380, l.e) })).forEach(l => rects.push({ top: toTop(l.s), h: (l.e - l.s) / 60 * HH, bg: 'repeating-linear-gradient(45deg, var(--hatch) 0 2px, transparent 2px 8px)', op: 1, label: 'Não vai rolar' }));
+      if (day === 0) rects.push({ top: 0, h: toTop(u.NOW), bg: 'var(--bg)', op: .55, label: '' });
+      return { rects, bg: day === 0 && n > 1 ? 'transparent' : 'transparent' };
+    });
+    const heads = days.map(day => {
+      const dt = new Date(2026, 10, 16 + day); const load = s.blocks.filter(b => b.day === day).reduce((x, b) => x + b.dur, 0) + s.doneBlocks.filter(b => b.day === day).reduce((x, b) => x + b.dur, 0);
+      return { wd: u.wd(day), num: dt.getDate(), numBg: day === 0 ? 'var(--pri)' : 'transparent', numTx: day === 0 ? 'var(--priTx)' : 'var(--tx)', load: load ? `${u.dur(load)} de ${u.dur(s.limit)}` : 'livre', loadColor: load >= s.limit ? 'var(--pri)' : 'var(--tx2)', open: () => this.setState({ view: 'dia', day }) };
+    });
+    const hourLabels = Array.from({ length: 15 }, (_, i) => ({ top: i * HH + (i === 0 ? 8 : 0), label: `${String(8 + i).padStart(2, '0')}h` }));
+    const hourLines = Array.from({ length: 14 }, (_, i) => ({ top: (i + 1) * HH }));
+    const g = st.ghost;
+    const blocks = visible.filter(b => days.includes(b.day)).sort((x, y) => (x.id > y.id ? 1 : -1)).map(b => {
+      const h = Math.max(20, b.dur / 60 * HH - 3); const small = h < 40;
+      const isSel = st.sel === b.id; const dragging = g && g.id === b.id;
+      return {
+        col: days.indexOf(b.day), top: toTop(b.start) + 1, h, title: b.title, timeLabel: b.timeLabel, tip: `${b.oShort} · ${b.title} · ${b.timeLabel}`,
+        pad: small ? '2px 8px' : '6px 8px', ws: small || n > 1 ? 'nowrap' : 'normal', showTime: small ? 'none' : 'block',
+        bg: b.done ? 'var(--s2)' : b.color, border: b.done ? '1px solid var(--border)' : '1px solid rgba(14,31,26,.08)', tx: b.done ? 'var(--tx2)' : '#0E1F1A',
+        deco: b.done ? 'line-through' : 'none', icon: b.done ? 'ph-bold ph-check' : (b.part > 0 || d.blocks.filter(x => x.eid === b.eid && !x.done).length > 1) ? 'ph-bold ph-puzzle-piece' : 'ph-bold ph-dot-outline',
+        outline: isSel ? '2px solid var(--tx)' : 'none', op: dragging ? .35 : 1, cursor: b.done ? 'pointer' : 'grab', z: isSel ? 6 : 5,
+        anim: b.fresh ? `popIn .5s ${(b.freshIdx * 0.09).toFixed(2)}s cubic-bezier(.3,1.6,.5,1) both` : 'none',
+        down: e => this.startDrag(e, b)
+      };
+    });
+    const ghostB = g && d.blocks.find(x => x.id === g.id);
+    const ghost = g ? { col: g.col, top: toTop(g.start) + 1, h: Math.max(20, g.dur / 60 * HH - 3), border: g.err ? 'var(--danger)' : 'var(--pri)', bg: g.err ? 'rgba(220,38,38,.08)' : 'var(--priSoft)', tx: g.err ? 'var(--danger)' : 'var(--pri)', label: g.err ? g.err : `${u.hm(g.start)} · ${ghostB ? ghostB.title : ''}` } : {};
+    // month
+    const monthCells = Array.from({ length: 42 }, (_, i) => {
+      const day = i - 21; const dt = new Date(2026, 10, 16 + day); const inRange = day >= 0 && day < 28;
+      const bs = visible.filter(b => b.day === day).sort((x, y) => x.start - y.start);
+      const flags = d.objs.filter(o => o.deadline === day && !st.hidden[o.id]).map(o => ({ label: `${o.kind} · ${o.short}`, color: o.color }));
+      const load = bs.reduce((x, b) => x + b.dur, 0);
+      if (isPrazos) {
+        const prazos = d.objs.filter(o => o.deadline === day && !st.hidden[o.id]).map(o => ({ name: o.short, pct: o.pct, bg: o.color, outline: st.selObj === o.id ? '2px solid var(--tx)' : 'none', tip: `${o.kind} · ${o.name} · ${o.pct}%`, open: e => { e.stopPropagation(); this.setState({ selObj: o.id }); } }));
+        return { num: dt.getDate(), op: dt.getMonth() !== 10 && day > 0 ? .55 : day < 0 ? .45 : 1, bg: day === 0 ? 'var(--bg)' : 'var(--surface)', cursor: inRange ? 'pointer' : 'default', numBg: day === 0 ? 'var(--pri)' : 'transparent', numTx: day === 0 ? 'var(--priTx)' : 'var(--tx)', load: '', flags: [], bars: [], prazos, hasMore: false, more: 0, open: () => { if (inRange) this.setState({ view: 'dia', day }); } };
+      }
+      return { prazos: [], num: dt.getDate(), op: dt.getMonth() !== 10 && day > 0 ? .55 : day < 0 ? .45 : 1, bg: day === 0 ? 'var(--bg)' : 'var(--surface)', cursor: inRange ? 'pointer' : 'default', numBg: day === 0 ? 'var(--pri)' : 'transparent', numTx: day === 0 ? 'var(--priTx)' : 'var(--tx)', load: load ? u.dur(load) : '', flags, bars: bs.slice(0, 3).map(b => ({ title: b.title, color: b.done ? 'var(--s2)' : b.color, anim: b.fresh ? `popIn .5s ${(b.freshIdx * 0.06).toFixed(2)}s both` : 'none' })), hasMore: bs.length > 3, more: bs.length - 3, open: () => { if (inRange) this.setState({ view: 'dia', day }); } };
+    });
+    const dlObjs = d.objs.filter(ob => !st.hidden[ob.id]);
+    const pcols = days.map(day => ({ bg: day === 0 ? 'var(--bg)' : 'transparent', items: dlObjs.filter(ob => ob.deadline === day).map(ob => ({ kind: ob.kind, name: n > 1 ? ob.short : ob.name, pct: ob.pct, bg: ob.color, outline: st.selObj === ob.id ? '2px solid var(--tx)' : 'none', tip: `${ob.kind} · ${ob.name} · ${ob.pct}%`, open: () => this.setState({ selObj: ob.id }) })) }));
+    const pEmpty = !pcols.some(c => c.items.length);
+    const upcoming = dlObjs.filter(ob => ob.deadline > days[days.length - 1]).sort((x, y) => x.deadline - y.deadline)[0];
+    const pEmptyLabel = `${st.view === 'dia' ? 'Nenhuma entrega neste dia' : 'Nenhuma entrega nesta semana'}${upcoming ? ` · próxima: ${upcoming.short} em ${upcoming.deadlineLabel}` : ''}`;
+    const sO = isPrazos && st.selObj && d.objs.find(ob => ob.id === st.selObj);
+    let so = {};
+    if (sO) {
+      const doneN = sO.etapas.filter(e => e.done).length;
+      const remMin = sO.etapas.filter(e => !e.done).reduce((x, e) => x + Math.round(e.dur * (1 - (e.partial || 0))), 0);
+      const nb = d.blocks.filter(b => b.oid === sO.id && !b.done).sort((x, y) => x.day - y.day || x.start - y.start)[0];
+      const left = sO.deadline;
+      so = { name: sO.name, color: sO.color, ink: sO.ink, pct: sO.pct,
+        when: `${sO.kind} · ${u.wdf(sO.deadline)}, ${sO.deadlineLabel} · ${left === 0 ? 'hoje' : left === 1 ? 'amanhã' : `em ${left} dias`}`,
+        etapas: `${doneN} de ${sO.etapas.length} etapas concluídas`,
+        restante: remMin ? `Faltam ${u.dur(Math.round(remMin / 15) * 15)} de execução` : 'Nada pendente',
+        folga: sO.doneAll ? 'Pronto antes do prazo' : sO.late ? `Não cabe até ${sO.deadlineLabel}` : sO.folga === 0 ? 'Sem folga restante' : `Folga restante: ${String(sO.folga).replace('.', ',')} ${sO.folga > 1 ? 'dias' : 'dia'}`,
+        folgaIcon: sO.late ? 'ph-bold ph-warning-circle' : 'ph-bold ph-check-circle', folgaColor: sO.late ? 'var(--danger)' : 'var(--pri)',
+        next: nb ? `Próxima etapa: ${nb.title} · ${nb.dayLabel === 'Hoje' ? 'hoje' : nb.dayLabel} às ${u.hm(nb.start)}` : 'Sem etapas agendadas' };
+    }
+    const selB = !isPrazos && st.sel && d.blocks.find(b => b.id === st.sel);
+    const o = selB && d.omap[selB.oid];
+    const parts = selB ? d.blocks.filter(b => b.eid === selB.eid && !b.done).sort((x, y) => x.day - y.day || x.start - y.start) : [];
+    const pi = selB ? parts.findIndex(p => p.id === selB.id) : -1;
+    const sel = selB ? { title: selB.title, color: selB.color, oName: o.name, ink: o.ink, pct: o.pct, folga: `${o.kind} ${o.deadlineLabel} · ${o.folgaLabel}`, when: `${selB.dayLabel === 'Hoje' || selB.dayLabel === 'Amanhã' ? selB.dayLabel + ', ' + u.dnum(selB.day) : selB.dayLabel} · ${selB.timeLabel}`, durLabel: selB.durLabel, partLabel: parts.length > 1 ? `Parte ${pi + 1} de ${parts.length} desta etapa` : selB.done ? 'Concluída' : 'Etapa inteira' } : {};
+    const wl = w => { const a0 = new Date(2026, 10, 16 + w * 7), b0 = new Date(2026, 10, 22 + w * 7); const M = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']; return a0.getMonth() === b0.getMonth() ? `${a0.getDate()}–${b0.getDate()} de ${M[a0.getMonth()]}` : `${a0.getDate()} ${M[a0.getMonth()].slice(0, 3)} – ${b0.getDate()} ${M[b0.getMonth()].slice(0, 3)}`; };
+    const rangeLabel = st.view === 'mes' ? 'Novembro de 2026' : st.view === 'dia' ? `${u.wdf(st.day)}, ${u.dnum(st.day)}` : wl(st.week);
+    const nv = s.notice;
+    const notice = nv ? { text: nv.text, icon: nv.icon, bg: nv.kind === 'warn' ? 'var(--surface)' : nv.kind === 'ok' ? 'var(--priSoft)' : 'var(--blueSoft)', border: nv.kind === 'warn' ? 'var(--danger)' : 'transparent', ic: nv.kind === 'warn' ? 'var(--danger)' : nv.kind === 'ok' ? 'var(--pri)' : 'var(--blue)' } : {};
+    const canPrev = st.view === 'semana' ? st.week > 0 : st.view === 'dia' ? st.day > 0 : false;
+    const canNext = st.view === 'semana' ? st.week < 3 : st.view === 'dia' ? st.day < 27 : false;
+    return {
+      rangeLabel, bodyH: HH * 15, isGrid, isMonth: !isGrid, n, cols, heads: heads.map((h, i) => { const k = dlObjs.filter(ob => ob.deadline === days[i]).length; return { ...h, dl: k ? `${k} ${k > 1 ? 'entregas' : 'entrega'}` : '—' }; }), hourLabels, hourLines, blocks,
+      isGridExec: isGrid && !isPrazos, isGridPrazos: isGrid && isPrazos, pcols, pEmpty, pEmptyLabel, prazoH: n > 1 ? 320 : 240,
+      modes: [['exec', 'Execução', 'puzzle-piece'], ['prazos', 'Prazos', 'flag-checkered']].map(([id, label, ic]) => { const on = st.mode === id; return { on, label, icon: (on ? 'ph-fill ph-' : 'ph-bold ph-') + ic, iconColor: on ? 'var(--pri)' : 'var(--tx2)', bg: on ? 'var(--surface)' : 'transparent', border: on ? 'var(--border)' : 'transparent', weight: on ? 800 : 700, pick: () => this.setState({ mode: id, sel: null, selObj: null, moving: null, partialOpen: false }) }; }),
+      hintIcon: isPrazos ? 'ph-bold ph-hand-pointing' : 'ph-bold ph-hand-grabbing', hintLabel: isPrazos ? 'Clique num prazo' : 'Arraste os blocos',
+      hasSelObj: !!sO, so, closeSelObj: () => this.setState({ selObj: null }),
+      verExecucao: () => {
+        const nb = d.blocks.filter(b => b.oid === sO.id && !b.done).sort((x, y) => x.day - y.day || x.start - y.start)[0];
+        const hidden = {}; d.objs.forEach(ob => { if (ob.id !== sO.id) hidden[ob.id] = true; });
+        this.setState({ mode: 'exec', selObj: null, hidden, view: 'semana', week: Math.min(3, Math.floor((nb ? nb.day : Math.max(0, sO.deadline)) / 7)) });
+      },
+      hasGhost: !!g, ghost,
+      showNow: isGrid && days.includes(0), nowTop: toTop(u.NOW || 1180), nowCol: days.indexOf(0),
+      layerRef: this.layerRef, layerPE: st.moving ? 'auto' : 'none', layerCursor: st.moving ? 'copy' : 'default',
+      layerClick: e => {
+        if (!st.moving) return;
+        const mb = d.blocks.find(x => x.id === st.moving); if (!mb) return;
+        const p = this.posFromEvent(e, 0, mb.dur);
+        const res = a.moveBlock(mb.id, p.day, p.start);
+        if (res && res.ok) this.setState({ moving: null });
+      },
+      monthHeads: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], monthCells,
+      views: [['dia', 'Dia'], ['semana', 'Semana'], ['mes', 'Mês']].map(([id, label]) => ({ label, bg: st.view === id ? 'var(--surface)' : 'transparent', border: st.view === id ? 'var(--border)' : 'transparent', weight: st.view === id ? 800 : 700, pick: () => this.setState({ view: id, day: id === 'dia' ? (st.view === 'semana' ? st.week * 7 : st.day) : st.day }) })),
+      filters: d.objs.map(ob => { const on = !st.hidden[ob.id]; return { short: ob.short, pct: ob.pct, color: ob.color, ink: on ? ob.ink : 'var(--tx2)', dotOp: on ? 1 : .35, bg: on ? 'var(--priSoft)' : 'var(--surface)', border: on ? 'var(--pri)' : 'var(--border)', tx: on ? 'var(--tx)' : 'var(--tx2)', toggle: () => this.setState(x => ({ hidden: { ...x.hidden, [ob.id]: !x.hidden[ob.id] } })) }; }),
+      prev: () => { if (!canPrev) return; this.setState(x => x.view === 'semana' ? { week: x.week - 1 } : { day: x.day - 1 }); },
+      next: () => { if (!canNext) return; this.setState(x => x.view === 'semana' ? { week: x.week + 1 } : { day: x.day + 1 }); },
+      prevColor: canPrev ? 'var(--tx)' : 'var(--border)', nextColor: canNext ? 'var(--tx)' : 'var(--border)',
+      goToday: () => this.setState({ week: 0, day: 0 }),
+      hasNotice: !!nv, notice, dismiss: a.dismissNotice,
+      moving: !!st.moving, movingTitle: st.moving ? (d.blocks.find(x => x.id === st.moving) || {}).title : '', cancelMove: () => this.setState({ moving: null }),
+      hasSel: !!selB, sel, selDone: !!(selB && selB.done), selOpen: !!(selB && !selB.done),
+      closeSel: () => this.setState({ sel: null, partialOpen: false }),
+      startNow: () => { a.startRampa(selB.eid); },
+      startMove: () => this.setState({ moving: selB.id }),
+      togglePartial: () => this.setState(x => ({ partialOpen: !x.partialOpen })), partialOpen: st.partialOpen, partialBg: st.partialOpen ? 'var(--blueSoft)' : 'transparent',
+      pctChips: [25, 50, 75].map(p => ({ label: `${p}%`, bg: st.pct === p ? 'var(--priSoft)' : 'var(--surface)', border: st.pct === p ? 'var(--pri)' : 'var(--border)', pick: () => this.setState({ pct: p }) })),
+      confirmPartial: () => { a.partialBlock(selB.id, st.pct); this.setState({ sel: null, partialOpen: false }); },
+      skip: () => { a.skipBlock(selB.id); this.setState({ sel: null, partialOpen: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

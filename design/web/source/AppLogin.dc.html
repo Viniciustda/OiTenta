@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:var(--bg)">
+  <div style="display:flex;flex-direction:column;justify-content:space-between;padding:40px 64px;background:var(--s2)">
+    <a href="Bora Landing Web.dc.html" style="display:flex;align-items:center;gap:10px;color:var(--tx);width:fit-content"><dc-import name="Broto" size="{{ 44 }}" hint-size="44px,44px"></dc-import><span style="font:700 30px/1 Fredoka,sans-serif;letter-spacing:-0.01em">bora</span></a>
+    <div style="display:flex;flex-direction:column;gap:24px;max-width:480px">
+      <dc-import name="Broto" size="{{ 180 }}" mood="animado" wave="{{ true }}" hint-size="180px,180px"></dc-import>
+      <h1 style="margin:0;font:600 40px/48px Fredoka,sans-serif;text-wrap:balance">{{ headline }}</h1>
+      <p style="margin:0;font:400 18px/28px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">{{ sub }}</p>
+    </div>
+    <span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">© 2026 Bora</span>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;padding:40px">
+    <div style="width:420px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;padding:4px;border-radius:999px;background:var(--s2);gap:4px">
+        <button onClick="{{ goLogin }}" style="flex:1;height:40px;border-radius:999px;border:1px solid {{ tabLoginBorder }};background:{{ tabLoginBg }};color:var(--tx);font:800 15px/1 Nunito,sans-serif;cursor:pointer">Entrar</button>
+        <button onClick="{{ goCadastro }}" style="flex:1;height:40px;border-radius:999px;border:1px solid {{ tabCadBorder }};background:{{ tabCadBg }};color:var(--tx);font:800 15px/1 Nunito,sans-serif;cursor:pointer">Criar conta</button>
+      </div>
+      <h2 style="margin:8px 0 0;font:600 28px/36px Fredoka,sans-serif">{{ title }}</h2>
+      <sc-if value="{{ isCad }}" hint-placeholder-val="{{ false }}">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font:800 13px/16px Nunito,sans-serif">Como você quer ser chamado?</span>
+          <span style="height:52px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface)"><i class="ph ph-user" style="font-size:20px;color:var(--tx2)"></i><input value="{{ nome }}" onChange="{{ setNome }}" placeholder="Arthur" style="flex:1;border:0;outline:0;background:transparent;font:600 15px/1 Nunito,sans-serif"></span>
+        </label>
+      </sc-if>
+      <label style="display:flex;flex-direction:column;gap:6px"><span style="font:800 13px/16px Nunito,sans-serif">E-mail</span>
+        <span style="height:52px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface)"><i class="ph ph-envelope-simple" style="font-size:20px;color:var(--tx2)"></i><input value="{{ email }}" onChange="{{ setEmail }}" placeholder="voce@faculdade.edu.br" style="flex:1;border:0;outline:0;background:transparent;font:600 15px/1 Nunito,sans-serif"></span>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px"><span style="font:800 13px/16px Nunito,sans-serif">Senha</span>
+        <span style="height:52px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface)"><i class="ph ph-lock-simple" style="font-size:20px;color:var(--tx2)"></i><input type="password" value="{{ senha }}" onChange="{{ setSenha }}" placeholder="••••••••" style="flex:1;border:0;outline:0;background:transparent;font:600 15px/1 Nunito,sans-serif"></span>
+      </label>
+      <button onClick="{{ submit }}" style="margin-top:8px;height:52px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">{{ cta }}<i class="ph-bold ph-arrow-right" style="font-size:18px"></i></button>
+      <button onClick="{{ demo }}" style="height:44px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">{{ demoLabel }}</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  state = { email: 'arthur@faculdade.edu.br', senha: 'bora1234', nome: 'Arthur' };
+  renderVals() {
+    const app = this.props.app || {}; const a = app.a || {}; const s = app.s || {};
+    const isCad = s.route === 'cadastro';
+    const on = 'var(--surface)', onB = 'var(--border)';
+    return {
+      isCad, ...this.state,
+      setEmail: e => this.setState({ email: e.target.value }), setSenha: e => this.setState({ senha: e.target.value }), setNome: e => this.setState({ nome: e.target.value }),
+      goLogin: a.goLogin, goCadastro: a.goCadastro,
+      tabLoginBg: isCad ? 'transparent' : on, tabLoginBorder: isCad ? 'transparent' : onB,
+      tabCadBg: isCad ? on : 'transparent', tabCadBorder: isCad ? onB : 'transparent',
+      title: isCad ? 'Criar sua conta' : 'Que bom te ver de novo',
+      cta: isCad ? 'Criar conta' : 'Entrar',
+      headline: isCad ? 'Oi! Eu sou o Broto. Vamos montar seu plano sem drama?' : 'Bora começar pelo degrau mais fácil?',
+      sub: isCad ? 'Leva uns minutos: você me mostra quando tá livre e eu cuido do resto.' : 'Seu plano de hoje já tá pronto. É só entrar e tocar em “Vamos começar?”.',
+      submit: isCad ? a.cadastrar : a.login,
+      demo: isCad ? a.cadastrar : a.login,
+      demoLabel: isCad ? 'Pular e ver o onboarding (demo)' : 'Entrar direto como Arthur (demo)'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:fixed;inset:0;z-index:60;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:32px;box-sizing:border-box;animation:fadeIn .2s">
+  <div role="dialog" aria-label="Novo objetivo" style="width:960px;max-width:100%;max-height:100%;overflow:auto;box-sizing:border-box;background:var(--surface);border:1px solid var(--border);border-radius:24px;display:flex;flex-direction:column;animation:riseIn .3s cubic-bezier(.3,1.4,.5,1)">
+    <div style="padding:24px 24px 0 32px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <dc-import name="Broto" size="{{ 56 }}" mood="{{ brotoMood }}" hint-size="56px,56px"></dc-import>
+        <div><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Novo objetivo · {{ stepLabel }}</span><h2 style="margin:4px 0 0;font:600 28px/36px Fredoka,sans-serif">{{ heading }}</h2></div>
+      </div>
+      <button onClick="{{ close }}" aria-label="Fechar" style="width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph ph-x" style="font-size:24px"></i></button>
+    </div>
+
+    <sc-if value="{{ isInput }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:24px 32px 32px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;padding:4px;border-radius:999px;background:var(--s2);gap:4px;width:fit-content">
+          <button onClick="{{ tabTexto }}" style="height:40px;padding:0 18px;border-radius:999px;border:1px solid {{ t1b }};background:{{ t1 }};color:var(--tx);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px"><i class="ph-bold ph-pencil-simple" style="font-size:16px"></i>Escrever</button>
+          <button onClick="{{ tabLink }}" style="height:40px;padding:0 18px;border-radius:999px;border:1px solid {{ t2b }};background:{{ t2 }};color:var(--tx);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px"><i class="ph-bold ph-link" style="font-size:16px"></i>Colar link</button>
+        </div>
+        <sc-if value="{{ isTexto }}" hint-placeholder-val="{{ true }}">
+          <label style="display:flex;flex-direction:column;gap:8px"><span style="font:800 14px/20px Nunito,sans-serif">O que você precisa entregar?</span>
+            <textarea value="{{ text }}" onChange="{{ setText }}" placeholder="trabalho de Engenharia de Software para dia 20" style="min-height:140px;box-sizing:border-box;padding:14px 16px;border-radius:12px;border:2px solid var(--blue);background:var(--surface);font:400 18px/26px Nunito,sans-serif;resize:vertical;outline:0"></textarea>
+          </label>
+        </sc-if>
+        <sc-if value="{{ isLink }}" hint-placeholder-val="{{ false }}">
+          <label style="display:flex;flex-direction:column;gap:8px"><span style="font:800 14px/20px Nunito,sans-serif">Link da atividade</span>
+            <span style="height:52px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:2px solid var(--blue);background:var(--surface)"><i class="ph ph-link" style="font-size:20px;color:var(--blue)"></i><input value="{{ link }}" onChange="{{ setLink }}" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:600 15px/1 Nunito,sans-serif;text-overflow:ellipsis"></span>
+          </label>
+        </sc-if>
+        <p style="margin:0;font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">Escreve do seu jeito. Eu acho o prazo, os requisitos e quebro em etapas que cabem nos seus horários.</p>
+        <div style="display:flex;justify-content:flex-end">
+          <button onClick="{{ analisar }}" style="height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)"><i class="ph-bold ph-sparkle" style="font-size:18px"></i>Analisar com IA</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAnalyzing }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:24px 32px 40px;display:flex;flex-direction:column;gap:16px">
+        <div style="border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--bg)">
+          <span style="display:flex;align-items:center;gap:8px;font:800 15px/20px Nunito,sans-serif;color:var(--blue)"><i class="ph-bold ph-circle-notch" style="font-size:18px;animation:spin 1s linear infinite"></i>IA analisando…</span>
+          <span style="height:10px;width:80%;border-radius:999px;background:linear-gradient(90deg, var(--s2) 25%, var(--border) 50%, var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite"></span>
+          <span style="height:10px;width:56%;border-radius:999px;background:linear-gradient(90deg, var(--s2) 25%, var(--border) 50%, var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite"></span>
+          <span style="display:flex;gap:6px"><span style="width:96px;height:24px;border-radius:999px;background:var(--s2)"></span><span style="width:72px;height:24px;border-radius:999px;background:var(--s2)"></span><span style="width:110px;height:24px;border-radius:999px;background:var(--s2)"></span></span>
+        </div>
+        <sc-for list="{{ skel }}" as="k" hint-placeholder-count="4"><span style="height:56px;border-radius:16px;background:linear-gradient(90deg, var(--s2) 25%, var(--border) 50%, var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;opacity:{{ k }}"></span></sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:20px 32px 0;display:flex;flex-direction:column;gap:20px;animation:riseIn .3s">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font:800 13px/16px Nunito,sans-serif">Objetivo</span><span style="height:52px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface)"><span style="width:10px;height:10px;border-radius:50%;background:var(--obj4)"></span><input value="{{ title }}" onChange="{{ setTitle }}" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:700 16px/1 Nunito,sans-serif"></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font:800 13px/16px Nunito,sans-serif">Entrega</span><span style="height:52px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface)"><i class="ph ph-flag-checkered" style="font-size:20px;color:var(--tx2)"></i><b style="font:700 16px/1 Nunito,sans-serif">{{ deadlineLabel }}</b></span></label>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:6px;font:800 14px/20px Nunito,sans-serif;color:var(--blue);margin-right:4px"><i class="ph-bold ph-sparkle" style="font-size:16px"></i>A IA achou</span>
+          <sc-for list="{{ reqs }}" as="r" hint-placeholder-count="4"><span style="height:28px;padding:0 10px;display:flex;align-items:center;border-radius:999px;background:var(--s2);font:700 13px/1 Nunito,sans-serif">{{ r }}</span></sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ count }} etapas · edite o que quiser</span><span style="font:700 14px/20px Nunito,sans-serif;color:var(--tx2)">Total <b style="font:600 20px/1 Fredoka,sans-serif;color:var(--tx)">{{ total }}</b></span></div>
+          <sc-for list="{{ etapas }}" as="e" hint-placeholder-count="7">
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;border-radius:16px;border:1px solid var(--border);background:var(--surface)">
+              <span style="width:28px;height:28px;flex:none;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font:600 14px/1 Fredoka,sans-serif;color:var(--tx2)">{{ e.num }}</span>
+              <input value="{{ e.title }}" onChange="{{ e.setTitle }}" style="flex:1;min-width:0;height:40px;padding:0 10px;border-radius:12px;border:2px solid transparent;background:transparent;font:700 15px/1 Nunito,sans-serif;outline:0" style-focus="border-color:var(--blue);background:var(--surface)">
+              <span style="display:flex;align-items:center;gap:2px;padding:2px;border-radius:999px;background:var(--s2)">
+                <button onClick="{{ e.minus }}" aria-label="Menos 15 min" style="width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph-bold ph-minus" style="font-size:14px"></i></button>
+                <b style="min-width:58px;text-align:center;font:600 16px/1 Fredoka,sans-serif;font-variant-numeric:tabular-nums">{{ e.durLabel }}</b>
+                <button onClick="{{ e.plus }}" aria-label="Mais 15 min" style="width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph-bold ph-plus" style="font-size:14px"></i></button>
+              </span>
+              <button onClick="{{ e.remove }}" aria-label="Remover etapa" style="width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph ph-trash" style="font-size:20px"></i></button>
+            </div>
+          </sc-for>
+          <button onClick="{{ addEtapa }}" style="align-self:flex-start;height:44px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-plus" style="font-size:16px"></i>Adicionar etapa</button>
+        </div>
+      </div>
+      <div style="position:sticky;bottom:0;margin-top:12px;padding:16px 32px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);border-top:1px solid var(--border)">
+        <span style="display:flex;align-items:center;gap:8px;font:700 15px/22px Nunito,sans-serif;color:{{ fitColor }}"><i class="{{ fitIcon }}" style="font-size:20px"></i>{{ fitLabel }}</span>
+        <div style="display:flex;gap:12px">
+          <button onClick="{{ back }}" style="height:52px;padding:0 20px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--border);cursor:pointer" style-active="transform:translateY(3px);box-shadow:none">Voltar</button>
+          <button onClick="{{ encaixar }}" style="height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)"><i class="ph-bold ph-calendar-plus" style="font-size:18px"></i>Encaixar no meu calendário</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  state = { step: 'input', tab: 'texto', text: 'Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11', link: 'moodle.suafacul.edu.br/mod/assign/view.php?id=5170', title: 'Trabalho de Algoritmos', deadline: 8, etapas: [], oid: null };
+  componentWillUnmount() { clearTimeout(this.t); }
+  defaults() {
+    return [['Ler o enunciado e escolher os 3 algoritmos', 30], ['Implementar o Bubble Sort', 45], ['Implementar o Merge Sort', 90], ['Implementar o Quick Sort', 90], ['Gerar as entradas de teste', 45], ['Medir os tempos e montar os gráficos', 90], ['Escrever o relatório comparativo', 105]].map(([t, d], i) => ({ k: 'k' + i, title: t, dur: d }));
+  }
+  obj() {
+    const st = this.state;
+    return { id: st.oid, name: st.title, short: st.title.replace(/^Trabalho de /, '').slice(0, 18), color: 'var(--obj4)', ink: 'var(--tx)', deadline: st.deadline, kind: 'Entrega', etapas: st.etapas.map((e, i) => ({ id: st.oid + '-' + i, title: e.title, dur: e.dur, done: false, partial: 0 })) };
+  }
+  fmt(m) { const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h${String(r).padStart(2, '0')}` : `${h}h`) : `${r} min`; }
+  renderVals() {
+    const app = this.props.app || { a: {}, u: {} }; const { a, u } = app; const st = this.state;
+    const upd = (i, f) => this.setState(x => ({ etapas: x.etapas.map((e, j) => j === i ? f(e) : e) }));
+    const total = st.etapas.reduce((x, e) => x + e.dur, 0);
+    let fit = null;
+    if (st.step === 'result' && a.previewObjective && st.etapas.length) fit = a.previewObjective(this.obj());
+    const dl = new Date(2026, 10, 16 + st.deadline);
+    return {
+      isInput: st.step === 'input', isAnalyzing: st.step === 'analyzing', isResult: st.step === 'result',
+      stepLabel: { input: '1 de 3', analyzing: '2 de 3', result: '3 de 3' }[st.step],
+      heading: { input: 'Me conta o que você precisa entregar', analyzing: 'Lendo o enunciado…', result: 'Quebrei em etapas pra você' }[st.step],
+      brotoMood: st.step === 'analyzing' ? 'focado' : st.step === 'result' ? 'animado' : 'ok',
+      close: a.closeModal,
+      isTexto: st.tab === 'texto', isLink: st.tab === 'link',
+      t1: st.tab === 'texto' ? 'var(--surface)' : 'transparent', t1b: st.tab === 'texto' ? 'var(--border)' : 'transparent',
+      t2: st.tab === 'link' ? 'var(--surface)' : 'transparent', t2b: st.tab === 'link' ? 'var(--border)' : 'transparent',
+      tabTexto: () => this.setState({ tab: 'texto' }), tabLink: () => this.setState({ tab: 'link' }),
+      text: st.text, link: st.link, setText: e => this.setState({ text: e.target.value }), setLink: e => this.setState({ link: e.target.value }),
+      analisar: () => {
+        const m = (st.tab === 'texto' ? st.text : '').match(/(\d{1,2})\/(\d{1,2})/);
+        let deadline = 8;
+        if (m) { const dt = new Date(2026, +m[2] - 1, +m[1]); const diff = Math.round((dt - new Date(2026, 10, 16)) / 864e5); if (diff > 1 && diff < 28) deadline = diff; }
+        const tm = st.tab === 'texto' && st.text.match(/^\s*([^—\-,]+)/);
+        this.setState({ step: 'analyzing', deadline, title: tm ? tm[1].trim() : 'Trabalho de Algoritmos', etapas: this.defaults(), oid: 'alg' + (Date.now() % 100000) });
+        this.t = setTimeout(() => this.setState({ step: 'result' }), 1900);
+      },
+      skel: [1, .8, .6, .4],
+      title: st.title, setTitle: e => this.setState({ title: e.target.value }),
+      deadlineLabel: `${String(dl.getDate()).padStart(2, '0')}/${String(dl.getMonth() + 1).padStart(2, '0')}`,
+      reqs: ['3 algoritmos de ordenação', 'comparação de tempo', 'código + relatório', `entrega ${String(dl.getDate()).padStart(2, '0')}/${String(dl.getMonth() + 1).padStart(2, '0')}`],
+      count: st.etapas.length, total: this.fmt(total),
+      etapas: st.etapas.map((e, i) => ({ num: i + 1, title: e.title, durLabel: this.fmt(e.dur), setTitle: ev => { const v = ev.target.value; upd(i, x => ({ ...x, title: v })); }, minus: () => upd(i, x => ({ ...x, dur: Math.max(15, x.dur - 15) })), plus: () => upd(i, x => ({ ...x, dur: Math.min(240, x.dur + 15) })), remove: () => this.setState(x => ({ etapas: x.etapas.filter((_, j) => j !== i) })) })),
+      addEtapa: () => this.setState(x => ({ etapas: [...x.etapas, { k: 'k' + Date.now(), title: 'Nova etapa', dur: 30 }] })),
+      fitLabel: fit ? (fit.folga < 0 ? `Não cabe até ${this.state.deadline ? '' : ''}a entrega. Tira ou encurta uma etapa.` : `Cabe até ${fit.last} respeitando seu limite · ${fit.label}`) : '',
+      fitColor: fit && fit.folga < 0 ? 'var(--danger)' : 'var(--tx)', fitIcon: fit && fit.folga < 0 ? 'ph-bold ph-warning-circle' : 'ph-bold ph-check-circle',
+      back: () => this.setState({ step: 'input' }),
+      encaixar: () => { if (!st.etapas.length) return; a.addObjective(this.obj()); }
+    };
+  }
+}
+</script>
+</body>
+</html>

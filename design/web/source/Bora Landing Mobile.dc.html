@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>body{margin:0;background:#DCE6E2;-webkit-font-smoothing:antialiased}a{color:#0369A1;text-decoration:none}a:hover{color:#065F46}button{font:inherit;margin:0}@keyframes brotoWave{0%,55%,100%{transform:rotate(0deg)}8%{transform:rotate(-12deg)}18%{transform:rotate(10deg)}28%{transform:rotate(-10deg)}38%{transform:rotate(8deg)}47%{transform:rotate(-3deg)}}</style>
+</helmet>
+<div style="padding:48px;display:flex;flex-direction:column;align-items:center;gap:16px;font-family:Nunito,sans-serif">
+<div style="width:390px;display:flex;justify-content:space-between;align-items:center;font:700 14px/20px Nunito,sans-serif;color:#4A5D57">
+  <span style="display:flex;gap:10px;align-items:center"><b style="padding:3px 8px;border-radius:6px;background:#0E1F1A;color:#fff;font:800 12px/16px Nunito,sans-serif">A</b>Landing · Mobile 390</span>
+  <a href="Bora Landing Web.dc.html" style="font:800 14px/20px Nunito,sans-serif">← Web</a>
+</div>
+<div data-screen-label="Landing Mobile" lang="pt-BR" style="--bg:#F6FAF8;--surface:#FFFFFF;--s2:#EAF5F0;--border:#D5E6DF;--tx:#0E1F1A;--tx2:#4A5D57;--pri:#047857;--priTx:#FFFFFF;--lip:#065F46;--fill:#10B981;--priSoft:#D1FAE5;--blue:#0369A1;--blueFill:#0EA5E9;--blueSoft:#E0F2FE;--streak:#F59E0B;--obj1:#10B981;--obj2:#0EA5E9;--obj3:#2DD4BF;--toastIcon:#38BDF8;width:390px;background:var(--bg);color:var(--tx);font-family:Nunito,sans-serif;overflow:hidden;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+
+<header style="height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between">
+  <a href="#" style="display:flex;align-items:center;gap:8px;color:var(--tx)"><dc-import name="Broto" size="{{ 36 }}" hint-size="36px,36px"></dc-import><span style="font:700 24px/1 Fredoka,sans-serif;letter-spacing:-0.01em">bora</span></a>
+  <div style="display:flex;align-items:center;gap:4px;margin-right:-10px">
+    <a href="Bora App.dc.html#login" style="height:44px;padding:0 14px;display:flex;align-items:center;border-radius:999px;font:800 16px/1 Nunito,sans-serif;color:var(--blue)" style-hover="background:var(--blueSoft);color:var(--blue)">Entrar</a>
+    <button aria-label="Menu" style="width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:var(--tx);display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ph ph-list" style="font-size:24px"></i></button>
+  </div>
+</header>
+
+<section style="padding:24px 20px 0">
+  <h1 style="margin:0;font:700 32px/38px Fredoka,sans-serif;letter-spacing:-0.01em;text-wrap:balance">Pare de adiar. Comece pelo degrau mais fácil.</h1>
+  <p style="margin:12px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">A IA quebra seus trabalhos em etapas, encaixa no seu calendário e te leva do zero ao foco em 25 minutos.</p>
+  <a href="Bora App.dc.html#cadastro" style="margin-top:24px;height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);transition:transform .08s, box-shadow .08s" style-hover="color:var(--priTx)" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">Começar grátis<i class="ph-bold ph-arrow-right" style="font-size:18px"></i></a>
+  <a href="#como-m" style="margin-top:8px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:999px;color:var(--blue);font:800 16px/1 Nunito,sans-serif" style-hover="background:var(--blueSoft);color:var(--blue)">Ver como funciona</a>
+  <div style="position:relative;height:500px;margin-top:16px">
+    <div style="position:absolute;left:15px;top:90px;width:320px;height:320px;border-radius:50%;background:var(--s2)"></div>
+    <div style="position:absolute;left:72px;top:10px;width:228px;height:478px">
+      <div style="transform:scale(.55);transform-origin:0 0;width:414px;height:868px"><dc-import name="PhoneRampa" hint-size="414px,868px"></dc-import></div>
+    </div>
+    <div style="position:absolute;right:-4px;top:100px;display:flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;background:var(--tx);color:var(--bg);box-shadow:0 8px 24px rgba(14,31,26,.18)">
+      <span style="width:32px;height:32px;border-radius:50%;background:rgba(56,189,248,.16);display:flex;align-items:center;justify-content:center"><i class="ph-fill ph-drop" style="font-size:18px;color:var(--toastIcon)"></i></span>
+      <span style="display:flex;flex-direction:column"><b style="font:700 16px/20px Fredoka,sans-serif">+5 gotas</b><span style="font:600 12px/16px Nunito,sans-serif;opacity:.8">Degrau concluído</span></span>
+    </div>
+    <div style="position:absolute;left:-6px;top:360px"><dc-import name="Broto" size="{{ 120 }}" mood="animado" wave="{{ true }}" hint-size="120px,120px"></dc-import></div>
+  </div>
+</section>
+
+<section id="como-m" style="padding:56px 20px 0">
+  <h2 style="margin:0;font:600 26px/32px Fredoka,sans-serif">Como funciona</h2>
+  <p style="margin:8px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2)">Três passos entre o enunciado e o primeiro minuto de foco.</p>
+  <div style="margin-top:24px;display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+        <div style="box-sizing:border-box;border:2px solid var(--blue);border-radius:12px;padding:12px 14px;font:400 16px/24px Nunito,sans-serif">trabalho de Engenharia de Software para dia 20<span style="display:inline-block;width:2px;height:18px;background:var(--blue);vertical-align:-3px;margin-left:2px"></span></div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px">
+          <span style="display:flex;align-items:center;gap:8px;font:800 14px/20px Nunito,sans-serif;color:var(--blue)"><i class="ph-bold ph-sparkle" style="font-size:16px"></i>A IA achou 3 requisitos</span>
+          <span style="display:flex;gap:6px;flex-wrap:wrap"><span style="height:28px;padding:0 10px;display:flex;align-items:center;border-radius:999px;background:var(--s2);font:700 13px/1 Nunito,sans-serif">diagrama UML</span><span style="height:28px;padding:0 10px;display:flex;align-items:center;border-radius:999px;background:var(--s2);font:700 13px/1 Nunito,sans-serif">PDF</span><span style="height:28px;padding:0 10px;display:flex;align-items:center;border-radius:999px;background:var(--s2);font:700 13px/1 Nunito,sans-serif">10 páginas</span></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <span style="width:36px;height:36px;flex:none;border-radius:50%;background:var(--priSoft);color:var(--pri);display:flex;align-items:center;justify-content:center;font:600 18px/1 Fredoka,sans-serif">1</span>
+        <div><h3 style="margin:4px 0 0;font:600 18px/24px Fredoka,sans-serif">Conte o que precisa entregar</h3><p style="margin:4px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Escreva do seu jeito ou cole o link da atividade. A IA lê o enunciado e separa os requisitos.</p></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+        <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;color:var(--tx2);text-align:center"><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span></div>
+        <div style="height:150px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px">
+          <div style="display:flex;flex-direction:column;gap:6px;background:var(--s2);border-radius:8px;padding:4px"><span style="height:40px;border-radius:6px;background:var(--obj1)"></span><span style="height:26px;border-radius:6px;background:var(--obj2)"></span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;background:var(--s2);border-radius:8px;padding:4px"><span style="height:18px"></span><span style="height:48px;border-radius:6px;background:var(--obj2)"></span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;background:var(--s2);border-radius:8px;padding:4px"><span style="height:58px;border-radius:6px;background:var(--obj1)"></span><span style="height:28px;border-radius:6px;background:var(--obj3)"></span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;background:var(--s2);border-radius:8px;padding:4px"><span style="height:32px;border-radius:6px;background:var(--obj3)"></span><span style="height:10px"></span><span style="height:30px;border-radius:6px;background:var(--obj1)"></span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;background:var(--s2);border-radius:8px;padding:4px"><span style="height:50px;border-radius:6px;background:var(--obj1)"></span></div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;font:700 12px/16px Nunito,sans-serif;color:var(--tx2)"><span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--obj1)"></span>Eng. Software</span><span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--obj2)"></span>Cálculo II</span><span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--obj3)"></span>Portfólio</span></div>
+        <span style="display:flex;align-items:center;gap:6px;font:600 14px/20px Nunito,sans-serif;color:var(--tx2)"><i class="ph-bold ph-check-circle" style="font-size:16px;color:var(--pri)"></i>Folga até o prazo: 2 dias</span>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <span style="width:36px;height:36px;flex:none;border-radius:50%;background:var(--priSoft);color:var(--pri);display:flex;align-items:center;justify-content:center;font:600 18px/1 Fredoka,sans-serif">2</span>
+        <div><h3 style="margin:4px 0 0;font:600 18px/24px Fredoka,sans-serif">A IA monta as etapas</h3><p style="margin:4px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Quebra o trabalho em etapas e encaixa nos seus horários livres, respeitando o seu limite por dia.</p></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+        <dc-import name="Broto" size="{{ 72 }}" mood="animado" hint-size="72px,72px"></dc-import>
+        <div style="align-self:stretch;padding:14px 22px 14px 14px;display:flex;align-items:center;gap:14px;border-radius:999px;background:var(--pri);color:var(--priTx);box-shadow:0 3px 0 var(--lip);cursor:pointer;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">
+          <span style="width:48px;height:48px;flex:none;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center"><i class="ph-fill ph-play" style="font-size:22px"></i></span>
+          <span style="flex:1;display:flex;flex-direction:column"><b style="font:800 20px/26px Nunito,sans-serif">Vamos começar?</b><span style="font:600 14px/20px Nunito,sans-serif;opacity:.9">Rampa de 25 min até o foco</span></span>
+          <i class="ph-bold ph-arrow-right" style="font-size:22px"></i>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <span style="width:36px;height:36px;flex:none;border-radius:50%;background:var(--priSoft);color:var(--pri);display:flex;align-items:center;justify-content:center;font:600 18px/1 Fredoka,sans-serif">3</span>
+        <div><h3 style="margin:4px 0 0;font:600 18px/24px Fredoka,sans-serif">Você só começa</h3><p style="margin:4px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Um toque em “Vamos começar?” e você sobe a rampa até o foco. O Broto vai junto.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:56px 20px 0">
+  <h2 style="margin:0;font:600 26px/32px Fredoka,sans-serif">Suba a rampa</h2>
+  <p style="margin:8px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Cinco degraus curtos levam você do zero ao foco. Cada degrau cumprido rende +5 gotas. Toque num degrau.</p>
+  <div style="margin-top:16px;display:flex;align-items:flex-end;gap:6px">
+    <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="height:60px;display:flex;align-items:flex-end;justify-content:center">
+          <sc-if value="{{ s.isCur }}" hint-placeholder-val="{{ false }}"><dc-import name="Broto" size="{{ 56 }}" mood="{{ s.mood }}" hint-size="56px,56px"></dc-import></sc-if>
+        </div>
+        <button onClick="{{ s.pick }}" style="height:{{ s.h }}px;box-sizing:border-box;border-radius:16px 16px 8px 8px;padding:10px 6px;border:{{ s.border }};background:{{ s.bg }};color:{{ s.color }};box-shadow:{{ s.shadow }};display:flex;flex-direction:column;align-items:flex-start;gap:2px;cursor:pointer;text-align:left;transition:transform .08s, box-shadow .08s">
+          <i class="{{ s.iconCls }}" style="font-size:22px;margin-bottom:4px"></i>
+          <span style="font:800 13px/16px Nunito,sans-serif">{{ s.name }}</span>
+          <span style="font:600 12px/16px Nunito,sans-serif;opacity:.85">{{ s.dur }}</span>
+          <span style="display:flex;align-items:center;gap:2px;font:600 12px/16px Fredoka,sans-serif"><i class="ph-fill ph-drop" style="font-size:12px;color:{{ s.dropColor }}"></i>+5</span>
+        </button>
+      </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font:700 14px/20px Nunito,sans-serif">{{ stepLabel }}</span>
+    <span style="display:flex;gap:2px;margin-right:-10px">
+      <button onClick="{{ trocar }}" style="height:36px;padding:0 10px;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-arrows-clockwise" style="font-size:16px"></i>Trocar</button>
+      <button onClick="{{ pular }}" style="height:36px;padding:0 10px;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Pular<i class="ph-bold ph-skip-forward" style="font-size:16px"></i></button>
+    </span>
+  </div>
+  <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;font:400 16px/24px Nunito,sans-serif;box-shadow:0 1px 2px rgba(14,31,26,.04)">{{ curDesc }}</div>
+</section>
+
+<section style="padding:56px 20px 0">
+  <h2 style="margin:0;font:600 26px/32px Fredoka,sans-serif;text-wrap:balance">Feito para quem trava pra começar</h2>
+  <p style="margin:8px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Pra quem sabe o que precisa fazer, mas não consegue dar o primeiro passo. Sem culpa e sem sermão.</p>
+  <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+      <div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;flex:none;border-radius:12px;background:var(--priSoft);color:var(--pri);display:flex;align-items:center;justify-content:center"><i class="ph ph-battery-medium" style="font-size:24px"></i></span><h3 style="margin:0;font:600 18px/24px Fredoka,sans-serif">Respeita a sua energia</h3></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ energy }}" as="e" hint-placeholder-count="3">
+          <button onClick="{{ e.pick }}" style="display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:16px;border:2px solid {{ e.borderColor }};background:{{ e.bg }};text-align:left;cursor:pointer;color:var(--tx)">
+            <dc-import name="Broto" size="{{ 44 }}" mood="{{ e.mood }}" hint-size="44px,44px"></dc-import>
+            <span style="display:flex;flex-direction:column"><b style="font:800 15px/20px Nunito,sans-serif">{{ e.name }}</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ e.desc }}</span></span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+      <div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;flex:none;border-radius:12px;background:var(--priSoft);color:var(--pri);display:flex;align-items:center;justify-content:center"><i class="ph ph-arrows-clockwise" style="font-size:24px"></i></span><h3 style="margin:0;font:600 18px/24px Fredoka,sans-serif">Atrasou? Ele recalcula</h3></div>
+      <div style="border:1px dashed var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:6px;font:700 13px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--obj2)"></span>Cálculo II</span><span style="padding:3px 9px;border-radius:999px;background:var(--s2);color:var(--tx2);font:800 12px/16px Nunito,sans-serif">Reagendada</span></div>
+        <span style="font:600 18px/24px Fredoka,sans-serif;color:var(--tx2)">Lista de integrais</span>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:8px"><dc-import name="Broto" size="{{ 40 }}" hint-size="40px,40px"></dc-import><div style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif">Tudo bem, recalculei pra você. Sobrou 1 dia de folga.</div></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+      <div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;flex:none;border-radius:12px;background:var(--priSoft);color:var(--pri);display:flex;align-items:center;justify-content:center"><i class="ph ph-broom" style="font-size:24px"></i></span><h3 style="margin:0;font:600 18px/24px Fredoka,sans-serif">Dia difícil também conta</h3></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ tarefas }}" as="t" hint-placeholder-count="2">
+          <button onClick="{{ t.toggle }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:left;cursor:pointer;color:var(--tx)">
+            <span style="width:26px;height:26px;box-sizing:border-box;flex:none;border-radius:50%;border:2px solid {{ t.boxBorder }};background:{{ t.boxBg }};display:flex;align-items:center;justify-content:center;color:var(--priTx)"><i class="ph-bold ph-check" style="font-size:14px;opacity:{{ t.checkOpacity }}"></i></span>
+            <span style="flex:1;display:flex;flex-direction:column;min-width:0"><b style="font:700 15px/20px Nunito,sans-serif;text-decoration:{{ t.deco }};color:{{ t.nameColor }}">{{ t.name }}</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ t.meta }}</span></span>
+            <span style="display:flex;align-items:center;gap:3px;font:600 14px/1 Fredoka,sans-serif"><i class="ph-fill ph-drop" style="font-size:14px;color:var(--blueFill)"></i>+3</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+      <div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;flex:none;border-radius:12px;background:var(--priSoft);color:var(--pri);display:flex;align-items:center;justify-content:center"><i class="ph ph-plant" style="font-size:24px"></i></span><h3 style="margin:0;font:600 18px/24px Fredoka,sans-serif">O Broto cresce com você</h3></div>
+      <p style="margin:0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Cada degrau rega o Broto e ele evolui com o seu nível. Num dia sem rega, só murcha um pouco. Nunca morre.</p>
+      <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;align-items:end;text-align:center">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><dc-import name="Broto" size="{{ 52 }}" stage="semente" hint-size="52px,52px"></dc-import><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">Nv 1</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><dc-import name="Broto" size="{{ 52 }}" stage="broto" hint-size="52px,52px"></dc-import><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">Nv 4</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><dc-import name="Broto" size="{{ 52 }}" stage="muda" hint-size="52px,52px"></dc-import><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">Nv 9</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><dc-import name="Broto" size="{{ 52 }}" stage="arbusto" hint-size="52px,52px"></dc-import><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">Nv 15</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><dc-import name="Broto" size="{{ 52 }}" stage="arvore" hint-size="52px,52px"></dc-import><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">Nv 25</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:56px 20px 0">
+  <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">E-mail diário</span>
+  <h2 style="margin:8px 0 0;font:600 26px/32px Fredoka,sans-serif">Seu dia já chega planejado</h2>
+  <p style="margin:8px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Toda manhã, um e-mail curto com o que fazer e quando. Um toque e você já está no primeiro degrau.</p>
+  <div style="margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(14,31,26,.04)">
+    <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;gap:12px"><dc-import name="Broto" size="{{ 56 }}" mood="animado" hint-size="56px,56px"></dc-import><div><div style="font:600 20px/26px Fredoka,sans-serif">Seu plano de hoje, Arthur</div><div style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">Sexta, 6 de novembro</div></div></div>
+      <div style="display:flex;flex-direction:column;border:1px solid var(--border);border-radius:16px">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)"><span style="width:56px;text-align:center;padding:4px 0;border-radius:999px;background:var(--blueSoft);color:var(--blue);font:800 13px/16px Nunito,sans-serif">10:00</span><span style="flex:1;display:flex;flex-direction:column"><b style="font:700 15px/20px Nunito,sans-serif">Lista de integrais</b><span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--obj2)"></span>Cálculo II · 45 min</span></span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)"><span style="width:56px;text-align:center;padding:4px 0;border-radius:999px;background:var(--blueSoft);color:var(--blue);font:800 13px/16px Nunito,sans-serif">14:00</span><span style="flex:1;display:flex;flex-direction:column"><b style="font:700 15px/20px Nunito,sans-serif">Diagrama de casos de uso</b><span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--obj1)"></span>Eng. Software · 1h30</span></span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px"><span style="width:56px;text-align:center;padding:4px 0;border-radius:999px;background:var(--blueSoft);color:var(--blue);font:800 13px/16px Nunito,sans-serif">17:30</span><span style="flex:1;display:flex;flex-direction:column"><b style="font:700 15px/20px Nunito,sans-serif">Escrever o case do app</b><span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--obj3)"></span>Portfólio · 30 min</span></span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--s2)"><i class="ph ph-broom" style="font-size:20px;color:var(--tx2)"></i><span style="flex:1;font:700 15px/20px Nunito,sans-serif">Lavar a louça <span style="font-weight:600;color:var(--tx2)">· 10 min</span></span><span style="display:flex;align-items:center;gap:3px;font:600 14px/1 Fredoka,sans-serif"><i class="ph-fill ph-drop" style="font-size:14px;color:var(--blueFill)"></i>+3</span></div>
+      <div style="height:52px;border-radius:999px;background:var(--pri);color:var(--priTx);box-shadow:0 3px 0 var(--lip);display:flex;align-items:center;justify-content:center;gap:8px;font:800 16px/1 Nunito,sans-serif"><i class="ph-fill ph-play" style="font-size:16px"></i>Vamos começar?</div>
+      <div style="display:flex;justify-content:center;align-items:center;gap:6px;font:600 14px/20px Nunito,sans-serif;color:var(--tx2)"><i class="ph-fill ph-leaf" style="font-size:18px;color:var(--streak)"></i><b style="font:600 16px/1 Fredoka,sans-serif;color:var(--tx)">6</b>dias regados</div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:56px 20px 64px">
+  <h2 style="margin:0;font:600 26px/32px Fredoka,sans-serif">Perguntas frequentes</h2>
+  <div style="margin-top:16px;display:flex;flex-direction:column;border-top:1px solid var(--border)">
+    <sc-for list="{{ faq }}" as="f" hint-placeholder-count="4">
+      <div style="border-bottom:1px solid var(--border)">
+        <button onClick="{{ f.toggle }}" style="width:100%;min-height:64px;padding:14px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;border:0;background:transparent;text-align:left;cursor:pointer;color:var(--tx)">
+          <span style="font:600 18px/24px Fredoka,sans-serif">{{ f.q }}</span>
+          <span style="width:36px;height:36px;flex:none;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center"><i class="{{ f.icon }}" style="font-size:14px"></i></span>
+        </button>
+        <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}"><p style="margin:-2px 0 0;padding:0 0 18px;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">{{ f.a }}</p></sc-if>
+      </div>
+    </sc-for>
+  </div>
+  <p style="margin:16px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2)">Não achou a sua? <a href="#" style="font-weight:700">Escreve pra gente.</a></p>
+</section>
+
+<section style="--bg:#0B1512;--surface:#12201C;--border:#24413A;--tx:#E6F2EE;--tx2:#9FB8B0;--pri:#34D399;--priTx:#052E22;--lip:#0F8A63;background:var(--bg);color:var(--tx);padding:48px 20px 0;text-align:center">
+  <div style="display:flex;justify-content:center;padding-top:24px"><dc-import name="Broto" size="{{ 190 }}" stage="arvore" mood="animado" hint-size="190px,190px"></dc-import></div>
+  <h2 style="margin:24px 0 0;font:700 32px/38px Fredoka,sans-serif;letter-spacing:-0.01em;text-wrap:balance">Um degrau hoje. Uma árvore no fim do semestre.</h2>
+  <p style="margin:12px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Cada degrau cumprido rega o Broto. Comece pelo mais fácil, o resto a gente encaixa.</p>
+  <a href="Bora App.dc.html#cadastro" style="margin-top:24px;height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);transition:transform .08s, box-shadow .08s" style-hover="color:var(--priTx)" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">Começar grátis<i class="ph-bold ph-arrow-right" style="font-size:18px"></i></a>
+  <footer style="margin-top:48px;padding:24px 0 32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+    <span style="display:flex;align-items:center;gap:8px"><dc-import name="Broto" size="{{ 28 }}" hint-size="28px,28px"></dc-import><b style="font:700 20px/1 Fredoka,sans-serif">bora</b></span>
+    <span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">© 2026 Bora</span>
+  </footer>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { cur: 2, alt: false, faq: 0, energy: 1, done: [true, false] };
+  renderVals() {
+    const S = [
+      { name: 'Aquecer', dur: '3 min', icon: 'person-simple-walk', desc: 'Levanta, bebe água, abre o material. Só isso.', alt: 'Arruma a mesa e deixa só o que vai usar.' },
+      { name: 'Desafio', dur: '2 min', icon: 'calculator', desc: 'Uma pergunta rápida pra acordar a cabeça.', alt: 'Explica o tema em uma frase, do seu jeito.' },
+      { name: 'Micro-passo', dur: '1 min', icon: 'footprints', desc: 'Um passo tão pequeno que não dá pra travar.', alt: 'Escreve só o título do que vai fazer.' },
+      { name: 'Foco', dur: '25 min', icon: 'timer', desc: 'Timer azul, notificações quietas e o Broto de óculos.', alt: 'Prefere 15 min? Dá pra encurtar o foco.' },
+      { name: 'Registrar', dur: '1 min', icon: 'check-circle', desc: 'Concluí, parcial ou não rolou. Tudo conta.', alt: 'Anota onde parou pra voltar mais fácil.' }
+    ];
+    const { cur, alt } = this.state;
+    const moods = ['ok', 'animado', 'ok', 'focado', 'comemorando'];
+    const steps = S.map((s, i) => {
+      const done = i < cur, isCur = i === cur;
+      return {
+        name: s.name, dur: s.dur, h: 108 + i * 19, isCur, mood: moods[i],
+        bg: isCur ? 'var(--pri)' : done ? 'var(--priSoft)' : 'var(--surface)',
+        color: isCur ? 'var(--priTx)' : done ? 'var(--pri)' : 'var(--tx)',
+        border: isCur || done ? '1px solid transparent' : '1px solid var(--border)',
+        shadow: isCur ? '0 3px 0 var(--lip)' : 'none',
+        iconCls: done ? 'ph-bold ph-check' : isCur ? `ph-fill ph-${s.icon}` : `ph ph-${s.icon}`,
+        dropColor: isCur || done ? 'currentColor' : 'var(--blueFill)',
+        pick: () => this.setState({ cur: i, alt: false })
+      };
+    });
+    const E = [
+      { name: 'Baixa', desc: 'Rampa leve, aquecimento longo', mood: 'sonolento' },
+      { name: 'Média', desc: 'Rampa padrão de 25 min', mood: 'ok' },
+      { name: 'Alta', desc: 'Pula direto pro desafio', mood: 'animado' }
+    ];
+    const energy = E.map((e, i) => ({ ...e, bg: i === this.state.energy ? 'var(--priSoft)' : 'var(--surface)', borderColor: i === this.state.energy ? 'var(--pri)' : 'var(--border)', pick: () => this.setState({ energy: i }) }));
+    const T = [{ name: 'Lavar a louça', meta: '10 min · ideal p/ energia baixa' }, { name: 'Arrumar o guarda-roupa', meta: '20 min' }];
+    const tarefas = T.map((t, i) => {
+      const on = this.state.done[i];
+      return { ...t, boxBg: on ? 'var(--pri)' : 'transparent', boxBorder: on ? 'var(--pri)' : 'var(--border)', checkOpacity: on ? 1 : 0, deco: on ? 'line-through' : 'none', nameColor: on ? 'var(--tx2)' : 'var(--tx)', toggle: () => this.setState(st => { const d = [...st.done]; d[i] = !d[i]; return { done: d }; }) };
+    });
+    const F = [
+      { q: 'O Bora é de graça?', a: 'Você começa grátis. Crie a conta, conte o que precisa entregar e monte o primeiro plano.' },
+      { q: 'Preciso ter TDAH pra usar?', a: 'Não. O Bora foi pensado pra quem trava pra começar, com ou sem diagnóstico. Ele não substitui acompanhamento profissional.' },
+      { q: 'Como a IA entende o meu trabalho?', a: 'Você escreve o que precisa entregar ou cola o link da atividade. A IA lê o enunciado, separa os requisitos e sugere as etapas. Você ajusta o que quiser.' },
+      { q: 'E se eu não cumprir o plano?', a: 'Tudo bem. O Bora recalcula as etapas, mostra a folga até o prazo e o Broto só murcha um pouco. Ele nunca morre.' }
+    ];
+    const faq = F.map((f, i) => ({ ...f, open: this.state.faq === i, icon: this.state.faq === i ? 'ph-bold ph-minus' : 'ph-bold ph-plus', toggle: () => this.setState(st => ({ faq: st.faq === i ? -1 : i })) }));
+    return {
+      steps, energy, tarefas, faq,
+      stepLabel: `Degrau ${cur + 1} de 5 · ${S[cur].name}`,
+      curDesc: alt ? S[cur].alt : S[cur].desc,
+      pular: () => this.setState(st => ({ cur: (st.cur + 1) % 5, alt: false })),
+      trocar: () => this.setState(st => ({ alt: !st.alt }))
+    };
+  }
+}
+</script>
+</body>
+</html>

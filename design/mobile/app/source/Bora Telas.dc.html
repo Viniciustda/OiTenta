@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+body { margin: 0; background: #EAF5F0; font-family: 'Nunito', sans-serif; color: #0E1F1A; -webkit-font-smoothing: antialiased; }
+a { color: #0369A1; text-decoration: none; }
+a:hover { color: #0369A1; text-decoration: underline; }
+button { font-family: inherit; }
+</style>
+</helmet>
+
+<section id="turno-1" style="padding: 48px; display: flex; flex-direction: column; gap: 24px;">
+  <div style="display: flex; flex-direction: column; gap: 4px; max-width: 640px;">
+    <div style="font: 800 12px/16px 'Nunito', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #4A5D57;">Bora · Telas mobile · Turno 1</div>
+    <div style="font: 600 26px/32px 'Fredoka', sans-serif; color: #0E1F1A;">Tela 1 — Hoje (modo claro)</div>
+    <div style="font: 600 14px/20px 'Nunito', sans-serif; color: #4A5D57; text-wrap: pretty;">Check-in pendente, Broto no humor "ok". O conteúdo rola dentro do artboard; barra de status e tab bar ficam fixas. Use o Tweak "energia" para ver o Broto sonolento/animado e o card de check-in sumindo.</div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+    <div id="1a" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="font: 800 12px/16px 'Nunito', sans-serif; color: #FFFFFF; background: #047857; border-radius: 999px; padding: 3px 9px;">1a</div>
+        <div style="font: 700 14px/20px 'Nunito', sans-serif; color: #4A5D57;">Hoje · 390×844</div>
+      </div>
+
+      <!-- ARTBOARD -->
+      <div data-screen-label="01 Hoje" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F6FAF8; border-radius: 36px; border: 1px solid #D5E6DF; box-shadow: 0 8px 24px rgba(14,31,26,.10); flex-shrink: 0;">
+
+        <!-- status bar -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 47px; z-index: 3; background: #F6FAF8; display: flex; align-items: center; justify-content: space-between; padding: 6px 28px 0 32px; box-sizing: border-box;">
+          <div style="font: 800 15px/1 'Nunito', sans-serif; color: #0E1F1A; font-variant-numeric: tabular-nums;">9:41</div>
+          <div style="display: flex; align-items: center; gap: 6px; color: #0E1F1A;">
+            <i class="ph-fill ph-cell-signal-full" style="font-size: 16px;"></i>
+            <i class="ph-bold ph-wifi-high" style="font-size: 16px;"></i>
+            <i class="ph-fill ph-battery-full" style="font-size: 22px;"></i>
+          </div>
+        </div>
+
+        <!-- scroll -->
+        <div style="position: absolute; top: 47px; left: 0; right: 0; bottom: 0; overflow-y: auto; scrollbar-width: none; padding: 8px 20px 128px; box-sizing: border-box; display: flex; flex-direction: column;">
+
+          <!-- topo: Broto + barra gamificada -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <sc-if value="{{ moodOk }}" hint-placeholder-val="{{ true }}">
+              <svg width="40" height="40" viewBox="0 0 120 120" style="overflow: visible; flex-shrink: 0;">
+                <ellipse cx="60" cy="112" rx="30" ry="4" fill="rgba(14,31,26,.10)"></ellipse>
+                <path d="M60 47 L60 36" fill="none" style="stroke: #047857; stroke-width: 3.5; stroke-linecap: round;"></path>
+                <path d="M60 36 C60 24 70 17 83 19 C81 32 71 38 60 36 Z" fill="#34D399"></path>
+                <path d="M63 33 C67 29 73 25 79 22" fill="none" style="stroke: #047857; stroke-width: 1.6; stroke-linecap: round; opacity: .5;"></path>
+                <path d="M60 46 C84 46 94 68 94 82 C94 100 79 108 60 108 C41 108 26 100 26 82 C26 68 36 46 60 46 Z" fill="#10B981"></path>
+                <path d="M27 90 C33 103 47 108 60 108 C78 108 91 101 93 88 C83 100 46 104 27 90 Z" fill="#059669"></path>
+                <path d="M44 59 C44 59 39 65 39 68.5 A5 5 0 0 0 49 68.5 C49 65 44 59 44 59 Z" fill="#BAE6FD"></path>
+                <ellipse cx="50" cy="82" rx="4" ry="5.5" fill="#0E1F1A"></ellipse>
+                <ellipse cx="70" cy="82" rx="4" ry="5.5" fill="#0E1F1A"></ellipse>
+                <path d="M57 92.5 Q60 95 63 92.5" fill="none" style="stroke: #0E1F1A; stroke-width: 2.2; stroke-linecap: round;"></path>
+              </svg>
+            </sc-if>
+            <sc-if value="{{ moodSono }}" hint-placeholder-val="{{ false }}">
+              <svg width="40" height="40" viewBox="0 0 120 120" style="overflow: visible; flex-shrink: 0;">
+                <ellipse cx="60" cy="112" rx="30" ry="4" fill="rgba(14,31,26,.10)"></ellipse>
+                <path d="M60 47 L60 36" fill="none" style="stroke: #047857; stroke-width: 3.5; stroke-linecap: round;"></path>
+                <g transform="rotate(38 60 36)">
+                  <path d="M60 36 C60 24 70 17 83 19 C81 32 71 38 60 36 Z" fill="#34D399"></path>
+                  <path d="M63 33 C67 29 73 25 79 22" fill="none" style="stroke: #047857; stroke-width: 1.6; stroke-linecap: round; opacity: .5;"></path>
+                </g>
+                <path d="M60 46 C84 46 94 68 94 82 C94 100 79 108 60 108 C41 108 26 100 26 82 C26 68 36 46 60 46 Z" fill="#10B981"></path>
+                <path d="M27 90 C33 103 47 108 60 108 C78 108 91 101 93 88 C83 100 46 104 27 90 Z" fill="#059669"></path>
+                <path d="M44 59 C44 59 39 65 39 68.5 A5 5 0 0 0 49 68.5 C49 65 44 59 44 59 Z" fill="#BAE6FD"></path>
+                <path d="M45.5 83 Q50 86.5 54.5 83" fill="none" style="stroke: #0E1F1A; stroke-width: 2.6; stroke-linecap: round;"></path>
+                <path d="M65.5 83 Q70 86.5 74.5 83" fill="none" style="stroke: #0E1F1A; stroke-width: 2.6; stroke-linecap: round;"></path>
+                <circle cx="60" cy="94" r="1.8" fill="#0E1F1A"></circle>
+                <text x="88" y="58" fill="#4A5D57" style="font: 700 14px 'Fredoka', sans-serif;">z</text>
+                <text x="98" y="46" fill="#4A5D57" style="font: 700 10px 'Fredoka', sans-serif;">z</text>
+              </svg>
+            </sc-if>
+            <sc-if value="{{ moodAnimado }}" hint-placeholder-val="{{ false }}">
+              <svg width="40" height="40" viewBox="0 0 120 120" style="overflow: visible; flex-shrink: 0;">
+                <ellipse cx="60" cy="112" rx="30" ry="4" fill="rgba(14,31,26,.10)"></ellipse>
+                <g transform="translate(0 -4)">
+                  <path d="M60 47 L60 36" fill="none" style="stroke: #047857; stroke-width: 3.5; stroke-linecap: round;"></path>
+                  <path d="M60 36 C60 24 70 17 83 19 C81 32 71 38 60 36 Z" fill="#34D399"></path>
+                  <path d="M63 33 C67 29 73 25 79 22" fill="none" style="stroke: #047857; stroke-width: 1.6; stroke-linecap: round; opacity: .5;"></path>
+                  <path d="M60 46 C84 46 94 68 94 82 C94 100 79 108 60 108 C41 108 26 100 26 82 C26 68 36 46 60 46 Z" fill="#10B981"></path>
+                  <path d="M27 90 C33 103 47 108 60 108 C78 108 91 101 93 88 C83 100 46 104 27 90 Z" fill="#059669"></path>
+                  <path d="M44 59 C44 59 39 65 39 68.5 A5 5 0 0 0 49 68.5 C49 65 44 59 44 59 Z" fill="#BAE6FD"></path>
+                  <ellipse cx="50" cy="82" rx="4.6" ry="6.2" fill="#0E1F1A"></ellipse>
+                  <ellipse cx="70" cy="82" rx="4.6" ry="6.2" fill="#0E1F1A"></ellipse>
+                  <circle cx="51.6" cy="79.4" r="1.7" fill="#FFFFFF"></circle>
+                  <circle cx="71.6" cy="79.4" r="1.7" fill="#FFFFFF"></circle>
+                  <path d="M55.5 90.5 Q60 97.5 64.5 90.5 Z" fill="#0E1F1A"></path>
+                </g>
+                <path d="M100 45 L100 55 M95 50 L105 50" fill="none" style="stroke: #0EA5E9; stroke-width: 2.6; stroke-linecap: round;"></path>
+                <path d="M18 59 L18 67 M14 63 L22 63" fill="none" style="stroke: #0EA5E9; stroke-width: 2.6; stroke-linecap: round;"></path>
+              </svg>
+            </sc-if>
+
+            <div style="display: flex; align-items: center; gap: 4px; padding: 4px; background: #FFFFFF; border: 1px solid #D5E6DF; border-radius: 999px; width: fit-content;">
+              <div style="display: flex; align-items: center; gap: 4px; padding: 6px 10px;">
+                <i class="ph-fill ph-fire" style="font-size: 18px; color: #F59E0B;"></i>
+                <span style="font: 600 16px/1 'Fredoka', sans-serif; color: #0E1F1A;">6</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 4px; padding: 6px 10px;">
+                <i class="ph-fill ph-drop" style="font-size: 18px; color: #0EA5E9;"></i>
+                <span style="font: 600 16px/1 'Fredoka', sans-serif; color: #0E1F1A;">340</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 10px; background: #EAF5F0; border-radius: 999px;">
+                <span style="font: 600 14px/1 'Fredoka', sans-serif; color: #047857;">Nv 7</span>
+                <div style="width: 36px; height: 6px; border-radius: 999px; background: #D5E6DF; overflow: hidden;">
+                  <div style="width: 85%; height: 100%; border-radius: 999px; background: #10B981;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- saudação -->
+          <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 20px;">
+            <div style="font: 600 26px/32px 'Fredoka', sans-serif; color: #0E1F1A;">Bom dia, Arthur</div>
+            <sc-if value="{{ pendente }}" hint-placeholder-val="{{ true }}">
+              <div style="font: 600 14px/20px 'Nunito', sans-serif; color: #4A5D57;">Quinta, 6 de novembro · 3 etapas no plano</div>
+            </sc-if>
+            <sc-if value="{{ moodSono }}" hint-placeholder-val="{{ false }}">
+              <div style="font: 600 14px/20px 'Nunito', sans-serif; color: #4A5D57;">Energia baixa hoje. Comece pelas tarefas leves, sem pressa.</div>
+            </sc-if>
+            <sc-if value="{{ energiaMedia }}" hint-placeholder-val="{{ false }}">
+              <div style="font: 600 14px/20px 'Nunito', sans-serif; color: #4A5D57;">Energia média. Dá pra fazer a primeira etapa com calma.</div>
+            </sc-if>
+            <sc-if value="{{ moodAnimado }}" hint-placeholder-val="{{ false }}">
+              <div style="font: 600 14px/20px 'Nunito', sans-serif; color: #4A5D57;">Energia alta. Bom dia pra adiantar o Diagrama.</div>
+            </sc-if>
+          </div>
+
+          <!-- check-in pendente -->
+          <sc-if value="{{ pendente }}" hint-placeholder-val="{{ true }}">
+            <button style="margin-top: 16px; display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px 14px 14px; background: #FFFFFF; border: 1px solid #D5E6DF; border-radius: 16px; box-shadow: 0 1px 2px rgba(14,31,26,.04); cursor: pointer; text-align: left;" style-active="background: #EAF5F0;">
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: #EAF5F0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="ph ph-battery-medium" style="font-size: 24px; color: #047857;"></i>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+                <div style="font: 600 18px/24px 'Fredoka', sans-serif; color: #0E1F1A;">Como está sua energia?</div>
+                <div style="font: 600 14px/20px 'Nunito', sans-serif; color: #4A5D57; text-wrap: pretty;">10 segundos pra eu ajustar sua rampa</div>
+              </div>
+              <i class="ph-bold ph-caret-right" style="font-size: 20px; color: #4A5D57; flex-shrink: 0;"></i>
+            </button>
+          </sc-if>
+
+          <!-- botão-herói -->
+          <button style="margin-top: 16px; display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 22px 14px 14px; background: #047857; color: #FFFFFF; border: 0; border-radius: 999px; box-shadow: 0 3px 0 #065F46; cursor: pointer; text-align: left; transition: transform .08s, box-shadow .08s; flex-shrink: 0;" style-active="transform: translateY(3px); box-shadow: none; filter: brightness(.94);">
+            <div style="width: 48px; height: 48px; border-radius: 999px; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i class="ph-fill ph-play" style="font-size: 22px; color: #FFFFFF;"></i>
+            </div>
+            <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+              <div style="font: 800 20px/26px 'Nunito', sans-serif;">Vamos começar?</div>
+              <div style="font: 600 14px/20px 'Nunito', sans-serif; opacity: .9;">Rampa de 25 min até o foco</div>
+            </div>
+            <i class="ph-bold ph-arrow-right" style="font-size: 22px; color: #FFFFFF; flex-shrink: 0;"></i>
+          </button>
+
+          <!-- timeline -->
+          <div style="margin-top: 32px; display: flex; align-items: baseline; justify-content: space-between;">
+            <div style="font: 800 12px/16px 'Nunito', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #4A5D57;">Seu dia</div>
+            <div style="font: 600 12px/16px 'Nunito', sans-serif; color: #4A5D57;">3 etapas · 2 tarefas leves</div>
+          </div>
+
+          <div style="margin-top: 12px; display: flex; flex-direction: column;">
+
+            <!-- 10:00 etapa parcial / próxima -->
+            <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 10px;">
+              <div style="display: flex; flex-direction: column; align-items: center; padding-top: 16px;">
+                <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #0E1F1A; font-variant-numeric: tabular-nums;">10:00</div>
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: #10B981; margin-top: 6px;"></div>
+                <div style="width: 2px; flex: 1; background: #D5E6DF; margin-top: 4px;"></div>
+              </div>
+              <div style="padding-bottom: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; background: #FFFFFF; border: 1px solid #D5E6DF; border-radius: 16px; box-shadow: 0 1px 2px rgba(14,31,26,.04);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                      <div style="width: 8px; height: 8px; border-radius: 999px; background: #10B981; flex-shrink: 0;"></div>
+                      <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Eng. de Software</div>
+                    </div>
+                    <div style="font: 800 12px/16px 'Nunito', sans-serif; padding: 3px 9px; border-radius: 999px; background: #E0F2FE; color: #0369A1; flex-shrink: 0;">Próxima</div>
+                  </div>
+                  <div style="font: 600 18px/24px 'Fredoka', sans-serif; color: #0E1F1A; text-wrap: pretty;">Diagrama de casos de uso</div>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="height: 6px; border-radius: 999px; background: #EAF5F0; overflow: hidden;">
+                      <div style="width: 40%; height: 100%; border-radius: 999px; background: #10B981;"></div>
+                    </div>
+                    <div style="font: 600 12px/16px 'Nunito', sans-serif; color: #4A5D57;">40% · continua de ontem</div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 14px; font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57;">
+                    <div style="display: flex; align-items: center; gap: 4px;"><i class="ph ph-clock" style="font-size: 16px;"></i>1h30</div>
+                    <div style="display: flex; align-items: center; gap: 4px;"><i class="ph-fill ph-drop" style="font-size: 15px; color: #0EA5E9;"></i>+20</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 11:30 tarefa leve -->
+            <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 10px;">
+              <div style="display: flex; flex-direction: column; align-items: center; padding-top: 14px;">
+                <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57; font-variant-numeric: tabular-nums;">11:30</div>
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: #FFFFFF; border: 2px solid #D5E6DF; box-sizing: border-box; margin-top: 6px;"></div>
+                <div style="width: 2px; flex: 1; background: #D5E6DF; margin-top: 4px;"></div>
+              </div>
+              <div style="padding-bottom: 12px;">
+                <button onClick="{{ toggleT1 }}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; background: #FFFFFF; border: 1px solid #D5E6DF; border-radius: 16px; box-shadow: 0 1px 2px rgba(14,31,26,.04); cursor: pointer; text-align: left;">
+                  <sc-if value="{{ t1 }}" hint-placeholder-val="{{ false }}">
+                    <div style="width: 26px; height: 26px; border-radius: 999px; background: #047857; border: 2px solid #047857; box-sizing: border-box; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="ph-bold ph-check" style="font-size: 14px; color: #FFFFFF;"></i></div>
+                  </sc-if>
+                  <sc-if value="{{ t1Open }}" hint-placeholder-val="{{ true }}">
+                    <div style="width: 26px; height: 26px; border-radius: 999px; background: #FFFFFF; border: 2px solid #D5E6DF; box-sizing: border-box; flex-shrink: 0;"></div>
+                  </sc-if>
+                  <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                    <div style="font: 700 15px/20px 'Nunito', sans-serif; color: {{ t1Color }}; text-decoration: {{ t1Deco }};">Responder o grupo do trabalho</div>
+                    <div style="font: 600 12px/16px 'Nunito', sans-serif; color: #4A5D57;">10 min · ideal p/ energia baixa</div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 3px; flex-shrink: 0;">
+                    <i class="ph-fill ph-drop" style="font-size: 14px; color: #0EA5E9;"></i>
+                    <span style="font: 600 14px/1 'Fredoka', sans-serif; color: #0E1F1A;">+3</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 14:00 etapa agendada -->
+            <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 10px;">
+              <div style="display: flex; flex-direction: column; align-items: center; padding-top: 16px;">
+                <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57; font-variant-numeric: tabular-nums;">14:00</div>
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: #0EA5E9; margin-top: 6px;"></div>
+                <div style="width: 2px; flex: 1; background: #D5E6DF; margin-top: 4px;"></div>
+              </div>
+              <div style="padding-bottom: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; background: #FFFFFF; border: 1px solid #D5E6DF; border-radius: 16px; box-shadow: 0 1px 2px rgba(14,31,26,.04);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                      <div style="width: 8px; height: 8px; border-radius: 999px; background: #0EA5E9; flex-shrink: 0;"></div>
+                      <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57;">Cálculo II</div>
+                    </div>
+                    <div style="font: 800 12px/16px 'Nunito', sans-serif; padding: 3px 9px; border-radius: 999px; background: #E0F2FE; color: #0369A1; flex-shrink: 0;">Hoje 14:00</div>
+                  </div>
+                  <div style="font: 600 18px/24px 'Fredoka', sans-serif; color: #0E1F1A; text-wrap: pretty;">Lista 3: integrais por partes</div>
+                  <div style="display: flex; align-items: center; gap: 14px; font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57;">
+                    <div style="display: flex; align-items: center; gap: 4px;"><i class="ph ph-clock" style="font-size: 16px;"></i>1h</div>
+                    <div style="display: flex; align-items: center; gap: 4px;"><i class="ph-fill ph-drop" style="font-size: 15px; color: #0EA5E9;"></i>+20</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 16:00 tarefa leve -->
+            <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 10px;">
+              <div style="display: flex; flex-direction: column; align-items: center; padding-top: 14px;">
+                <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57; font-variant-numeric: tabular-nums;">16:00</div>
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: #FFFFFF; border: 2px solid #D5E6DF; box-sizing: border-box; margin-top: 6px;"></div>
+                <div style="width: 2px; flex: 1; background: #D5E6DF; margin-top: 4px;"></div>
+              </div>
+              <div style="padding-bottom: 12px;">
+                <button onClick="{{ toggleT2 }}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; background: #FFFFFF; border: 1px solid #D5E6DF; border-radius: 16px; box-shadow: 0 1px 2px rgba(14,31,26,.04); cursor: pointer; text-align: left;">
+                  <sc-if value="{{ t2 }}" hint-placeholder-val="{{ false }}">
+                    <div style="width: 26px; height: 26px; border-radius: 999px; background: #047857; border: 2px solid #047857; box-sizing: border-box; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="ph-bold ph-check" style="font-size: 14px; color: #FFFFFF;"></i></div>
+                  </sc-if>
+                  <sc-if value="{{ t2Open }}" hint-placeholder-val="{{ true }}">
+                    <div style="width: 26px; height: 26px; border-radius: 999px; background: #FFFFFF; border: 2px solid #D5E6DF; box-sizing: border-box; flex-shrink: 0;"></div>
+                  </sc-if>
+                  <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                    <div style="font: 700 15px/20px 'Nunito', sans-serif; color: {{ t2Color }}; text-decoration: {{ t2Deco }};">Separar o material da prova</div>
+                    <div style="font: 600 12px/16px 'Nunito', sans-serif; color: #4A5D57;">15 min · bom entre etapas</div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 3px; flex-shrink: 0;">
+                    <i class="ph-fill ph-drop" style="font-size: 14px; color: #0EA5E9;"></i>
+                    <span style="font: 600 14px/1 'Fredoka', sans-serif; color: #0E1F1A;">+3</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 19:00 etapa agendada -->
+            <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 10px;">
+              <div style="display: flex; flex-direction: column; align-items: center; padding-top: 16px;">
+                <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57; font-variant-numeric: tabular-nums;">19:00</div>
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: #2DD4BF; margin-top: 6px;"></div>
+              </div>
+              <div>
+                <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; background: #FFFFFF; border: 1px solid #D5E6DF; border-radius: 16px; box-shadow: 0 1px 2px rgba(14,31,26,.04);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                      <div style="width: 8px; height: 8px; border-radius: 999px; background: #2DD4BF; flex-shrink: 0;"></div>
+                      <div style="font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57;">Portfólio no GitHub</div>
+                    </div>
+                    <div style="font: 800 12px/16px 'Nunito', sans-serif; padding: 3px 9px; border-radius: 999px; background: #E0F2FE; color: #0369A1; flex-shrink: 0;">Hoje 19:00</div>
+                  </div>
+                  <div style="font: 600 18px/24px 'Fredoka', sans-serif; color: #0E1F1A; text-wrap: pretty;">README do projeto de Compiladores</div>
+                  <div style="display: flex; align-items: center; gap: 14px; font: 700 13px/16px 'Nunito', sans-serif; color: #4A5D57;">
+                    <div style="display: flex; align-items: center; gap: 4px;"><i class="ph ph-clock" style="font-size: 16px;"></i>45 min</div>
+                    <div style="display: flex; align-items: center; gap: 4px;"><i class="ph-fill ph-drop" style="font-size: 15px; color: #0EA5E9;"></i>+20</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- rodapé folga -->
+          <div style="margin-top: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; border-radius: 999px; background: #EAF5F0;">
+            <i class="ph-bold ph-check-circle" style="font-size: 16px; color: #047857;"></i>
+            <span style="font: 800 14px/20px 'Nunito', sans-serif; color: #0E1F1A;">Folga até o prazo: 2 dias</span>
+            <span style="font: 600 14px/20px 'Nunito', sans-serif; color: #4A5D57;">· entrega 20/11</span>
+          </div>
+        </div>
+
+        <!-- tab bar -->
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; background: #FFFFFF; border-top: 1px solid #D5E6DF; padding: 8px 8px 30px; display: flex;">
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;">
+            <div style="width: 56px; height: 32px; border-radius: 999px; background: #D1FAE5; display: flex; align-items: center; justify-content: center;"><i class="ph-fill ph-sun" style="font-size: 24px; color: #047857;"></i></div>
+            <div style="font: 800 12px/16px 'Nunito', sans-serif; color: #0E1F1A;">Hoje</div>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;">
+            <div style="width: 56px; height: 32px; border-radius: 999px; display: flex; align-items: center; justify-content: center;"><i class="ph ph-flag-banner" style="font-size: 24px; color: #4A5D57;"></i></div>
+            <div style="font: 600 12px/16px 'Nunito', sans-serif; color: #4A5D57;">Objetivos</div>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;">
+            <div style="width: 56px; height: 32px; border-radius: 999px; display: flex; align-items: center; justify-content: center;"><i class="ph ph-calendar-blank" style="font-size: 24px; color: #4A5D57;"></i></div>
+            <div style="font: 600 12px/16px 'Nunito', sans-serif; color: #4A5D57;">Semana</div>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;">
+            <div style="width: 56px; height: 32px; border-radius: 999px; display: flex; align-items: center; justify-content: center;"><i class="ph ph-plant" style="font-size: 24px; color: #4A5D57;"></i></div>
+            <div style="font: 600 12px/16px 'Nunito', sans-serif; color: #4A5D57;">Jardim</div>
+          </div>
+          <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; height: 5px; margin-left: -67px; border-radius: 999px; background: #0E1F1A;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;energia&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pendente&quot;,&quot;baixa&quot;,&quot;média&quot;,&quot;alta&quot;],&quot;default&quot;:&quot;pendente&quot;,&quot;tsType&quot;:&quot;'pendente'|'baixa'|'média'|'alta'&quot;}}">
+class Component extends DCLogic {
+  state = { t1: false, t2: false };
+  renderVals() {
+    const e = this.props.energia ?? 'pendente';
+    const { t1, t2 } = this.state;
+    return {
+      pendente: e === 'pendente',
+      moodOk: e === 'pendente' || e === 'média',
+      moodSono: e === 'baixa',
+      moodAnimado: e === 'alta',
+      energiaMedia: e === 'média',
+      t1, t1Open: !t1, t1Color: t1 ? '#4A5D57' : '#0E1F1A', t1Deco: t1 ? 'line-through' : 'none',
+      t2, t2Open: !t2, t2Color: t2 ? '#4A5D57' : '#0E1F1A', t2Deco: t2 ? 'line-through' : 'none',
+      toggleT1: () => this.setState(s => ({ t1: !s.t1 })),
+      toggleT2: () => this.setState(s => ({ t2: !s.t2 })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

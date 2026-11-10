@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="padding:40px 48px 64px;max-width:880px;box-sizing:border-box">
+  <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ countLabel }}</span>
+  <h1 style="margin:6px 0 0;font:600 40px/48px Fredoka,sans-serif">Tarefas leves</h1>
+  <p style="margin:8px 0 0;font:400 18px/28px Nunito,sans-serif;color:var(--tx2);text-wrap:pretty">Pros dias de energia baixa. Coisas rápidas que tiram peso da cabeça e rendem +3 gotas cada.</p>
+  <div style="margin-top:32px;display:flex;gap:12px">
+    <span style="flex:1;height:52px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface)"><i class="ph ph-broom" style="font-size:20px;color:var(--tx2)"></i><input value="{{ draft }}" onChange="{{ setDraft }}" onKeyDown="{{ key }}" placeholder="Ex.: trocar a roupa de cama" style="flex:1;border:0;outline:0;background:transparent;font:600 15px/1 Nunito,sans-serif"></span>
+    <button onClick="{{ add }}" style="height:52px;padding:0 24px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--border);cursor:pointer;display:flex;align-items:center;gap:8px" style-active="transform:translateY(3px);box-shadow:none;background:var(--s2)"><i class="ph-bold ph-plus" style="font-size:16px"></i>Adicionar</button>
+  </div>
+  <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ items }}" as="t" hint-placeholder-count="5">
+      <button onClick="{{ t.toggle }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:left;cursor:pointer;color:var(--tx);box-shadow:var(--shadow)">
+        <span style="width:26px;height:26px;box-sizing:border-box;flex:none;border-radius:50%;border:2px solid {{ t.boxBorder }};background:{{ t.boxBg }};display:flex;align-items:center;justify-content:center;color:var(--priTx);transition:background .15s"><i class="ph-bold ph-check" style="font-size:14px;opacity:{{ t.op }}"></i></span>
+        <span style="flex:1;display:flex;flex-direction:column"><b style="font:700 15px/20px Nunito,sans-serif;text-decoration:{{ t.deco }};color:{{ t.nameColor }}">{{ t.name }}</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ t.meta }}</span></span>
+        <span style="display:flex;align-items:center;gap:3px;font:600 14px/1 Fredoka,sans-serif"><i class="ph-fill ph-drop" style="font-size:14px;color:var(--blueFill)"></i>+3</span>
+      </button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  state = { draft: '' };
+  renderVals() {
+    const app = this.props.app || { s: { tarefas: [] }, a: {} }; const { s, a } = app;
+    const ts = [...s.tarefas].sort((x, y) => (x.done ? 1 : 0) - (y.done ? 1 : 0));
+    const add = () => { a.addTarefa(this.state.draft); this.setState({ draft: '' }); };
+    return {
+      countLabel: `${s.tarefas.filter(t => t.done).length} de ${s.tarefas.length} feitas hoje`,
+      draft: this.state.draft, setDraft: e => this.setState({ draft: e.target.value }), key: e => { if (e.key === 'Enter') add(); }, add,
+      items: ts.map(t => ({ name: t.name, meta: t.meta, boxBg: t.done ? 'var(--pri)' : 'transparent', boxBorder: t.done ? 'var(--pri)' : 'var(--border)', op: t.done ? 1 : 0, deco: t.done ? 'line-through' : 'none', nameColor: t.done ? 'var(--tx2)' : 'var(--tx)', toggle: () => a.toggleTarefa(t.id) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

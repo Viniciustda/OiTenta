@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="padding:40px 48px 64px;max-width:960px;box-sizing:border-box;display:flex;flex-direction:column;gap:24px">
+  <div><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Arthur · arthur@faculdade.edu.br</span><h1 style="margin:6px 0 0;font:600 40px/48px Fredoka,sans-serif">Configurações</h1></div>
+
+  <section style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:var(--shadow)">
+    <div><h2 style="margin:0;font:600 20px/26px Fredoka,sans-serif">Tema</h2><p style="margin:4px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2)">O escuro descansa a vista à noite.</p></div>
+    <div style="display:flex;padding:4px;border-radius:999px;background:var(--s2);gap:4px">
+      <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.pick }}" style="height:40px;padding:0 18px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:var(--tx);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px"><i class="{{ t.icon }}" style="font-size:18px"></i>{{ t.label }}</button></sc-for>
+    </div>
+  </section>
+
+  <section style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:var(--shadow)">
+    <div><h2 style="margin:0;font:600 20px/26px Fredoka,sans-serif">Disponibilidade</h2><p style="margin:4px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2)">Pinte os horários livres arrastando o mouse. O plano se reorganiza na hora.</p></div>
+    <dc-import name="AvailGrid" avail="{{ avail }}" on-change="{{ setAvail }}" cell-h="{{ 24 }}" hint-size="100%,440px"></dc-import>
+  </section>
+
+  <section style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><div><h2 style="margin:0;font:600 20px/26px Fredoka,sans-serif">Limite diário</h2><p style="margin:4px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2)">Eu nunca encaixo mais que isso num dia.</p></div><b style="font:600 28px/36px Fredoka,sans-serif;color:var(--pri)">{{ limitLabel }}</b></div>
+    <div ref="{{ trackRef }}" onPointerDown="{{ trackDown }}" style="position:relative;height:28px;cursor:pointer;touch-action:none">
+      <div style="position:absolute;left:0;right:0;top:10px;height:8px;border-radius:999px;background:var(--s2)"></div>
+      <div style="position:absolute;left:0;top:10px;height:8px;width:{{ limitPct }}%;border-radius:999px;background:var(--fill)"></div>
+      <div style="position:absolute;top:0;left:calc({{ limitPct }}% - 14px);width:28px;height:28px;box-sizing:border-box;border-radius:50%;background:#FFFFFF;border:2px solid var(--pri);box-shadow:0 2px 0 var(--lip)"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><span>1h</span><span>5h</span></div>
+  </section>
+
+  <section style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:var(--shadow)">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:24px">
+      <div><h2 style="margin:0;font:600 20px/26px Fredoka,sans-serif">E-mail diário</h2><p style="margin:4px 0 0;font:400 16px/24px Nunito,sans-serif;color:var(--tx2)">Todo dia às 07:00, com o plano do dia e um botão pra começar.</p></div>
+      <button onClick="{{ toggleEmail }}" role="switch" aria-checked="{{ emailOn }}" aria-label="E-mail diário" style="width:56px;height:32px;flex:none;border:0;border-radius:999px;background:{{ swBg }};position:relative;cursor:pointer;transition:background .15s"><span style="position:absolute;top:4px;left:{{ swLeft }}px;width:24px;height:24px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 2px rgba(14,31,26,.2);transition:left .15s"></span></button>
+    </div>
+    <div style="display:flex;justify-content:center;padding:24px;border-radius:16px;background:var(--bg);opacity:{{ previewOp }};transition:opacity .2s">
+      <div style="width:520px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        <div style="padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)">
+          <span style="width:36px;height:36px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center"><dc-import name="Broto" size="{{ 28 }}" hint-size="28px,28px"></dc-import></span>
+          <span style="flex:1;display:flex;flex-direction:column"><b style="font:800 14px/20px Nunito,sans-serif">Bora</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">Seu plano de hoje, Arthur</span></span>
+          <span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">07:00</span>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:12px"><dc-import name="Broto" size="{{ 56 }}" mood="animado" hint-size="56px,56px"></dc-import><div><div style="font:600 24px/30px Fredoka,sans-serif">Seu plano de hoje, Arthur</div><div style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">Segunda, 16 de novembro</div></div></div>
+          <div style="display:flex;flex-direction:column;border:1px solid var(--border);border-radius:16px">
+            <sc-for list="{{ mailRows }}" as="r" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:{{ r.sep }}"><span style="width:56px;text-align:center;padding:4px 0;border-radius:999px;background:var(--blueSoft);color:var(--blue);font:800 13px/16px Nunito,sans-serif">{{ r.time }}</span><span style="flex:1;display:flex;flex-direction:column"><b style="font:700 15px/20px Nunito,sans-serif">{{ r.title }}</b><span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:{{ r.color }}"></span>{{ r.meta }}</span></span></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--s2)"><i class="ph ph-broom" style="font-size:20px;color:var(--tx2)"></i><span style="flex:1;font:700 15px/20px Nunito,sans-serif">{{ leve }}</span><span style="display:flex;align-items:center;gap:3px;font:600 14px/1 Fredoka,sans-serif"><i class="ph-fill ph-drop" style="font-size:14px;color:var(--blueFill)"></i>+3</span></div>
+          <div style="height:52px;border-radius:999px;background:var(--pri);color:var(--priTx);box-shadow:0 3px 0 var(--lip);display:flex;align-items:center;justify-content:center;gap:8px;font:800 16px/1 Nunito,sans-serif"><i class="ph-fill ph-play" style="font-size:16px"></i>Vamos começar?</div>
+          <div style="display:flex;justify-content:center;align-items:center;gap:6px;font:600 14px/20px Nunito,sans-serif;color:var(--tx2)"><i class="ph-fill ph-leaf" style="font-size:18px;color:var(--streak)"></i><b style="font:600 16px/1 Fredoka,sans-serif;color:var(--tx)">{{ streak }}</b>dias regados</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+    <span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">Bora · versão demo</span>
+    <button onClick="{{ logout }}" style="height:44px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-sign-out" style="font-size:16px"></i>Sair</button>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  trackRef = React.createRef();
+  setFromX(x) { const r = this.trackRef.current.getBoundingClientRect(); const f = Math.max(0, Math.min(1, (x - r.left) / r.width)); const v = Math.round((60 + f * 240) / 30) * 30; if (v !== this.props.app.s.limit) this.props.app.a.setLimit(v); }
+  renderVals() {
+    const app = this.props.app || { s: {}, a: {}, u: {}, d: { blocks: [] } }; const { s, a, u, d } = app;
+    const today = d.blocks.filter(b => b.day === 0 && !b.done).sort((x, y) => x.start - y.start);
+    const rows = (today.length ? today : d.blocks.filter(b => !b.done).slice(0, 3)).slice(0, 3);
+    return {
+      themes: [['light', 'Claro', 'ph-bold ph-sun'], ['dark', 'Escuro', 'ph-bold ph-moon']].map(([id, label, icon]) => ({ label, icon, bg: s.theme === id ? 'var(--surface)' : 'transparent', border: s.theme === id ? 'var(--border)' : 'transparent', pick: () => a.setTheme(id) })),
+      avail: s.avail, setAvail: a.setAvail,
+      limitLabel: u.dur(s.limit), limitPct: Math.round((s.limit - 60) / 240 * 100), trackRef: this.trackRef,
+      trackDown: e => { this.setFromX(e.clientX); const mv = ev => this.setFromX(ev.clientX); const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); }; window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); },
+      emailOn: !!s.emailOn, toggleEmail: () => a.setEmail(!s.emailOn), swBg: s.emailOn ? 'var(--pri)' : 'var(--border)', swLeft: s.emailOn ? 28 : 4, previewOp: s.emailOn ? 1 : .4,
+      mailRows: rows.map((b, i) => ({ time: u.hm(b.start), title: b.title, meta: `${b.oShort} · ${b.durLabel}`, color: b.color, sep: i < rows.length - 1 ? '1px solid var(--border)' : '0' })),
+      leve: (s.tarefas.find(t => !t.done) || { name: 'Lavar a louça' }).name + ' · 10 min',
+      streak: s.streak, logout: a.logout
+    };
+  }
+}
+</script>
+</body>
+</html>

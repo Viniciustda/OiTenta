@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="padding:40px 48px 64px;max-width:1200px;box-sizing:border-box">
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+      <div><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ countLabel }}</span><h1 style="margin:6px 0 0;font:600 40px/48px Fredoka,sans-serif">Objetivos</h1></div>
+      <button onClick="{{ novo }}" style="height:52px;padding:0 24px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;gap:8px" style-active="transform:translateY(3px);box-shadow:none"><i class="ph-bold ph-plus" style="font-size:16px"></i>Novo objetivo</button>
+    </div>
+    <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ list }}" as="o" hint-placeholder-count="3">
+        <button onClick="{{ o.open }}" style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 120px;gap:32px;align-items:center;padding:24px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:left;cursor:pointer;color:var(--tx);box-shadow:var(--shadow)" style-hover="border-color:var(--pri)">
+          <span style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <span style="display:flex;align-items:center;gap:8px;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)"><span style="width:10px;height:10px;border-radius:50%;background:{{ o.color }}"></span>{{ o.kindLabel }}</span>
+            <b style="font:600 20px/26px Fredoka,sans-serif">{{ o.name }}</b>
+            <span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ o.nextLine }}</span>
+          </span>
+          <span style="display:flex;flex-direction:column;gap:8px">
+            <span style="height:10px;border-radius:999px;background:var(--s2);overflow:hidden"><span style="display:block;height:100%;width:{{ o.pct }}%;background:{{ o.color }};border-radius:999px"></span></span>
+            <span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><i class="{{ o.icon }}" style="font-size:14px;color:{{ o.iconColor }}"></i>{{ o.folgaLine }}</span>
+          </span>
+          <span style="display:flex;align-items:center;justify-content:flex-end;gap:12px"><b style="font:600 28px/1 Fredoka,sans-serif;color:{{ o.ink }}">{{ o.pct }}%</b><i class="ph-bold ph-caret-right" style="font-size:18px;color:var(--tx2)"></i></span>
+        </button>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ back }}" style="margin-left:-12px;height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-arrow-left" style="font-size:16px"></i>Objetivos</button>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+      <div><span style="display:flex;align-items:center;gap:8px;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)"><span style="width:10px;height:10px;border-radius:50%;background:{{ det.color }}"></span>{{ det.kindLabel }}</span><h1 style="margin:6px 0 0;font:600 40px/48px Fredoka,sans-serif">{{ det.name }}</h1></div>
+      <sc-if value="{{ det.hasNext }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ det.start }}" style="height:52px;padding:0 24px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;gap:8px" style-active="transform:translateY(3px);box-shadow:none"><i class="ph-fill ph-play" style="font-size:16px"></i>Começar próxima etapa</button>
+      </sc-if>
+    </div>
+    <div style="margin-top:32px;display:grid;grid-template-columns:360px minmax(0,1fr);gap:32px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:var(--shadow)">
+          <div style="position:relative;width:180px;height:180px">{{ ring }}<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><b style="font:600 44px/1 Fredoka,sans-serif;color:{{ det.ink }}">{{ det.pct }}%</b><span style="margin-top:6px;font:700 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ det.doneLabel }}</span></div></div>
+          <div style="align-self:stretch;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--border)"><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Prazo</span><b style="display:block;margin-top:4px;font:600 20px/26px Fredoka,sans-serif">{{ det.deadlineLabel }}</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ det.deadlineWd }}</span></div>
+            <div style="padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--border)"><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Folga</span><b style="display:block;margin-top:4px;font:600 20px/26px Fredoka,sans-serif;color:{{ det.folgaColor }}">{{ det.folgaShort }}</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ det.totalLabel }} no total</span></div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)">
+          <div style="display:flex;justify-content:space-between;align-items:center"><b style="font:600 18px/24px Fredoka,sans-serif">Novembro</b><button onClick="{{ goCal }}" style="height:36px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Abrir calendário</button></div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center">
+            <sc-for list="{{ miniHeads }}" as="mh" hint-placeholder-count="7"><span style="font:800 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ mh }}</span></sc-for>
+            <sc-for list="{{ mini }}" as="m" hint-placeholder-count="35">
+              <span title="{{ m.tip }}" style="height:40px;box-sizing:border-box;border-radius:10px;border:2px solid {{ m.border }};background:{{ m.bg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;opacity:{{ m.op }}"><b style="font:600 14px/1 Fredoka,sans-serif;color:{{ m.tx }}">{{ m.num }}</b><span style="width:6px;height:6px;border-radius:50%;background:{{ m.dot }}"></span></span>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:14px;font:700 12px/16px Nunito,sans-serif;color:var(--tx2)"><span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{{ det.color }}"></span>Etapa agendada</span><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;box-sizing:border-box;border-radius:4px;border:2px solid {{ det.color }}"></span>Prazo</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--shadow)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px"><h2 style="margin:0;font:600 28px/36px Fredoka,sans-serif">Trilha das etapas</h2>
+          <span style="display:flex;align-items:center;gap:12px">
+            <span style="font:700 14px/20px Nunito,sans-serif;color:var(--tx2);white-space:nowrap">{{ trailCountLabel }}</span>
+            <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ startEdit }}" style="height:36px;padding:0 14px;display:flex;align-items:center;gap:6px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 14px/1 Nunito,sans-serif;box-shadow:0 2px 0 var(--border);cursor:pointer;white-space:nowrap;flex:none" style-active="transform:translateY(2px);box-shadow:none;background:var(--s2)"><i class="ph-bold ph-pencil-simple" style="font-size:16px"></i>Editar trilha</button>
+            </sc-if>
+            <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ cancelEdit }}" style="height:44px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Cancelar</button>
+              <button onClick="{{ saveEdit }}" style="height:44px;padding:0 20px;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 15px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)"><i class="ph-bold ph-check" style="font-size:16px"></i>Salvar</button>
+            </sc-if>
+          </span>
+        </div>
+        <sc-if value="{{ saved }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:16px;display:flex;align-items:center;gap:12px;padding:12px 8px 12px 16px;border-radius:16px;background:var(--priSoft);animation:noticeIn .3s">
+            <i class="ph-bold ph-check-circle" style="font-size:20px;color:var(--pri)"></i>
+            <span style="flex:1;font:700 15px/22px Nunito,sans-serif;color:var(--tx)">Plano recalculado ✓ As etapas foram realocadas no calendário.</span>
+            <button onClick="{{ goCal }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Ver calendário</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:20px;display:flex;flex-direction:column">
+            <sc-for list="{{ etrail }}" as="t" hint-placeholder-count="0">
+              <sc-if value="{{ t.isSlot }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:20px 32px minmax(0,1fr);gap:12px;height:24px">
+                  <span></span>
+                  <span style="position:relative;display:flex;justify-content:center;align-items:center"><span style="position:absolute;top:0;bottom:0;width:2px;background:var(--border)"></span><button onClick="{{ t.add }}" title="Adicionar etapa aqui" aria-label="Adicionar etapa aqui" style="position:relative;width:24px;height:24px;box-sizing:border-box;padding:0;border-radius:50%;border:2px solid var(--border);background:var(--surface);color:var(--blue);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="border-color:var(--blue);background:var(--blueSoft)"><i class="ph-bold ph-plus" style="font-size:12px"></i></button></span>
+                  <span></span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ t.isNew }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:20px 32px minmax(0,1fr);gap:12px;animation:riseIn .2s">
+                  <span></span>
+                  <span style="position:relative;display:flex;justify-content:center"><span style="position:absolute;top:0;bottom:0;width:2px;background:var(--border)"></span><span style="position:relative;margin-top:14px;width:32px;height:32px;box-sizing:border-box;border-radius:50%;border:2px dashed var(--blue);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--blue)"><i class="ph-bold ph-plus" style="font-size:14px"></i></span></span>
+                  <div style="padding:8px 0 12px;display:flex;align-items:center;gap:8px">
+                    <input autoFocus="{{ true }}" value="{{ newTitle }}" onChange="{{ setNewTitle }}" onKeyDown="{{ newKey }}" placeholder="Nome da etapa" style="flex:1;min-width:160px;height:44px;box-sizing:border-box;padding:0 12px;border-radius:12px;border:2px solid var(--blue);background:var(--surface);font:700 15px/1 Nunito,sans-serif;outline:0">
+                    <span style="display:flex;align-items:center;gap:2px;padding:2px;border-radius:999px;background:var(--s2)">
+                      <button onClick="{{ newMinus }}" aria-label="Menos 15 min" style="width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph-bold ph-minus" style="font-size:14px"></i></button>
+                      <b style="min-width:58px;text-align:center;font:600 16px/1 Fredoka,sans-serif;font-variant-numeric:tabular-nums">{{ newDurLabel }}</b>
+                      <button onClick="{{ newPlus }}" aria-label="Mais 15 min" style="width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph-bold ph-plus" style="font-size:14px"></i></button>
+                    </span>
+                    <button onClick="{{ confirmNew }}" style="height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer">Adicionar</button>
+                    <button onClick="{{ cancelNew }}" aria-label="Cancelar" style="width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph ph-x" style="font-size:20px"></i></button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ t.isRow }}" hint-placeholder-val="{{ false }}">
+                <div draggable="true" onDragStart="{{ t.dragStart }}" onDragOver="{{ t.dragOver }}" onDrop="{{ t.drop }}" onDragEnd="{{ t.dragEnd }}" onMouseEnter="{{ t.enter }}" onMouseLeave="{{ t.leave }}" style="display:grid;grid-template-columns:20px 32px minmax(0,1fr);gap:12px;border-radius:12px;background:{{ t.rowBg }};box-shadow:{{ t.dropLine }};opacity:{{ t.op }};transition:background .12s">
+                  <span onMouseDown="{{ t.grab }}" title="Arraste para reordenar" style="display:flex;justify-content:center;padding-top:20px;color:var(--tx2);cursor:grab"><i class="ph-bold ph-dots-six-vertical" style="font-size:18px"></i></span>
+                  <span style="position:relative;display:flex;justify-content:center"><span style="position:absolute;top:0;bottom:0;width:2px;background:{{ t.line }}"></span><button onClick="{{ t.toggle }}" aria-label="{{ t.toggleLabel }}" title="{{ t.toggleLabel }}" style="position:relative;margin-top:14px;width:32px;height:32px;box-sizing:border-box;padding:0;border-radius:50%;border:2px {{ t.ringStyle }} {{ t.ringColor }};background:{{ t.dotBg }};display:flex;align-items:center;justify-content:center;color:{{ t.dotTx }};cursor:pointer" style-hover="border-color:var(--pri)"><i class="{{ t.icon }}" style="font-size:14px"></i></button></span>
+                  <div style="padding:12px 8px 12px 0;display:flex;align-items:center;gap:12px;min-width:0">
+                    <sc-if value="{{ t.notConfirming }}" hint-placeholder-val="{{ true }}">
+                      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                        <input value="{{ t.title }}" onChange="{{ t.setTitle }}" aria-label="Título da etapa" style="width:100%;box-sizing:border-box;margin-left:-8px;padding:2px 6px;border-radius:8px;border:2px solid transparent;background:transparent;font:600 18px/24px Fredoka,sans-serif;color:{{ t.titleColor }};outline:0" style-hover="border-color:var(--border)" style-focus="border-color:var(--blue);background:var(--surface)">
+                        <span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ t.meta }}</span>
+                      </div>
+                      <span style="flex:none;display:flex;align-items:center;gap:2px;padding:2px;border-radius:999px;background:var(--s2)">
+                        <button onClick="{{ t.minus }}" aria-label="Menos 15 min" style="width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph-bold ph-minus" style="font-size:14px"></i></button>
+                        <b style="min-width:58px;text-align:center;font:600 16px/1 Fredoka,sans-serif;font-variant-numeric:tabular-nums">{{ t.durLabel }}</b>
+                        <button onClick="{{ t.plus }}" aria-label="Mais 15 min" style="width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph-bold ph-plus" style="font-size:14px"></i></button>
+                      </span>
+                      <button onClick="{{ t.askDel }}" aria-label="Excluir etapa" title="Excluir etapa" style="flex:none;width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:{{ t.trashOp }};transition:opacity .12s" style-hover="background:var(--s2);color:var(--danger)"><i class="ph ph-trash" style="font-size:20px"></i></button>
+                    </sc-if>
+                    <sc-if value="{{ t.confirming }}" hint-placeholder-val="{{ false }}">
+                      <div style="flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:8px 8px 8px 14px;border-radius:12px;border:1px solid var(--danger);background:var(--surface);animation:riseIn .2s">
+                        <span style="flex:1;min-width:0;font:700 15px/20px Nunito,sans-serif">Excluir “{{ t.title }}”?</span>
+                        <button onClick="{{ t.cancelDel }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Manter</button>
+                        <button onClick="{{ t.doDel }}" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--danger);color:#FFFFFF;font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px"><i class="ph-bold ph-trash" style="font-size:14px"></i>Excluir</button>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-for>
+            <div style="display:grid;grid-template-columns:20px 32px minmax(0,1fr);gap:12px"><span></span><span style="display:flex;justify-content:center"><span style="margin-top:2px;width:32px;height:32px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--tx2)"><i class="ph-fill ph-flag-checkered" style="font-size:16px"></i></span></span><div style="padding-top:6px;font:700 15px/20px Nunito,sans-serif">{{ det.kind }} · {{ det.deadlineLabel }}</div></div>
+            <sc-if value="{{ showAddEnd }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ addEnd }}" style="margin-top:16px;align-self:flex-start;height:44px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-plus" style="font-size:16px"></i>Adicionar etapa</button>
+            </sc-if>
+            <span style="margin-top:12px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">Clique no círculo pra marcar ou desmarcar, no título ou no tempo pra editar. Arraste pelo <i class="ph-bold ph-dots-six-vertical" style="font-size:12px;vertical-align:-1px"></i> pra reordenar.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:20px;display:flex;flex-direction:column">
+          <sc-for list="{{ trail }}" as="t" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:16px">
+              <span style="position:relative;display:flex;justify-content:center"><span style="position:absolute;top:0;bottom:0;width:2px;background:{{ t.line }}"></span><span style="position:relative;margin-top:14px;width:32px;height:32px;box-sizing:border-box;border-radius:50%;border:2px {{ t.ringStyle }} {{ t.ringColor }};background:{{ t.dotBg }};display:flex;align-items:center;justify-content:center;color:{{ t.dotTx }}"><i class="{{ t.icon }}" style="font-size:14px"></i></span></span>
+              <div style="padding:12px 0 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                  <b style="font:600 18px/24px Fredoka,sans-serif;color:{{ t.titleColor }};text-decoration:{{ t.deco }}">{{ t.title }}</b>
+                  <span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ t.meta }}</span>
+                  <sc-if value="{{ t.isPartial }}" hint-placeholder-val="{{ false }}"><span style="margin-top:4px;width:200px;height:6px;border-radius:999px;background:var(--s2);overflow:hidden"><span style="display:block;height:100%;width:{{ t.partialPct }}%;background:var(--fill)"></span></span></sc-if>
+                </div>
+                <sc-if value="{{ t.hasPill }}" hint-placeholder-val="{{ false }}"><span style="flex:none;padding:3px 9px;border-radius:999px;background:{{ t.pillBg }};color:{{ t.pillTx }};font:800 12px/16px Nunito,sans-serif">{{ t.pill }}</span></sc-if>
+              </div>
+            </div>
+          </sc-for>
+          <div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:16px"><span style="display:flex;justify-content:center"><span style="margin-top:2px;width:32px;height:32px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--tx2)"><i class="ph-fill ph-flag-checkered" style="font-size:16px"></i></span></span><div style="padding-top:6px;font:700 15px/20px Nunito,sans-serif">{{ det.kind }} · {{ det.deadlineLabel }}</div></div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  state = { editing: false, draftOid: null, draft: [], confirmDel: null, addAt: null, newTitle: '', newDur: 30, hover: null, dragId: null, overId: null, saved: false };
+  componentDidMount() { this.mu = () => { this.grabbing = false; }; window.addEventListener('mouseup', this.mu); }
+  componentWillUnmount() { window.removeEventListener('mouseup', this.mu); clearTimeout(this.sT); }
+  fmt(m) { const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h${String(r).padStart(2, '0')}` : `${h}h`) : `${r} min`; }
+  upd(id, f) { this.setState(x => ({ draft: x.draft.map(e => e.id === id ? f(e) : e) })); }
+  insertNew() {
+    const st = this.state; const t = st.newTitle.trim(); if (!t) return;
+    const e = { id: st.draftOid + '-n' + Date.now(), title: t, dur: st.newDur, done: false, partial: 0 };
+    const d = [...st.draft]; d.splice(st.addAt, 0, e);
+    this.setState({ draft: d, addAt: null, newTitle: '', newDur: 30 });
+  }
+  editVals(o, d, u) {
+    const st = this.state;
+    const firstPend = st.draft.find(e => !e.done);
+    const list = [];
+    const slot = i => ({ isSlot: true, add: () => this.setState({ addAt: i, newTitle: '', newDur: 30, confirmDel: null }) });
+    const newRow = { isNew: true };
+    st.draft.forEach((e, i) => {
+      if (st.addAt === i) list.push(newRow); else if (i > 0) list.push(slot(i));
+      const bs = d.blocks.filter(b => b.eid === e.id && !b.done).sort((x, y) => x.day - y.day || x.start - y.start);
+      const isNext = firstPend && e.id === firstPend.id;
+      const done = !!e.done;
+      const over = st.overId === e.id && st.dragId && st.dragId !== e.id;
+      list.push({
+        isRow: true, title: e.title, durLabel: this.fmt(e.dur),
+        meta: done ? 'Concluída' : bs.length ? bs.map(b => `${b.dayLabel} ${u.hm(b.start)}`).join(' + ') : 'Novo horário ao salvar',
+        icon: done ? 'ph-bold ph-check' : e.partial ? 'ph-bold ph-circle-half' : isNext ? 'ph-fill ph-play' : 'ph ph-clock',
+        dotBg: done ? 'var(--priSoft)' : isNext ? 'var(--pri)' : 'var(--surface)', dotTx: done ? 'var(--pri)' : isNext ? 'var(--priTx)' : 'var(--tx2)',
+        ringColor: done ? 'var(--priSoft)' : isNext ? 'var(--pri)' : 'var(--border)', ringStyle: done || isNext ? 'solid' : 'dashed',
+        line: done ? 'var(--fill)' : 'var(--border)', titleColor: done ? 'var(--tx2)' : 'var(--tx)',
+        toggleLabel: done ? 'Marcar como pendente' : 'Marcar como concluída',
+        toggle: () => this.upd(e.id, x => ({ ...x, done: !x.done, partial: 0 })),
+        setTitle: ev => { const v = ev.target.value; this.upd(e.id, x => ({ ...x, title: v })); },
+        minus: () => this.upd(e.id, x => ({ ...x, dur: Math.max(15, x.dur - 15) })),
+        plus: () => this.upd(e.id, x => ({ ...x, dur: Math.min(240, x.dur + 15) })),
+        trashOp: st.hover === e.id ? 1 : 0,
+        confirming: st.confirmDel === e.id, notConfirming: st.confirmDel !== e.id,
+        askDel: () => this.setState({ confirmDel: e.id }), cancelDel: () => this.setState({ confirmDel: null }),
+        doDel: () => this.setState(x => ({ draft: x.draft.filter(y => y.id !== e.id), confirmDel: null })),
+        enter: () => this.setState({ hover: e.id }), leave: () => this.setState(x => x.hover === e.id ? { hover: null } : null),
+        rowBg: over ? 'var(--priSoft)' : 'transparent', dropLine: over ? 'inset 0 0 0 2px var(--pri)' : 'none', op: st.dragId === e.id ? .4 : 1,
+        grab: () => { this.grabbing = true; },
+        dragStart: ev => { if (!this.grabbing) { ev.preventDefault(); return; } ev.dataTransfer.effectAllowed = 'move'; try { ev.dataTransfer.setData('text/plain', e.id); } catch (_) {} this.setState({ dragId: e.id, confirmDel: null, addAt: null }); },
+        dragOver: ev => { if (!this.state.dragId) return; ev.preventDefault(); if (this.state.overId !== e.id) this.setState({ overId: e.id }); },
+        drop: ev => {
+          ev.preventDefault(); const from = this.state.draft.findIndex(y => y.id === this.state.dragId); const to = this.state.draft.findIndex(y => y.id === e.id);
+          if (from < 0 || to < 0 || from === to) { this.setState({ dragId: null, overId: null }); return; }
+          const dd = [...this.state.draft]; const [it] = dd.splice(from, 1); dd.splice(to, 0, it);
+          this.setState({ draft: dd, dragId: null, overId: null });
+        },
+        dragEnd: () => { this.grabbing = false; this.setState({ dragId: null, overId: null }); }
+      });
+    });
+    if (st.addAt === st.draft.length) list.push(newRow);
+    return list;
+  }
+  ring(frac, color) {
+    const C = 402;
+    return React.createElement('svg', { viewBox: '0 0 148 148', width: 180, height: 180, style: { transform: 'rotate(-90deg)', display: 'block' } },
+      React.createElement('circle', { cx: 74, cy: 74, r: 64, fill: 'none', stroke: 'var(--s2)', strokeWidth: 10 }),
+      React.createElement('circle', { cx: 74, cy: 74, r: 64, fill: 'none', stroke: color, strokeWidth: 10, strokeLinecap: 'round', strokeDasharray: C, strokeDashoffset: C * (1 - frac), style: { transition: 'stroke-dashoffset .6s' } }));
+  }
+  renderVals() {
+    const app = this.props.app || { s: {}, a: {}, u: {}, d: { objs: [], blocks: [] } };
+    const { s, a, u, d } = app;
+    const nextOf = o => d.blocks.filter(b => b.oid === o.id && !b.done).sort((x, y) => x.day - y.day || x.start - y.start)[0];
+    const list = d.objs.map(o => { const nb = nextOf(o); return { name: o.name, color: o.color, ink: o.ink, pct: o.pct, kindLabel: `${o.kind} · ${o.deadlineLabel}`, nextLine: nb ? `Próxima: ${nb.title} · ${nb.dayLabel.toLowerCase()} às ${u.hm(nb.start)}` : o.doneAll ? 'Tudo pronto' : 'Sem etapas agendadas', folgaLine: o.doneAll ? 'Entregue com folga' : o.late ? `Não cabe até ${o.deadlineLabel}` : o.folgaLabel.replace(/^f/, 'F'), icon: o.late ? 'ph-bold ph-warning-circle' : 'ph-bold ph-check-circle', iconColor: o.late ? 'var(--danger)' : 'var(--pri)', open: () => a.nav('objetivo', o.id) }; });
+    const o = s.page === 'objetivo' ? (d.objs.find(x => x.id === s.objId) || d.objs[0]) : null;
+    let det = {}, trail = [], mini = [], ring = null;
+    if (o) {
+      const nb = nextOf(o);
+      const doneCount = o.etapas.filter(e => e.done).length;
+      det = { name: o.name, color: o.color, ink: o.ink, pct: o.pct, kind: o.kind, kindLabel: `${o.kind} · ${o.deadlineLabel}`, deadlineLabel: o.deadlineLabel, deadlineWd: u.wdf(o.deadline), folgaShort: o.doneAll ? 'Entregue' : o.late ? 'Não cabe' : o.folga === 0 ? '0 dia' : `${String(o.folga).replace('.', ',')} ${o.folga > 1 ? 'dias' : 'dia'}`, folgaColor: o.late ? 'var(--danger)' : 'var(--tx)', totalLabel: o.totalLabel, doneLabel: `${doneCount} de ${o.etapas.length} etapas`, trailCount: `${doneCount}/${o.etapas.length} concluídas`, hasNext: !!nb, start: () => nb && a.startRampa(nb.eid) };
+      ring = this.ring(o.pct / 100, o.color);
+      const firstPend = o.etapas.find(e => !e.done);
+      trail = o.etapas.map((e, i) => {
+        const bs = d.blocks.filter(b => b.eid === e.id && !b.done).sort((x, y) => x.day - y.day || x.start - y.start);
+        const isNext = firstPend && e.id === firstPend.id;
+        const last = i === o.etapas.length - 1;
+        if (e.done) return { title: e.title, meta: `Concluída · ${u.dur(e.dur)}`, icon: 'ph-bold ph-check', dotBg: 'var(--priSoft)', dotTx: 'var(--pri)', ringColor: 'var(--priSoft)', ringStyle: 'solid', line: 'var(--fill)', titleColor: 'var(--tx2)', deco: 'none', hasPill: false, isPartial: false };
+        const when = bs.length ? bs.map(b => `${b.dayLabel} ${u.hm(b.start)}`).join(' + ') : 'Ainda sem horário';
+        return { title: e.title, meta: `${when} · ${u.dur(e.dur)}`, icon: e.partial ? 'ph-bold ph-circle-half' : isNext ? 'ph-fill ph-play' : 'ph ph-clock', dotBg: isNext ? 'var(--pri)' : 'var(--surface)', dotTx: isNext ? 'var(--priTx)' : 'var(--tx2)', ringColor: isNext ? 'var(--pri)' : 'var(--border)', ringStyle: isNext ? 'solid' : 'dashed', line: 'var(--border)', titleColor: 'var(--tx)', deco: 'none', hasPill: !!bs.length, pill: bs.length ? (bs[0].day === 0 ? `Hoje ${u.hm(bs[0].start)}` : bs[0].dayLabel) : '', pillBg: isNext ? 'var(--pri)' : 'var(--blueSoft)', pillTx: isNext ? 'var(--priTx)' : 'var(--blue)', isPartial: !!e.partial, partialPct: Math.round((e.partial || 0) * 100) };
+      });
+      mini = Array.from({ length: 35 }, (_, i) => {
+        const day = i - 14; const dt = new Date(2026, 10, 16 + day);
+        const has = d.blocks.some(b => b.oid === o.id && b.day === day);
+        const isDl = day === o.deadline, isToday = day === 0;
+        return { num: dt.getDate(), op: dt.getMonth() !== 10 ? .45 : 1, bg: isToday ? 'var(--pri)' : 'transparent', tx: isToday ? 'var(--priTx)' : 'var(--tx)', border: isDl ? o.color : 'transparent', dot: has ? o.color : 'transparent', tip: isDl ? `${o.kind} ${o.deadlineLabel}` : '' };
+      });
+    }
+    const st = this.state;
+    const editing = !!(o && st.editing && st.draftOid === o.id);
+    const draftDone = st.draft.filter(e => e.done).length;
+    return {
+      editing, notEditing: !editing, saved: !!(o && st.saved && st.draftOid === o.id && !editing),
+      trailCountLabel: editing ? `${draftDone}/${st.draft.length} concluídas` : det.trailCount,
+      etrail: editing ? this.editVals(o, d, u) : [],
+      startEdit: () => { clearTimeout(this.sT); this.setState({ editing: true, saved: false, draftOid: o.id, draft: o.etapas.map(e => ({ ...e })), confirmDel: null, addAt: null, hover: null }); },
+      cancelEdit: () => this.setState({ editing: false, draft: [], confirmDel: null, addAt: null }),
+      saveEdit: () => {
+        const draft = (st.addAt != null && st.newTitle.trim()) ? (() => { const dd = [...st.draft]; dd.splice(st.addAt, 0, { id: st.draftOid + '-n' + Date.now(), title: st.newTitle.trim(), dur: st.newDur, done: false, partial: 0 }); return dd; })() : st.draft;
+        a.updateEtapas(o.id, draft.filter(e => e.title.trim()).map(e => ({ ...e, title: e.title.trim() })));
+        this.setState({ editing: false, draft: [], confirmDel: null, addAt: null, saved: true });
+        clearTimeout(this.sT); this.sT = setTimeout(() => this.setState({ saved: false }), 6000);
+      },
+      newTitle: st.newTitle, setNewTitle: e => this.setState({ newTitle: e.target.value }),
+      newKey: e => { if (e.key === 'Enter') this.insertNew(); if (e.key === 'Escape') this.setState({ addAt: null }); },
+      newDurLabel: this.fmt(st.newDur), newMinus: () => this.setState(x => ({ newDur: Math.max(15, x.newDur - 15) })), newPlus: () => this.setState(x => ({ newDur: Math.min(240, x.newDur + 15) })),
+      confirmNew: () => this.insertNew(), cancelNew: () => this.setState({ addAt: null, newTitle: '' }),
+      showAddEnd: st.addAt !== st.draft.length, addEnd: () => this.setState({ addAt: st.draft.length, newTitle: '', newDur: 30, confirmDel: null }),
+      isList: s.page !== 'objetivo', isDetail: s.page === 'objetivo',
+      countLabel: `${d.objs.length} ativos`, list, novo: a.openNovo,
+      det, trail, mini, ring, miniHeads: ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+      back: () => a.nav('objetivos'), goCal: () => a.nav('calendario')
+    };
+  }
+}
+</script>
+</body>
+</html>

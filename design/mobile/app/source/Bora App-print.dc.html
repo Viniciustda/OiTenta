@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="omelette-print-source" content="v1794021657124293 Bora App.dc.html">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="./doc-page.js"></script>
+<style>
+doc-page:not(:defined) { visibility: hidden; }
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+* { animation-delay: -99s !important; animation-duration: .001s !important; animation-iteration-count: 1 !important; animation-fill-mode: both !important; animation-play-state: running !important; transition-duration: 0s !important; }
+body { margin: 0; font-family: 'Nunito', sans-serif; color: #0E1F1A; }
+</style>
+</helmet>
+
+<doc-page orientation="landscape">
+  <sc-for list="{{ pages }}" as="pg" hint-placeholder-count="11">
+    <section class="page" style="background: #F6FAF8; padding: 30px 34px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <div style="font: 600 20px/26px 'Fredoka', sans-serif; color: #0E1F1A;">Bora · protótipo mobile</div>
+        <div style="font: 800 12px/16px 'Nunito', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #4A5D57;">{{ pg.label }}</div>
+      </div>
+      <div style="display: flex; gap: 40px; justify-content: center;">
+        <sc-for list="{{ pg.screens }}" as="sc" hint-placeholder-count="3">
+          <div style="display: flex; flex-direction: column; gap: 8px; width: 296px;">
+            <div style="font: 800 12px/16px 'Nunito', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #4A5D57;">{{ sc.n }} · {{ sc.title }}</div>
+            <div style="zoom: .76; width: 390px; height: 844px;">
+              <dc-import name="Bora App" tela="{{ sc.tela }}" tema="{{ sc.tema }}" painel="{{ false }}" hint-size="390px,844px"></dc-import>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+</doc-page>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const S = [
+      ['hoje', 'Hoje'], ['checkin', 'Check-in de energia'], ['rampa', 'Rampa · escada'],
+      ['aquecer', 'Rampa · aquecimento'], ['desafio', 'Rampa · desafio mental'], ['micro', 'Rampa · micro-passo'],
+      ['foco', 'Sessão de foco'], ['ajuda', 'Pedir ajuda'], ['registro', 'Registro de progresso'],
+      ['celebra', 'Celebração'], ['pausa', 'Pausa'], ['mini', 'Mini-degrau'],
+      ['tarefas', 'Tarefas leves'], ['objetivos', 'Objetivos'], ['trilha', 'Trilha do objetivo'],
+      ['novo', 'Novo objetivo · chat'], ['analisando', 'Chat · IA analisando'], ['revisar', 'Chat · resposta'],
+      ['manual', 'Preencher à mão'], ['inviavel', 'Plano inviável'], ['semana', 'Calendário · semana'],
+      ['mes', 'Calendário · mês'], ['prazos', 'Calendário · prazos'], ['jardim', 'Jardim'],
+      ['perfil', 'Perfil'], ['rotina', 'Redefinir rotina'], ['idioma', 'Idioma'],
+      ['sugestao', 'Enviar sugestão'], ['hoje', 'Hoje · escuro', 'escuro'], ['foco', 'Foco · escuro', 'escuro'],
+      ['semana', 'Calendário · escuro', 'escuro'],
+    ].map(([tela, title, tema], i) => ({ tela, title, tema: tema || 'claro', n: String(i + 1).padStart(2, '0') }));
+    const pages = [];
+    for (let i = 0; i < S.length; i += 3) pages.push({ label: `Página ${pages.length + 1} de ${Math.ceil(S.length / 3)}`, screens: S.slice(i, i + 3) });
+    return { pages };
+  }
+}
+
+</script>
+</body>
+</html>

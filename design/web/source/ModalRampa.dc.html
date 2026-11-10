@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:fixed;inset:0;z-index:60;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:32px;box-sizing:border-box;animation:fadeIn .2s">
+  <div role="dialog" aria-label="Rampa até o foco" style="width:880px;max-width:100%;max-height:100%;overflow:auto;box-sizing:border-box;background:{{ cardBg }};border:1px solid var(--border);border-radius:24px;padding:24px 32px 32px;display:flex;flex-direction:column;gap:24px;animation:riseIn .3s cubic-bezier(.3,1.4,.5,1);transition:background .3s">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div>
+        <span style="display:flex;align-items:center;gap:8px;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:{{ oColor }}"></span>Rampa · {{ oShort }}</span>
+        <h2 style="margin:6px 0 0;font:600 28px/36px Fredoka,sans-serif">{{ title }}</h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div title="Acelera o tempo só na demo" style="display:flex;align-items:center;gap:8px"><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Demo</span>
+          <div style="display:flex;padding:3px;border-radius:999px;background:var(--s2);gap:2px">
+            <sc-for list="{{ speeds }}" as="sp" hint-placeholder-count="3"><button onClick="{{ sp.pick }}" style="height:30px;padding:0 10px;border-radius:999px;border:1px solid {{ sp.border }};background:{{ sp.bg }};color:var(--tx);font:800 12px/1 Nunito,sans-serif;cursor:pointer">{{ sp.label }}</button></sc-for>
+          </div>
+        </div>
+        <button onClick="{{ close }}" aria-label="Fechar" style="width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--s2)"><i class="ph ph-x" style="font-size:24px"></i></button>
+      </div>
+    </div>
+
+    <sc-if value="{{ showStepper }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="height:160px;display:flex;align-items:flex-end;gap:8px">
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+            <div style="flex:1;min-width:0;height:{{ s.h }}px;box-sizing:border-box;border-radius:16px 16px 8px 8px;padding:12px;background:{{ s.bg }};border:{{ s.border }};color:{{ s.color }};box-shadow:{{ s.shadow }};display:flex;flex-direction:column;gap:2px;transition:background .25s, color .25s">
+              <i class="{{ s.icon }}" style="font-size:22px;margin-bottom:4px"></i>
+              <span style="font:800 14px/18px Nunito,sans-serif">{{ s.name }}</span>
+              <span style="font:600 12px/16px Nunito,sans-serif;opacity:.85">{{ s.dur }}</span>
+              <span style="display:flex;align-items:center;gap:2px;font:600 12px/16px Fredoka,sans-serif"><i class="ph-fill ph-drop" style="font-size:12px;color:{{ s.drop }}"></i>+5</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font:700 14px/20px Nunito,sans-serif">{{ stepLabel }}</span>
+          <span style="display:flex;gap:2px">
+            <sc-if value="{{ canSwap }}" hint-placeholder-val="{{ true }}"><button onClick="{{ trocar }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-arrows-clockwise" style="font-size:16px"></i>Trocar</button></sc-if>
+            <button onClick="{{ pular }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)">Pular<i class="ph-bold ph-skip-forward" style="font-size:16px"></i></button>
+          </span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isRamp }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:{{ gridCols }};gap:32px;align-items:center;padding:8px 0">
+        <div style="display:flex;justify-content:center"><dc-import name="Broto" size="{{ brotoSize }}" mood="{{ mood }}" stage="{{ stage }}" hint-size="140px,140px"></dc-import></div>
+        <div style="display:flex;flex-direction:column;gap:20px;align-items:{{ align }}">
+          <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ stepKicker }}</span>
+          <p style="margin:0;font:600 28px/36px Fredoka,sans-serif;text-wrap:balance;text-align:{{ textAlign }}">{{ instruction }}</p>
+          <div style="position:relative;width:{{ ringSize }}px;height:{{ ringSize }}px">
+            {{ ring }}
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <b style="font:600 {{ timeSize }}px/1 Fredoka,sans-serif;font-variant-numeric:tabular-nums;color:var(--tx)">{{ timeLabel }}</b>
+              <span style="margin-top:6px;font:700 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ ringLabel }}</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <sc-if value="{{ isFoco }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ togglePause }}" style="height:52px;padding:0 24px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--border);cursor:pointer;display:flex;align-items:center;gap:8px" style-active="transform:translateY(3px);box-shadow:none"><i class="{{ pauseIcon }}" style="font-size:18px"></i>{{ pauseLabel }}</button>
+              <button onClick="{{ endFocus }}" style="height:44px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Terminar foco</button>
+            </sc-if>
+            <sc-if value="{{ isWarm }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ concluir }}" style="height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;gap:8px;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">Concluí o degrau<i class="ph-bold ph-check" style="font-size:16px"></i></button>
+            </sc-if>
+          </div>
+          <sc-if value="{{ showPausedHint }}" hint-placeholder-val="{{ false }}"><span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">Pausado. Quando voltar, eu te dou um mini-degrau de 2 min.</span></sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isRegistrar }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:20px;padding:8px 0 8px;text-align:center;animation:riseIn .3s">
+        <dc-import name="Broto" size="{{ 110 }}" stage="{{ stage }}" hint-size="110px,110px"></dc-import>
+        <p style="margin:0;max-width:560px;font:600 28px/36px Fredoka,sans-serif;text-wrap:balance">Quanto você avançou em “{{ title }}”?</p>
+        <div style="display:flex;gap:12px">
+          <button onClick="{{ regConclui }}" style="height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer;display:flex;align-items:center;gap:8px" style-active="transform:translateY(3px);box-shadow:none"><i class="ph-bold ph-check" style="font-size:16px"></i>Concluí</button>
+          <button onClick="{{ regParcial }}" style="height:52px;padding:0 24px;border-radius:999px;border:2px solid {{ parcialBorder }};background:{{ parcialBg }};color:var(--blue);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--border);cursor:pointer" style-active="transform:translateY(3px);box-shadow:none">Parcial</button>
+          <button onClick="{{ regNao }}" style="height:52px;padding:0 20px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 16px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Não rolou</button>
+        </div>
+        <sc-if value="{{ showParcial }}" hint-placeholder-val="{{ false }}">
+          <div style="width:420px;display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:16px;border:1px solid var(--border);background:var(--surface);animation:riseIn .2s">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font:800 14px/20px Nunito,sans-serif">Quanto foi?</b><b style="font:600 24px/1 Fredoka,sans-serif;color:var(--pri)">{{ pct }}%</b></div>
+            <div ref="{{ trackRef }}" onPointerDown="{{ trackDown }}" style="position:relative;height:28px;cursor:pointer;touch-action:none">
+              <div style="position:absolute;left:0;right:0;top:10px;height:8px;border-radius:999px;background:var(--s2)"></div>
+              <div style="position:absolute;left:0;top:10px;height:8px;width:{{ pct }}%;border-radius:999px;background:var(--fill)"></div>
+              <div style="position:absolute;top:0;left:calc({{ pct }}% - 14px);width:28px;height:28px;box-sizing:border-box;border-radius:50%;background:#FFFFFF;border:2px solid var(--pri);box-shadow:0 2px 0 var(--lip)"></div>
+            </div>
+            <button onClick="{{ confirmParcial }}" style="height:48px;border-radius:999px;border:2px solid var(--border);background:var(--surface);color:var(--blue);font:800 15px/1 Nunito,sans-serif;cursor:pointer">Registrar {{ pct }}% · +10 gotas</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCelebra }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0;text-align:center;animation:riseIn .35s cubic-bezier(.3,1.6,.5,1)">
+        <div style="position:relative">
+          <i class="ph-fill ph-drop" style="position:absolute;left:50%;top:-6px;margin-left:-10px;font-size:22px;color:var(--blueFill);animation:dropFall 1.2s ease-in forwards"></i>
+          <dc-import name="Broto" size="{{ 150 }}" mood="{{ celebraMood }}" stage="{{ stage }}" hint-size="150px,150px"></dc-import>
+        </div>
+        <span style="display:flex;align-items:center;gap:10px"><i class="ph-fill ph-drop" style="font-size:36px;color:var(--blueFill)"></i><b style="font:700 44px/52px Fredoka,sans-serif">{{ rewardTitle }}</b></span>
+        <span style="font:600 18px/26px Nunito,sans-serif">{{ rewardSub }}</span>
+        <span style="font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ rewardMeta }}</span>
+        <button onClick="{{ close }}" style="margin-top:16px;height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);font:800 16px/1 Nunito,sans-serif;box-shadow:0 3px 0 var(--lip);cursor:pointer" style-active="transform:translateY(3px);box-shadow:none">Voltar pro meu dia</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  trackRef = React.createRef();
+  state = this.init();
+  init() {
+    const e = this.props && this.props.app && this.props.app.s.energy;
+    const st0 = e === 'alta' ? 1 : 0;
+    return { step: st0, phase: 'ramp', rem: this.durOf(st0, e) * 60, speed: 1, paused: false, alt: false, pct: 50, showParcial: false, degraus: 0, focusMin: 0, focusElapsed: 0, result: null };
+  }
+  durOf(i, e) { return [e === 'baixa' ? 5 : 3, 2, 1, 25, 1][i]; }
+  componentDidMount() {
+    this.last = performance.now();
+    this.iv = setInterval(() => {
+      const now = performance.now(); const real = Math.min(5, (now - this.last) / 1000); this.last = now;
+      const st = this.state;
+      if (st.phase !== 'ramp' || st.paused || st.step > 3) return;
+      const dt = real * st.speed;
+      const rem = st.rem - dt;
+      if (st.step === 3) this.setState({ focusElapsed: st.focusElapsed + dt });
+      if (rem <= 0) { this.finishStep(true); } else this.setState({ rem });
+    }, 250);
+  }
+  componentWillUnmount() { clearInterval(this.iv); }
+  finishStep(earn) {
+    const app = this.props.app; const st = this.state;
+    if (earn) app.a.degrauDone();
+    if (st.step === 3) { const m = Math.max(1, Math.round(st.focusElapsed / 60)); app.a.focusDone(m); this.setState({ focusMin: m }); }
+    const next = st.step + 1;
+    if (next >= 4) { this.setState({ phase: 'registrar', step: 4, degraus: st.degraus + (earn ? 1 : 0) }); return; }
+    this.setState({ step: next, rem: this.durOf(next, app.s.energy) * 60, alt: false, degraus: st.degraus + (earn ? 1 : 0) });
+  }
+  ring(size, frac, color) {
+    const C = 402;
+    return React.createElement('svg', { viewBox: '0 0 148 148', width: size, height: size, style: { transform: 'rotate(-90deg)', display: 'block' } },
+      React.createElement('circle', { cx: 74, cy: 74, r: 64, fill: 'none', stroke: 'var(--ringTrack)', strokeWidth: 10 }),
+      React.createElement('circle', { cx: 74, cy: 74, r: 64, fill: 'none', stroke: color, strokeWidth: 10, strokeLinecap: 'round', strokeDasharray: C, strokeDashoffset: C * (1 - frac), style: { transition: 'stroke-dashoffset .25s linear' } }));
+  }
+  setPct(x) { const r = this.trackRef.current.getBoundingClientRect(); const v = Math.round(Math.max(5, Math.min(95, (x - r.left) / r.width * 100)) / 5) * 5; this.setState({ pct: v }); }
+  renderVals() {
+    const app = this.props.app || { s: {}, a: {}, d: { blocks: [], objs: [], omap: {} } };
+    const { s, a, d } = app; const st = this.state;
+    const o = d.objs.find(x => x.etapas.some(e => e.id === s.rampaEid)) || d.objs[0] || {};
+    const etapa = (o.etapas || []).find(e => e.id === s.rampaEid) || { title: '' };
+    const N = [['Aquecer', 'person-simple-walk'], ['Desafio', 'calculator'], ['Micro-passo', 'footprints'], ['Foco', 'timer'], ['Registrar', 'check-circle']];
+    const steps = N.map(([name, ic], i) => {
+      const done = i < st.step, cur = i === st.step && st.phase !== 'celebra', fut = !done && !cur;
+      return { name, dur: `${this.durOf(i, s.energy)} min`, h: 104 + i * 14, icon: done ? 'ph-bold ph-check' : cur ? 'ph-fill ph-' + ic : 'ph ph-' + ic, bg: cur ? 'var(--pri)' : done ? 'var(--priSoft)' : 'var(--surface)', color: cur ? 'var(--priTx)' : done ? 'var(--pri)' : 'var(--tx)', border: fut ? '1px solid var(--border)' : '1px solid transparent', shadow: cur ? '0 3px 0 var(--lip)' : 'none', drop: fut ? 'var(--blueFill)' : 'currentColor' };
+    });
+    const ch = { eng: 'Em uma frase: quem usa o sistema e pra quê?', calc: 'Derive x·eˣ de cabeça. Vale chutar.', port: 'Qual projeto te deixa mais orgulhoso? Por quê?' }[o.id] || 'Pra 10 itens, quem ganha: Bubble ou Merge? Chuta.';
+    const texts = [
+      ['Levanta, bebe uma água e abre o material de ' + o.short + '.', 'Arruma a mesa e deixa só o que vai usar.'],
+      [ch, 'Explica o tema em voz alta, como se fosse pra um amigo.'],
+      [`Abra o arquivo e escreva só o título: “${etapa.title}”.`, 'Escreve três tópicos do que vai fazer. Só tópicos.'],
+      [`Foco em: ${etapa.title}`, `Foco em: ${etapa.title}`]
+    ];
+    const i = Math.min(st.step, 3);
+    const total = this.durOf(i, s.energy) * 60;
+    const isFoco = st.step === 3 && st.phase === 'ramp';
+    const rem = Math.max(0, Math.ceil(st.rem));
+    const ringSize = isFoco ? 260 : 148;
+    const lastDrops = st.result === 'parcial' ? 10 : 20;
+    return {
+      cardBg: isFoco ? 'var(--focusBg)' : 'var(--surface)',
+      oColor: o.color, oShort: o.short, title: etapa.title,
+      speeds: [1, 10, 60].map(v => ({ label: `${v}×`, bg: st.speed === v ? 'var(--surface)' : 'transparent', border: st.speed === v ? 'var(--border)' : 'transparent', pick: () => this.setState({ speed: v }) })),
+      close: a.closeModal,
+      showStepper: st.phase !== 'celebra', steps,
+      stepLabel: st.phase === 'ramp' ? `Degrau ${st.step + 1} de 5 · ${N[st.step][0]}` : 'Degrau 5 de 5 · Registrar',
+      canSwap: st.phase === 'ramp' && st.step < 3,
+      trocar: () => this.setState(x => ({ alt: !x.alt })),
+      pular: () => { if (st.phase !== 'ramp') return; this.finishStep(false); },
+      isRamp: st.phase === 'ramp', isFoco, isWarm: st.phase === 'ramp' && st.step < 3,
+      gridCols: isFoco ? '200px minmax(0,1fr)' : '180px minmax(0,1fr)', align: isFoco ? 'center' : 'flex-start', textAlign: isFoco ? 'center' : 'left',
+      brotoSize: isFoco ? 160 : 140, mood: ['ok', 'animado', 'ok', 'focado'][i], stage: d.stage,
+      stepKicker: isFoco ? 'Sessão de foco' : `${N[i][0]} · ${this.durOf(i, s.energy)} min`,
+      instruction: texts[i][st.alt ? 1 : 0],
+      ring: this.ring(ringSize, 1 - rem / total, isFoco ? 'var(--blueFill)' : 'var(--fill)'), ringSize,
+      timeLabel: `${String(Math.floor(rem / 60)).padStart(2, '0')}:${String(rem % 60).padStart(2, '0')}`, timeSize: isFoco ? 64 : 36,
+      ringLabel: isFoco ? (st.paused ? 'pausado' : 'foco') : 'aquecimento',
+      togglePause: () => this.setState(x => ({ paused: !x.paused })), pauseLabel: st.paused ? 'Continuar' : 'Pausar', pauseIcon: st.paused ? 'ph-fill ph-play' : 'ph-bold ph-pause', showPausedHint: isFoco && st.paused,
+      endFocus: () => this.finishStep(true),
+      concluir: () => this.finishStep(true),
+      isRegistrar: st.phase === 'registrar',
+      regConclui: () => { a.registrar(s.rampaEid, 'concluí'); this.setState({ phase: 'celebra', result: 'concluí' }); },
+      regParcial: () => this.setState(x => ({ showParcial: !x.showParcial })), showParcial: st.showParcial, parcialBg: st.showParcial ? 'var(--s2)' : 'var(--surface)', parcialBorder: st.showParcial ? 'var(--pri)' : 'var(--border)',
+      pct: st.pct, trackRef: this.trackRef,
+      trackDown: e => { this.setPct(e.clientX); const mv = ev => this.setPct(ev.clientX); const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); }; window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); },
+      confirmParcial: () => { a.registrar(s.rampaEid, 'parcial', st.pct); this.setState({ phase: 'celebra', result: 'parcial' }); },
+      regNao: () => { a.registrar(s.rampaEid, 'nao'); a.closeModal(); },
+      isCelebra: st.phase === 'celebra', celebraMood: 'comemorando',
+      rewardTitle: `+${lastDrops} gotas`,
+      rewardSub: st.result === 'parcial' ? `${st.pct}% de “${etapa.title}” registrado` : `“${etapa.title}” concluída`,
+      rewardMeta: `+${st.degraus * 5} gotas da rampa · +${st.focusMin} XP de foco · ${o.short} agora em ${o.pct}%`
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;flex-direction:column;gap:12px;user-select:none">
+  <div style="display:grid;grid-template-columns:44px repeat(7,minmax(0,1fr));gap:4px">
+    <span></span>
+    <sc-for list="{{ heads }}" as="h" hint-placeholder-count="7"><span style="text-align:center;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">{{ h }}</span></sc-for>
+  </div>
+  <div onMouseLeave="{{ endDrag }}" style="display:grid;grid-template-columns:44px repeat(7,minmax(0,1fr));gap:4px">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ hours }}" as="hr" hint-placeholder-count="15"><span style="height:{{ cellH }}px;display:flex;align-items:center;font:600 12px/1 Nunito,sans-serif;color:var(--tx2)">{{ hr }}</span></sc-for>
+    </div>
+    <sc-for list="{{ cols }}" as="c" hint-placeholder-count="7">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ c.cells }}" as="x" hint-placeholder-count="15">
+          <div onMouseDown="{{ x.down }}" onMouseEnter="{{ x.enter }}" title="{{ x.title }}" style="height:{{ cellH }}px;box-sizing:border-box;border-radius:6px;border:1px solid {{ x.border }};background:{{ x.bg }};cursor:{{ x.cursor }};display:flex;align-items:center;padding:0 6px;font:700 12px/1 Nunito,sans-serif;color:var(--tx2);overflow:hidden;white-space:nowrap;transition:background .08s">{{ x.label }}</div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div style="display:flex;gap:16px;font:700 12px/16px Nunito,sans-serif;color:var(--tx2)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:4px;background:var(--priSoft);border:1px solid var(--pri)"></span>Livre · {{ total }}</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:4px;border:1px solid var(--border);background:repeating-linear-gradient(135deg, var(--hatch) 0 2px, transparent 2px 6px)"></span>Aula e estágio</span>
+    </div>
+    <div style="display:flex;gap:4px">
+      <button onClick="{{ clear }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-eraser" style="font-size:16px"></i>Limpar</button>
+      <button onClick="{{ suggest }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-sparkle" style="font-size:16px"></i>Usar sugestão do Broto</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:640,&quot;height&quot;:560},&quot;avail&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;number[][]&quot;},&quot;onChange&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(av:number[][])=&gt;void&quot;},&quot;cellH&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:28,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.up = () => { this.drag = null; }; window.addEventListener('mouseup', this.up); }
+  componentWillUnmount() { window.removeEventListener('mouseup', this.up); }
+  busy(d, h) { if (d > 4) return null; if (h >= 8 && h < 12) return 'Aula'; if (h >= 13 && h < 18) return 'Estágio'; return null; }
+  set(d, h, on) {
+    const av = (this.props.avail || [[], [], [], [], [], [], []]).map(a => [...a]);
+    const has = av[d].includes(h);
+    if (on && !has) av[d].push(h); else if (!on && has) av[d] = av[d].filter(x => x !== h); else return;
+    this.props.onChange && this.props.onChange(av);
+  }
+  renderVals() {
+    const av = this.props.avail || [[], [], [], [], [], [], []];
+    const cellH = +(this.props.cellH ?? 28);
+    const H = Array.from({ length: 15 }, (_, i) => 8 + i);
+    const cols = [0, 1, 2, 3, 4, 5, 6].map(d => ({
+      cells: H.map(h => {
+        const b = this.busy(d, h); const on = av[d].includes(h);
+        const firstBusy = b && this.busy(d, h - 1) !== b;
+        return {
+          label: firstBusy ? b : '', title: b ? `${b} · ocupado` : `${h}h–${h + 1}h`,
+          bg: b ? 'repeating-linear-gradient(135deg, var(--hatch) 0 2px, transparent 2px 8px)' : on ? 'var(--priSoft)' : 'var(--surface)',
+          border: b ? 'var(--border)' : on ? 'var(--pri)' : 'var(--border)',
+          cursor: b ? 'not-allowed' : 'pointer',
+          down: e => { if (b) return; e.preventDefault(); this.drag = { on: !on }; this.set(d, h, !on); },
+          enter: () => { if (b || !this.drag) return; this.set(d, h, this.drag.on); }
+        };
+      })
+    }));
+    const total = av.reduce((a, x) => a + x.length, 0);
+    return {
+      cellH, cols, heads: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], hours: H.map(h => `${String(h).padStart(2, '0')}h`),
+      total: `${total}h por semana`, endDrag: () => { this.drag = null; },
+      clear: () => this.props.onChange && this.props.onChange([[], [], [], [], [], [], []]),
+      suggest: () => this.props.onChange && this.props.onChange([[20, 21, 22], [20, 21, 22], [20, 21, 22], [20, 21, 22], [20, 21, 22], [9, 10, 11, 14, 15, 16, 17], [14, 15, 16]])
+    };
+  }
+}
+</script>
+</body>
+</html>

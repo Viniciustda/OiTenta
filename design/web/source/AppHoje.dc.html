@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="padding:40px 48px 64px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:40px;align-items:start;max-width:1200px;box-sizing:border-box">
+  <div style="display:flex;flex-direction:column;gap:32px;min-width:0">
+    <div>
+      <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Segunda, 16 de novembro · 19:40</span>
+      <h1 style="margin:8px 0 0;font:600 40px/48px Fredoka,sans-serif">Boa noite, Arthur</h1>
+      <p style="margin:8px 0 0;font:400 18px/28px Nunito,sans-serif;color:var(--tx2)">{{ summary }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:560px">
+      <span style="display:flex;align-items:center;gap:8px;font:700 14px/20px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:{{ nextColor }}"></span>{{ nextLine }}</span>
+      <button onClick="{{ start }}" style="padding:14px 22px 14px 14px;display:flex;align-items:center;gap:14px;border:0;border-radius:999px;background:var(--pri);color:var(--priTx);box-shadow:0 3px 0 var(--lip);cursor:pointer;text-align:left;transition:transform .08s, box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">
+        <span style="width:48px;height:48px;flex:none;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center"><i class="ph-fill ph-play" style="font-size:22px"></i></span>
+        <span style="flex:1;display:flex;flex-direction:column"><b style="font:800 20px/26px Nunito,sans-serif">Vamos começar?</b><span style="font:600 14px/20px Nunito,sans-serif;opacity:.9">{{ heroSub }}</span></span>
+        <i class="ph-bold ph-arrow-right" style="font-size:22px"></i>
+      </button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Seu dia</span><button onClick="{{ goCal }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:var(--blueSoft)"><i class="ph-bold ph-calendar-blank" style="font-size:16px"></i>Ver semana</button></div>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:56px 24px minmax(0,1fr);gap:8px;min-height:{{ t.minH }}px">
+            <span style="padding-top:{{ t.padTop }}px;font:700 13px/16px Nunito,sans-serif;color:{{ t.timeColor }};font-variant-numeric:tabular-nums">{{ t.time }}</span>
+            <span style="position:relative;display:flex;justify-content:center"><span style="position:absolute;top:0;bottom:0;width:2px;background:var(--border)"></span><span style="position:relative;margin-top:{{ t.dotTop }}px;width:{{ t.dotSize }}px;height:{{ t.dotSize }}px;border-radius:50%;background:{{ t.dot }};border:2px solid var(--bg)"></span></span>
+            <div style="padding-bottom:12px;min-width:0">
+              <sc-if value="{{ t.isBusy }}" hint-placeholder-val="{{ false }}">
+                <div style="height:40px;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;border:1px solid var(--border);background:repeating-linear-gradient(135deg, var(--hatch) 0 2px, transparent 2px 8px);font:700 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ t.label }} <span style="font-weight:600">· {{ t.range }}</span></div>
+              </sc-if>
+              <sc-if value="{{ t.isNow }}" hint-placeholder-val="{{ false }}">
+                <div style="height:24px;display:flex;align-items:center;gap:8px;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--blue)">Agora<span style="flex:1;height:2px;background:var(--blue);opacity:.35"></span></div>
+              </sc-if>
+              <sc-if value="{{ t.isBlock }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ t.open }}" style="width:100%;text-align:left;cursor:pointer;background:var(--surface);border:{{ t.border }};border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);color:var(--tx)" style-hover="border-color:var(--pri)">
+                  <span style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="display:flex;align-items:center;gap:6px;font:700 13px/16px Nunito,sans-serif;color:var(--tx2)"><span style="width:8px;height:8px;border-radius:50%;background:{{ t.color }}"></span>{{ t.oShort }}</span><span style="display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:{{ t.pillBg }};color:{{ t.pillTx }};font:800 12px/16px Nunito,sans-serif"><i class="{{ t.pillIcon }}" style="font-size:12px"></i>{{ t.pill }}</span></span>
+                  <span style="font:600 18px/24px Fredoka,sans-serif;color:{{ t.titleColor }}">{{ t.title }}</span>
+                  <span style="display:flex;gap:14px;font:700 13px/16px Nunito,sans-serif;color:var(--tx2)"><span style="display:flex;align-items:center;gap:4px"><i class="ph ph-clock" style="font-size:16px"></i>{{ t.durLabel }}</span><span style="display:flex;align-items:center;gap:4px"><i class="ph-fill ph-drop" style="font-size:15px;color:var(--blueFill)"></i>+20</span></span>
+                </button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ lowEnergy }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px;animation:riseIn .3s">
+        <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Pra energia baixa</span>
+        <sc-for list="{{ leves }}" as="l" hint-placeholder-count="2">
+          <button onClick="{{ l.toggle }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:left;cursor:pointer;color:var(--tx)">
+            <span style="width:26px;height:26px;box-sizing:border-box;flex:none;border-radius:50%;border:2px solid {{ l.boxBorder }};background:{{ l.boxBg }};display:flex;align-items:center;justify-content:center;color:var(--priTx)"><i class="ph-bold ph-check" style="font-size:14px;opacity:{{ l.op }}"></i></span>
+            <span style="flex:1;display:flex;flex-direction:column"><b style="font:700 15px/20px Nunito,sans-serif;text-decoration:{{ l.deco }};color:{{ l.nameColor }}">{{ l.name }}</b><span style="font:600 12px/16px Nunito,sans-serif;color:var(--tx2)">{{ l.meta }}</span></span>
+            <span style="display:flex;align-items:center;gap:3px;font:600 14px/1 Fredoka,sans-serif"><i class="ph-fill ph-drop" style="font-size:14px;color:var(--blueFill)"></i>+3</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)">
+      <div style="display:flex;align-items:center;gap:14px"><dc-import name="Broto" size="{{ 72 }}" mood="{{ mood }}" hint-size="72px,72px"></dc-import><div><h3 style="margin:0;font:600 20px/26px Fredoka,sans-serif">Como está sua energia?</h3><p style="margin:4px 0 0;font:600 14px/20px Nunito,sans-serif;color:var(--tx2)">{{ energyMsg }}</p></div></div>
+      <div style="display:flex;gap:8px">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3">
+          <button onClick="{{ c.pick }}" style="flex:1;height:44px;padding:0 12px 0 10px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;border:2px solid {{ c.border }};background:{{ c.bg }};color:var(--tx);font:800 15px/1 Nunito,sans-serif;cursor:pointer"><i class="{{ c.icon }}" style="font-size:20px"></i>{{ c.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Folga por objetivo</span>
+      <sc-for list="{{ goals }}" as="g" hint-placeholder-count="3">
+        <button onClick="{{ g.open }}" style="text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;color:var(--tx);box-shadow:var(--shadow)" style-hover="border-color:var(--pri)">
+          <span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><b style="font:800 14px/20px Nunito,sans-serif">{{ g.name }}</b><b style="font:600 18px/1 Fredoka,sans-serif;color:{{ g.ink }}">{{ g.pct }}%</b></span>
+          <span style="height:10px;border-radius:999px;background:var(--s2);overflow:hidden"><span style="display:block;height:100%;width:{{ g.pct }}%;background:{{ g.color }};border-radius:999px;transition:width .5s"></span></span>
+          <span style="display:flex;align-items:center;gap:6px;font:600 12px/16px Nunito,sans-serif;color:var(--tx2)"><i class="{{ g.icon }}" style="font-size:14px;color:{{ g.iconColor }}"></i>{{ g.meta }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)">Conquistas recentes</span><button onClick="{{ goJardim }}" style="height:36px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--blue);font:800 14px/1 Nunito,sans-serif;cursor:pointer" style-hover="background:var(--blueSoft)">Ver jardim</button></div>
+      <sc-for list="{{ badges }}" as="b" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="width:56px;height:56px;flex:none;box-sizing:border-box;border-radius:50%;border:2px {{ b.bStyle }} {{ b.bColor }};background:{{ b.bg }};display:flex;align-items:center;justify-content:center;color:{{ b.ic }}"><i class="{{ b.icon }}" style="font-size:26px"></i></span>
+          <span style="display:flex;flex-direction:column"><b style="font:600 16px/20px Fredoka,sans-serif;color:{{ b.nameColor }}">{{ b.name }}</b><span style="font:600 12px/16px Nunito,sans-serif;color:{{ b.subColor }}">{{ b.sub }}</span></span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const app = this.props.app || { s: {}, a: {}, u: {}, d: { objs: [], blocks: [] } };
+    const { s, a, u, d } = app;
+    const today = (d.blocks || []).filter(b => b.day === 0).sort((x, y) => x.start - y.start);
+    const pend = today.filter(b => !b.done);
+    const next = pend[0] || d.next;
+    const items = [
+      { k: 'busy', start: 480, label: 'Aula', range: '08:00–12:00' },
+      { k: 'busy', start: 780, label: 'Estágio', range: '13:00–18:00' },
+      { k: 'now', start: u.NOW || 1180 },
+      ...today.map(b => ({ k: 'block', start: b.start, b }))
+    ].sort((x, y) => x.start - y.start || (x.k === 'now' ? -1 : 1));
+    const timeline = items.map(it => {
+      const base = { time: u.hm ? u.hm(it.start) : '', isBusy: it.k === 'busy', isNow: it.k === 'now', isBlock: it.k === 'block', minH: it.k === 'now' ? 36 : it.k === 'busy' ? 52 : 140, padTop: it.k === 'block' ? 16 : it.k === 'now' ? 4 : 12, dotTop: it.k === 'block' ? 18 : it.k === 'now' ? 6 : 14, dotSize: it.k === 'now' ? 12 : 10, timeColor: it.k === 'now' ? 'var(--blue)' : 'var(--tx2)', dot: it.k === 'now' ? 'var(--blueFill)' : it.k === 'busy' ? 'var(--border)' : 'var(--fill)', label: it.label, range: it.range };
+      if (it.k !== 'block') return base;
+      const b = it.b, done = !!b.done, isNext = next && b.id === next.id;
+      return { ...base, color: b.color, oShort: b.oShort, title: b.title, durLabel: b.durLabel,
+        pill: done ? 'Concluída' : isNext ? `Próxima · ${u.hm(b.start)}` : `Hoje ${u.hm(b.start)}`,
+        pillBg: done ? 'var(--priSoft)' : 'var(--blueSoft)', pillTx: done ? 'var(--pri)' : 'var(--blue)', pillIcon: done ? 'ph-bold ph-check' : 'ph-bold ph-clock',
+        titleColor: done ? 'var(--tx2)' : 'var(--tx)', border: isNext ? '2px solid var(--pri)' : '1px solid var(--border)',
+        dot: done ? 'var(--pri)' : 'var(--fill)',
+        open: () => { if (!done) a.startRampa(b.eid); } };
+    });
+    const totalMin = pend.reduce((x, b) => x + b.dur, 0);
+    const summary = pend.length ? `${pend.length} ${pend.length > 1 ? 'etapas' : 'etapa'} hoje · ${u.dur(totalMin)} de foco planejado. O resto da noite é seu.` : 'Tudo feito por hoje. Quer adiantar alguma coisa?';
+    const E = [['baixa', 'Baixa', 'battery-low'], ['media', 'Média', 'battery-medium'], ['alta', 'Alta', 'battery-full']];
+    const chips = E.map(([id, label, ic]) => ({ label, icon: 'ph-bold ph-' + ic, bg: s.energy === id ? 'var(--priSoft)' : 'var(--surface)', border: s.energy === id ? 'var(--pri)' : 'var(--border)', pick: () => a.setEnergy(id) }));
+    const energyMsg = { baixa: 'Rampa leve hoje, aquecimento mais longo. Tarefas leves à mão.', media: 'Rampa padrão de 25 min.', alta: 'Bora! Pulo direto pro desafio.' }[s.energy] || 'Conta pra mim antes de começar.';
+    const goals = (d.objs || []).filter(o => !o.doneAll || true).map(o => ({ name: o.name, pct: o.pct, ink: o.ink, color: o.color, meta: o.doneAll ? 'Tudo pronto · entregue com folga' : o.late ? `Não cabe até ${o.deadlineLabel}` : `${o.kind} ${o.deadlineLabel} · ${o.folgaLabel}`, icon: o.late ? 'ph-bold ph-warning-circle' : 'ph-bold ph-check-circle', iconColor: o.late ? 'var(--danger)' : 'var(--pri)', open: () => a.nav('objetivo', o.id) }));
+    const ach = s.ach || {};
+    const B = [];
+    if (ach.sete) B.push({ name: '7 dias regados', sub: 'Desbloqueada hoje', icon: 'ph-fill ph-drop', st: 'on' });
+    if (ach.folga) B.push({ name: 'Entregue com folga', sub: 'Desbloqueada hoje', icon: 'ph-fill ph-paper-plane-tilt', st: 'on' });
+    B.push({ name: 'Rampa completa', sub: 'Rara · 8% dos usuários', icon: 'ph-fill ph-flag-checkered', st: 'rare' });
+    B.push({ name: 'Primeiro passo', sub: 'Desbloqueada 03/11', icon: 'ph-fill ph-footprints', st: 'on' });
+    if (!ach.sete) B.push({ name: '7 dias regados', sub: `${s.streak} de 7`, icon: 'ph ph-lock-simple', st: 'lock' });
+    const badges = B.slice(0, 3).map(b => ({ ...b, bg: b.st === 'rare' ? 'var(--streakSoft)' : b.st === 'lock' ? 'var(--s2)' : 'var(--priSoft)', bColor: b.st === 'rare' ? 'var(--streak)' : b.st === 'lock' ? 'var(--border)' : 'var(--fill)', bStyle: b.st === 'lock' ? 'dashed' : 'solid', ic: b.st === 'rare' ? 'var(--streakInk)' : b.st === 'lock' ? 'var(--tx2)' : 'var(--pri)', nameColor: b.st === 'lock' ? 'var(--tx2)' : 'var(--tx)', subColor: b.st === 'rare' ? 'var(--streakInk)' : 'var(--tx2)' }));
+    const leves = (s.tarefas || []).slice(0, 2).map(t => ({ name: t.name, meta: t.meta, boxBg: t.done ? 'var(--pri)' : 'transparent', boxBorder: t.done ? 'var(--pri)' : 'var(--border)', op: t.done ? 1 : 0, deco: t.done ? 'line-through' : 'none', nameColor: t.done ? 'var(--tx2)' : 'var(--tx)', toggle: () => a.toggleTarefa(t.id) }));
+    const nb = next && d.blocks.find(b => b.id === next.id);
+    return {
+      summary, timeline, chips, energyMsg, goals, badges, leves, lowEnergy: s.energy === 'baixa', mood: d.mood,
+      heroSub: s.energy === 'alta' ? 'Direto pro desafio · 25 min de foco' : s.energy === 'baixa' ? 'Rampa leve até o foco' : 'Rampa de 25 min até o foco',
+      nextLine: nb ? `Próxima: ${nb.title} · ${nb.dayLabel === 'Hoje' ? 'hoje' : nb.dayLabel} às ${u.hm(nb.start)}` : 'Nada agendado',
+      nextColor: nb ? nb.color : 'var(--border)',
+      start: () => { if (next) a.startRampa(next.eid); },
+      goCal: () => a.nav('calendario'), goJardim: () => a.nav('jardim')
+    };
+  }
+}
+</script>
+</body>
+</html>

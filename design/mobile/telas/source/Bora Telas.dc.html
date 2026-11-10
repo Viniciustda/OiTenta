@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+body{margin:0;background:#E3ECE8;font-family:Nunito,sans-serif;color:#0E1F1A;-webkit-font-smoothing:antialiased}
+a{color:#0369A1;text-decoration:none}
+a:hover{color:#047857;text-decoration:underline}
+</style>
+</helmet>
+
+<section id="bloco-1" data-screen-label="Bloco 1 · Onboarding" style="padding:64px 64px 96px;display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#4A5D57">Bloco 1 de 3 · aguardando aprovação</span>
+    <h2 style="margin:0;font:600 28px/36px Fredoka,sans-serif;color:#0E1F1A">Onboarding em chat</h2>
+    <p style="margin:0;font:600 14px/20px Nunito,sans-serif;color:#4A5D57;max-width:560px;text-wrap:pretty">O Broto conduz 6 perguntas curtas. Respostas em chips, grade de horários livres e limite diário. Mobile 390×844.</p>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:48px;align-items:flex-start">
+
+    <!-- 1a -->
+    <div id="1a" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:800 13px/1 Nunito,sans-serif;background:#0E1F1A;color:#F6FAF8;padding:6px 10px;border-radius:999px">1a</span><span style="font:700 14px/20px Nunito,sans-serif;color:#4A5D57">Boas-vindas · passo 2 de 6</span></div>
+      <div data-screen-label="1a Onboarding · Boas-vindas" style="width:390px;height:844px;background:#F6FAF8;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;border:1px solid #D5E6DF;box-shadow:0 24px 64px rgba(14,31,26,.10)">
+        <div style="height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;flex-shrink:0"><span style="font:800 16px/1 Nunito,sans-serif;color:#0E1F1A">9:41</span><div style="display:flex;gap:6px;align-items:center;color:#0E1F1A;font-size:17px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:0 20px 0 8px;height:52px;flex-shrink:0"><div style="width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#4A5D57;font-size:24px;cursor:pointer"><i class="ph ph-caret-left"></i></div><div style="flex:1;height:4px;border-radius:999px;background:#EAF5F0;overflow:hidden"><div style="width:33.3%;height:100%;border-radius:999px;background:#10B981"></div></div><span style="font:700 13px/16px Nunito,sans-serif;color:#4A5D57;min-width:40px;text-align:right">2 de 6</span></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:20px 20px 0;min-height:0">
+          <div style="display:flex;align-items:flex-end;gap:8px">
+            <div style="width:40px;height:40px;flex-shrink:0"><dc-import name="Broto" mood="excited" size="40" hint-size="40px,40px"></dc-import></div>
+            <div style="max-width:272px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif;color:#0E1F1A;text-wrap:pretty">Oi! Eu sou o <span style="font-family:Fredoka,sans-serif;font-weight:600">Broto</span>. Vamos montar seu plano sem drama?</div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><span style="background:#047857;color:#FFFFFF;padding:9px 14px;border-radius:999px;font:800 15px/20px Nunito,sans-serif">Bora!</span></div>
+          <div style="display:flex;align-items:flex-end;gap:8px;padding-top:4px">
+            <div style="width:40px;flex-shrink:0"></div>
+            <div style="max-width:272px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif;color:#0E1F1A;text-wrap:pretty">Fechado, Arthur. São 6 perguntas rápidas e dá pra mudar tudo depois.</div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:8px">
+            <div style="width:40px;height:40px;flex-shrink:0"><dc-import name="Broto" mood="ok" size="40" hint-size="40px,40px"></dc-import></div>
+            <div style="max-width:272px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif;color:#0E1F1A;text-wrap:pretty">O que mais te trava na hora de estudar?</div>
+          </div>
+          <div style="flex:1"></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;padding-bottom:20px">
+            <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#4A5D57;padding-bottom:4px">Escolha uma</span>
+            <div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px">
+              <span style="height:44px;display:flex;align-items:center;padding:0 16px;border-radius:999px;border:2px solid #D5E6DF;background:#FFFFFF;color:#0369A1;font:800 15px/1 Nunito,sans-serif;box-sizing:border-box;cursor:pointer">Começar</span>
+              <span style="height:44px;display:flex;align-items:center;padding:0 16px;border-radius:999px;border:2px solid #D5E6DF;background:#FFFFFF;color:#0369A1;font:800 15px/1 Nunito,sans-serif;box-sizing:border-box;cursor:pointer">Saber por onde ir</span>
+              <span style="height:44px;display:flex;align-items:center;padding:0 16px;border-radius:999px;border:2px solid #D5E6DF;background:#FFFFFF;color:#0369A1;font:800 15px/1 Nunito,sans-serif;box-sizing:border-box;cursor:pointer">Manter o foco</span>
+              <span style="height:44px;display:flex;align-items:center;padding:0 16px;border-radius:999px;border:2px solid #D5E6DF;background:#FFFFFF;color:#0369A1;font:800 15px/1 Nunito,sans-serif;box-sizing:border-box;cursor:pointer">Prazo em cima</span>
+              <span style="height:44px;display:flex;align-items:center;padding:0 16px;border-radius:999px;border:2px solid #D5E6DF;background:#FFFFFF;color:#0369A1;font:800 15px/1 Nunito,sans-serif;box-sizing:border-box;cursor:pointer">Um pouco de tudo</span>
+            </div>
+          </div>
+        </div>
+        <div style="height:34px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;box-sizing:border-box;flex-shrink:0"><div style="width:134px;height:5px;border-radius:999px;background:#0E1F1A"></div></div>
+      </div>
+    </div>
+
+    <!-- 1b -->
+    <div id="1b" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:800 13px/1 Nunito,sans-serif;background:#0E1F1A;color:#F6FAF8;padding:6px 10px;border-radius:999px">1b</span><span style="font:700 14px/20px Nunito,sans-serif;color:#4A5D57">Horários livres · passo 4 de 6</span></div>
+      <div data-screen-label="1b Onboarding · Horários livres" style="width:390px;height:844px;background:#F6FAF8;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;border:1px solid #D5E6DF;box-shadow:0 24px 64px rgba(14,31,26,.10)">
+        <div style="height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;flex-shrink:0"><span style="font:800 16px/1 Nunito,sans-serif;color:#0E1F1A">9:41</span><div style="display:flex;gap:6px;align-items:center;color:#0E1F1A;font-size:17px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:0 20px 0 8px;height:52px;flex-shrink:0"><div style="width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#4A5D57;font-size:24px;cursor:pointer"><i class="ph ph-caret-left"></i></div><div style="flex:1;height:4px;border-radius:999px;background:#EAF5F0;overflow:hidden"><div style="width:66.6%;height:100%;border-radius:999px;background:#10B981"></div></div><span style="font:700 13px/16px Nunito,sans-serif;color:#4A5D57;min-width:40px;text-align:right">4 de 6</span></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:12px 20px 0;min-height:0">
+          <div style="display:flex;justify-content:flex-end"><span style="background:#047857;color:#FFFFFF;padding:9px 14px;border-radius:999px;font:800 15px/20px Nunito,sans-serif">Saber por onde ir</span></div>
+          <div style="display:flex;align-items:flex-end;gap:8px;padding-top:4px">
+            <div style="width:40px;flex-shrink:0"></div>
+            <div style="max-width:272px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif;color:#0E1F1A;text-wrap:pretty">Anotado. Eu quebro tudo em degraus pequenos pra você.</div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:8px">
+            <div style="width:40px;height:40px;flex-shrink:0"><dc-import name="Broto" mood="ok" size="40" hint-size="40px,40px"></dc-import></div>
+            <div style="max-width:272px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif;color:#0E1F1A;text-wrap:pretty">Quando costuma sobrar um tempo livre? Toca nos períodos.</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;padding-top:12px">
+            <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;color:#4A5D57;text-align:center">
+              <span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SÁB</span><span>DOM</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;color:#4A5D57;padding-top:4px"><i class="ph ph-sun-horizon" style="font-size:16px"></i><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase">Manhã</span><span style="font:600 12px/16px Nunito,sans-serif">6h–12h</span></div>
+            <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;color:#4A5D57;padding-top:6px"><i class="ph ph-sun" style="font-size:16px"></i><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase">Tarde</span><span style="font:600 12px/16px Nunito,sans-serif">12h–18h</span></div>
+            <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;color:#4A5D57;padding-top:6px"><i class="ph ph-moon" style="font-size:16px"></i><span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase">Noite</span><span style="font:600 12px/16px Nunito,sans-serif">18h–23h</span></div>
+            <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #D5E6DF;background:#FFFFFF;box-sizing:border-box;cursor:pointer"></div>
+              <div style="height:48px;border-radius:12px;border:2px solid #047857;background:#D1FAE5;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#047857;font-size:18px;cursor:pointer"><i class="ph-bold ph-check"></i></div>
+            </div>
+            <div style="display:flex;justify-content:center;padding-top:10px">
+              <span style="display:flex;align-items:center;gap:6px;background:#E0F2FE;color:#0369A1;padding:6px 12px;border-radius:999px;font:700 13px/16px Nunito,sans-serif"><i class="ph ph-clock" style="font-size:16px"></i>10 períodos · cerca de 20h livres por semana</span>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+        </div>
+        <div style="padding:12px 20px 8px;flex-shrink:0"><div style="height:52px;border-radius:999px;background:#047857;color:#FFFFFF;font:800 16px/1 Nunito,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #065F46;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">Continuar</div></div>
+        <div style="height:34px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;box-sizing:border-box;flex-shrink:0"><div style="width:134px;height:5px;border-radius:999px;background:#0E1F1A"></div></div>
+      </div>
+    </div>
+
+    <!-- 1c -->
+    <div id="1c" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:800 13px/1 Nunito,sans-serif;background:#0E1F1A;color:#F6FAF8;padding:6px 10px;border-radius:999px">1c</span><span style="font:700 14px/20px Nunito,sans-serif;color:#4A5D57">Limite diário · passo 5 de 6</span></div>
+      <div data-screen-label="1c Onboarding · Limite diário" style="width:390px;height:844px;background:#F6FAF8;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;border:1px solid #D5E6DF;box-shadow:0 24px 64px rgba(14,31,26,.10)">
+        <div style="height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;flex-shrink:0"><span style="font:800 16px/1 Nunito,sans-serif;color:#0E1F1A">9:41</span><div style="display:flex;gap:6px;align-items:center;color:#0E1F1A;font-size:17px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:0 20px 0 8px;height:52px;flex-shrink:0"><div style="width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#4A5D57;font-size:24px;cursor:pointer"><i class="ph ph-caret-left"></i></div><div style="flex:1;height:4px;border-radius:999px;background:#EAF5F0;overflow:hidden"><div style="width:83.3%;height:100%;border-radius:999px;background:#10B981"></div></div><span style="font:700 13px/16px Nunito,sans-serif;color:#4A5D57;min-width:40px;text-align:right">5 de 6</span></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:12px 20px 0;min-height:0">
+          <div style="display:flex;justify-content:flex-end"><span style="display:flex;align-items:center;gap:6px;background:#047857;color:#FFFFFF;padding:9px 14px;border-radius:999px;font:800 15px/20px Nunito,sans-serif">10 períodos livres</span></div>
+          <div style="display:flex;align-items:flex-end;gap:8px;padding-top:4px">
+            <div style="width:40px;flex-shrink:0"></div>
+            <div style="max-width:272px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif;color:#0E1F1A;text-wrap:pretty">Boa, deu umas 20h por semana. Não vou usar tudo.</div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:8px">
+            <div style="width:40px;height:40px;flex-shrink:0"><dc-import name="Broto" mood="ok" size="40" hint-size="40px,40px"></dc-import></div>
+            <div style="max-width:272px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:20px 20px 20px 6px;padding:12px 14px;font:400 15px/22px Nunito,sans-serif;color:#0E1F1A;text-wrap:pretty">Qual o máximo de estudo por dia que ainda fica leve pra você?</div>
+          </div>
+
+          <div style="margin-top:16px;background:#FFFFFF;border:1px solid #D5E6DF;border-radius:16px;box-shadow:0 1px 2px rgba(14,31,26,.04);padding:20px;display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font:800 12px/16px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#4A5D57">Máximo por dia</span>
+              <div style="display:flex;align-items:baseline;gap:8px"><span style="font:600 44px/52px Fredoka,sans-serif;color:#0E1F1A;letter-spacing:-.01em">4h</span><span style="font:600 14px/20px Nunito,sans-serif;color:#4A5D57">por dia</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="position:relative;height:28px;display:flex;align-items:center;cursor:pointer">
+                <div style="position:absolute;left:0;right:0;height:8px;border-radius:999px;background:#EAF5F0"></div>
+                <div style="position:absolute;left:0;width:42.86%;height:8px;border-radius:999px;background:#10B981"></div>
+                <div style="position:absolute;left:calc(42.86% - 14px);width:28px;height:28px;border-radius:999px;background:#FFFFFF;border:2px solid #047857;box-shadow:0 2px 0 #065F46;box-sizing:border-box"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font:600 12px/16px Nunito,sans-serif;color:#4A5D57"><span>1h</span><span>2h</span><span>3h</span><span style="color:#047857;font-weight:800">4h</span><span>5h</span><span>6h</span><span>7h</span><span>8h</span></div>
+            </div>
+            <div style="height:1px;background:#D5E6DF"></div>
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <i class="ph ph-shield-check" style="font-size:20px;color:#047857;flex-shrink:0;margin-top:1px"></i>
+              <span style="font:600 14px/20px Nunito,sans-serif;color:#4A5D57;text-wrap:pretty">Eu nunca passo desse limite. Se não couber, te aviso antes do prazo apertar.</span>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+        </div>
+        <div style="padding:12px 20px 8px;flex-shrink:0"><div style="height:52px;border-radius:999px;background:#047857;color:#FFFFFF;font:800 16px/1 Nunito,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #065F46;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(3px);box-shadow:none;filter:brightness(.94)">Continuar</div></div>
+        <div style="height:34px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;box-sizing:border-box;flex-shrink:0"><div style="width:134px;height:5px;border-radius:999px;background:#0E1F1A"></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>
