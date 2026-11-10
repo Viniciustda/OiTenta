@@ -9,6 +9,7 @@ function makeState(overrides: Partial<UserState> = {}): UserState {
     name: "Ana Souza",
     email: "ana@bora.app",
     password: VALID_HASH,
+    timezone: "America/Sao_Paulo",
     ...overrides,
   };
 }
@@ -29,6 +30,7 @@ describe("User", () => {
     expect(user.name).toBe("Ana Souza");
     expect(user.email).toBe("ana@bora.app");
     expect(user.password).toBe(VALID_HASH);
+    expect(user.timezone).toBe("America/Sao_Paulo");
     expect(user.id).toEqual(expect.any(String));
     expect(user.createdAt).toBeInstanceOf(Date);
     expect(user.updatedAt).toBeInstanceOf(Date);
@@ -49,12 +51,13 @@ describe("User", () => {
   });
 
   test("deve acusar todos os campos obrigatorios vazios", () => {
-    const user = new User(makeState({ name: "", email: "", password: "" }));
+    const user = new User(makeState({ name: "", email: "", password: "", timezone: "" }));
 
     expect(getValidationMessages(() => user.validate())).toEqual([
       "user.name.required",
       "user.email.required",
       "user.password.required",
+      "user.timezone.required",
     ]);
   });
 
@@ -101,6 +104,28 @@ describe("User", () => {
 
     expect(getValidationMessages(() => user.validate())).toEqual([
       "user.password.bcrypt.hash",
+    ]);
+  });
+
+  test("C0-1: deve aceitar fuso IANA valido", () => {
+    const user = new User(makeState({ timezone: "America/Manaus" }));
+
+    expect(() => user.validate()).not.toThrow();
+  });
+
+  test("C0-2: deve rejeitar fuso inexistente", () => {
+    const user = new User(makeState({ timezone: "Lua/Base" }));
+
+    expect(getValidationMessages(() => user.validate())).toEqual([
+      "user.timezone.invalid.timezone",
+    ]);
+  });
+
+  test("deve exigir fuso", () => {
+    const user = new User(makeState({ timezone: "" }));
+
+    expect(getValidationMessages(() => user.validate())).toEqual([
+      "user.timezone.required",
     ]);
   });
 
