@@ -4,7 +4,7 @@ Este diário permite que qualquer sessão continue o trabalho de onde a anterior
 
 ## Painel
 
-- **Próxima ação:** 5.1 `chore/dependencias-etapa-b` (instalar as dependências aprovadas e configurar Vitest e Playwright).
+- **Próxima ação:** Etapa B — preparar as 5 worktrees (`npm ci` + `flutter pub get`) e lançar os subagentes B1–B5.
 - **Estado da developer:** verde; último commit integrado: ver a linha da tarefa mais recente abaixo.
 - **Main intocada:** sim (`7b8a85e`, landing em produção).
 
@@ -40,4 +40,5 @@ Não havia diário anterior.
 
 | Id | Branch | Status | Commit na developer | TDD | Verificação | Revisor | Pendências e problemas |
 |---|---|---|---|---|---|---|---|
-| A-dec | `docs/decisoes-etapa-a` | integrada | (este commit) | n/a (docs) | verde | n/a (sem subagente) | — |
+| A-dec | `docs/decisoes-etapa-a` | integrada | `bbde72c` | n/a (docs) | verde | n/a (sem subagente) | — |
+| 5.1 | `chore/dependencias-etapa-b` | integrada | (este commit) | n/a (configuração). O Vitest foi validado com um teste temporário (jsdom + React + alias `@`), que passou e foi removido | verde; `flutter build ios --simulator` ok | n/a | Instalado: frontend `vitest@4.1.12`, `@testing-library/react@16.3.3`, `jsdom@29.1.1`, `@playwright/test@1.65.0` (o `@testing-library/dom` veio como peer dependency automática); backend `class-validator@0.15.1`, `class-transformer@0.5.1` (o `ValidationPipe` entra na Etapa C); mobile `go_router@17.5.0`, `google_fonts@8.2.1`, `phosphor_flutter@2.1.0`, `http@1.6.0`. O `flutter pub add` gerou `Podfile`/`Podfile.lock` e ajustes no projeto do Xcode (CocoaPods, porque há plugins nativos). Script `test` do frontend = `vitest run --passWithNoTests`; `test:e2e` = `playwright test`. Os navegadores do Playwright serão instalados na Etapa E. |
