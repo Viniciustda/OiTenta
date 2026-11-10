@@ -1,0 +1,24 @@
+name: oitenta-oitenta-backend-db
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: oitenta-oitenta-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: oitenta_oitenta
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: oitenta_oitenta_db
+    ports:
+      - '6435:5432'
+    volumes:
+      - oitenta-oitenta-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U oitenta_oitenta']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  oitenta-oitenta-postgres-data:
+    driver: local
