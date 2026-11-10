@@ -21,7 +21,7 @@ class OnboardingController extends ChangeNotifier {
 
   int step = 1;
   String? stuckAnswer;
-  final Set<(int, DayPeriod)> _selected = {};
+  final Set<(int, FreePeriod)> _selected = {};
   int limitHours = 4;
   bool saving = false;
   String? error;
@@ -45,9 +45,9 @@ class OnboardingController extends ChangeNotifier {
     next();
   }
 
-  bool isSelected(int column, DayPeriod p) => _selected.contains((column, p));
+  bool isSelected(int column, FreePeriod p) => _selected.contains((column, p));
 
-  void togglePeriod(int column, DayPeriod p) {
+  void togglePeriod(int column, FreePeriod p) {
     if (!_selected.remove((column, p))) _selected.add((column, p));
     notifyListeners();
   }

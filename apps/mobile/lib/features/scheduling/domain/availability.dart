@@ -43,12 +43,12 @@ class WeeklyAvailability {
 
 /// Os 3 períodos da grade do onboarding mobile (T02): manhã 6–12, tarde 12–18,
 /// noite 18–23. Cada período marcado vira uma janela (modelagem 3.1).
-enum DayPeriod {
+enum FreePeriod {
   morning(360, 720),
   afternoon(720, 1080),
   night(1080, 1380);
 
-  const DayPeriod(this.startMinute, this.endMinute);
+  const FreePeriod(this.startMinute, this.endMinute);
 
   final int startMinute;
   final int endMinute;

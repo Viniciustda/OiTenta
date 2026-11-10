@@ -24,9 +24,9 @@ class BoraTopBar extends StatelessWidget {
           children: [
             ?leading,
             if (leading != null && center != null) const SizedBox(width: 10),
-            ?center,
+            if (center != null) Flexible(child: center!),
             const Spacer(),
-            ?trailing,
+            if (trailing != null) Flexible(child: trailing!),
           ],
         ),
       ),
@@ -79,7 +79,7 @@ class BoraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.bora;
-    return ColoredBox(
+    return Material(
       color: background ?? c.bg,
       child: SafeArea(
         bottom: false,

@@ -95,7 +95,7 @@ class SecondaryButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icon != null) ...[Icon(icon, size: 18, color: c.blue), const SizedBox(width: 8)],
-              Text(label, style: BoraText.button(c.blue)),
+              Flexible(child: Text(label, style: BoraText.button(c.blue), overflow: TextOverflow.ellipsis)),
             ],
           ),
         ),
@@ -141,7 +141,11 @@ class TertiaryButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[Icon(icon, size: compact ? 16 : 18, color: fg), const SizedBox(width: 6)],
-              Text(label, style: BoraText.nunito(size, size, weight: FontWeight.w800, color: fg)),
+              Flexible(
+                child: Text(label,
+                    overflow: TextOverflow.ellipsis,
+                    style: BoraText.nunito(size, size, weight: FontWeight.w800, color: fg)),
+              ),
             ],
           ),
         ),

@@ -36,10 +36,10 @@ void main() {
 
   test('a grade marca e desmarca períodos e conta as horas (2h por período)', () {
     expect(c.canContinueGrid, isFalse);
-    c.togglePeriod(0, DayPeriod.night);
-    c.togglePeriod(1, DayPeriod.night);
-    c.togglePeriod(1, DayPeriod.night);
-    expect(c.isSelected(0, DayPeriod.night), isTrue);
+    c.togglePeriod(0, FreePeriod.night);
+    c.togglePeriod(1, FreePeriod.night);
+    c.togglePeriod(1, FreePeriod.night);
+    expect(c.isSelected(0, FreePeriod.night), isTrue);
     expect(c.periodCount, 1);
     expect(c.approxHours, 2);
     expect(c.canContinueGrid, isTrue);
@@ -54,8 +54,8 @@ void main() {
   });
 
   test('salvar envia janelas por período (seg=1 … dom=0) e o limite em minutos', () async {
-    c.togglePeriod(0, DayPeriod.night); // segunda
-    c.togglePeriod(6, DayPeriod.morning); // domingo
+    c.togglePeriod(0, FreePeriod.night); // segunda
+    c.togglePeriod(6, FreePeriod.morning); // domingo
     c.setLimit(3);
     c.goTo(5);
     final ok = await c.save();
