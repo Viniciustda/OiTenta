@@ -12,6 +12,7 @@ model User {
   goals     Goal[]
   weeklyAvailability WeeklyAvailability?
   scheduledBlocks    ScheduledBlock[]
+  focusSessions      FocusSession[]
 
   @@map("users")
 }
