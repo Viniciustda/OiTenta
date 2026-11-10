@@ -5,6 +5,7 @@ model User {
   name      String
   email     String    @unique
   password  String
+  timezone  String    @default("America/Sao_Paulo")
   createdAt DateTime  @map("created_at")
   updatedAt DateTime  @map("updated_at")
   deletedAt DateTime? @map("deleted_at")

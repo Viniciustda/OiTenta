@@ -8,10 +8,14 @@ import { User } from "../model";
 import { CryptoProvider, UserRepository } from "../provider";
 import { normalizeEmail, PublicUser, toPublicUser } from "./public-user";
 
+// Fuso usado quando o cliente não informa o dele (decisão P1).
+export const DEFAULT_TIMEZONE = "America/Sao_Paulo";
+
 export interface RegisterUserIn {
   name: string;
   email: string;
   password: string;
+  timezone?: string;
 }
 
 export interface RegisterUserOut {
@@ -40,7 +44,12 @@ export class RegisterUser implements UseCase<RegisterUserIn, RegisterUserOut> {
     }
 
     const hashedPassword = await this.cryptoProvider.encrypt(input.password);
-    const user = new User({ name: input.name, email, password: hashedPassword });
+    const user = new User({
+      name: input.name,
+      email,
+      password: hashedPassword,
+      timezone: input.timezone ?? DEFAULT_TIMEZONE,
+    });
     user.validate();
 
     await this.userRepository.create(user);

@@ -54,7 +54,7 @@ Entidade `User` (`name`, `email`, `password` em hash) e casos de uso `RegisterUs
 
 **Cenários novos (C0):**
 1. `User` com `timezone = 'America/Sao_Paulo'` → `validate()` ok.
-2. `User` com `timezone = 'Lua/Base'` (inexistente) → `ValidationException` com `user.timezone.invalid`.
+2. `User` com `timezone = 'Lua/Base'` (inexistente) → `ValidationException` com `user.timezone.invalid.timezone` (padrão de código das regras do shared, como `user.email.invalid.email`).
 3. `RegisterUser` com `timezone = 'America/Manaus'` → o usuário gravado tem esse fuso.
 4. `RegisterUser` sem `timezone` → o usuário gravado tem `America/Sao_Paulo`.
 5. `GetAuthenticatedUser` → a saída inclui o `timezone`.

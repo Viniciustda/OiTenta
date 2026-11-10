@@ -7,6 +7,7 @@ import {
   MinLengthRule,
   PersonNameRule,
   RequiredRule,
+  TimezoneRule,
   Validator,
 } from "@oitenta/shared";
 
@@ -14,6 +15,7 @@ export interface UserState extends EntityState {
   name: string;
   email: string;
   password: string;
+  timezone: string;
 }
 
 export class User extends Entity<UserState> {
@@ -31,6 +33,10 @@ export class User extends Entity<UserState> {
 
   get password(): string {
     return this.props.password;
+  }
+
+  get timezone(): string {
+    return this.props.timezone;
   }
 
   public validate(): void {
@@ -54,6 +60,11 @@ export class User extends Entity<UserState> {
         code: "user.password",
         value: this.password,
         rules: [new RequiredRule(), new BcryptHashRule()],
+      },
+      {
+        code: "user.timezone",
+        value: this.timezone,
+        rules: [new RequiredRule(), new TimezoneRule()],
       },
     ]);
   }

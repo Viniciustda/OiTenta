@@ -239,6 +239,11 @@
             "type": "string",
             "example": "Senha@123",
             "description": "Mínimo 8 caracteres, com maiúscula, minúscula, número e símbolo."
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Sao_Paulo",
+            "description": "Fuso IANA do usuário. Padrão: America/Sao_Paulo."
           }
         },
         "required": [
@@ -259,12 +264,17 @@
           },
           "email": {
             "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Sao_Paulo"
           }
         },
         "required": [
           "id",
           "name",
-          "email"
+          "email",
+          "timezone"
         ]
       },
       "UserResponse": {
