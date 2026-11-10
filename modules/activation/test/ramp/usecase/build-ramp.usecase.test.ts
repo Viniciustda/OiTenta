@@ -36,8 +36,15 @@ describe("BuildRamp", () => {
       "log",
     ]);
     expect(output.suggested).toBe("micro");
-    expect(output.steps[2].options.map((option) => option.title)).toEqual(
-      MICRO_STEPS,
+    expect(output.steps[2].options).toEqual(
+      MICRO_STEPS.map((text, index) => ({
+        id: `micro-${index + 1}`,
+        stepKind: "micro",
+        title: text,
+        durationLabel: "1 min",
+        description: "Micro-passo",
+        icon: "footprints",
+      })),
     );
     expect(output.steps[0].options).toHaveLength(5);
     expect(output.steps[1].options).toHaveLength(4);
@@ -57,8 +64,18 @@ describe("BuildRamp", () => {
     });
 
     expect(output.suggested).toBe("warmup");
-    expect(output.steps[2].options.map((option) => option.title)).toEqual([
-      GENERIC_MICRO_STEP,
+    expect(GENERIC_MICRO_STEP).toBe(
+      "Abra o material desta etapa e faça só a primeira linha: o título ou a primeira frase.",
+    );
+    expect(output.steps[2].options).toEqual([
+      {
+        id: "micro-1",
+        stepKind: "micro",
+        title: GENERIC_MICRO_STEP,
+        durationLabel: "1 min",
+        description: "Micro-passo",
+        icon: "footprints",
+      },
     ]);
   });
 
@@ -104,10 +121,12 @@ describe("BuildRamp", () => {
       USER_A,
       USER_A,
       USER_A,
-      USER_A,
     ]);
-    expect(
-      optionSource.calls.find((call) => call.stepKind === "micro")?.microSteps,
-    ).toEqual(MICRO_STEPS);
+    expect(optionSource.calls.map((call) => call.stepKind)).toEqual([
+      "warmup",
+      "challenge",
+      "focus",
+      "log",
+    ]);
   });
 });

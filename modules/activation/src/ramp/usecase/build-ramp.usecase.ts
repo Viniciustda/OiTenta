@@ -3,6 +3,7 @@ import {
   AvailableTime,
   ENERGY_LEVELS,
   EnergyLevel,
+  GENERIC_MICRO_STEP,
   RAMP_STEP_KINDS,
   RampOption,
   RampStepKind,
@@ -28,6 +29,19 @@ export interface BuildRampOut {
   suggested: RampStepKind;
 }
 
+function microOptions(microSteps: string[]): RampOption[] {
+  const texts = microSteps.length > 0 ? microSteps : [GENERIC_MICRO_STEP];
+
+  return texts.map((text, index) => ({
+    id: `micro-${index + 1}`,
+    stepKind: "micro",
+    title: text,
+    durationLabel: "1 min",
+    description: "Micro-passo",
+    icon: "footprints",
+  }));
+}
+
 export class BuildRamp implements UseCase<BuildRampIn, BuildRampOut> {
   private readonly rampSuggestion = new RampSuggestion();
 
@@ -44,11 +58,10 @@ export class BuildRamp implements UseCase<BuildRampIn, BuildRampOut> {
 
     const steps: RampStep[] = [];
     for (const kind of RAMP_STEP_KINDS) {
-      const options = await this.rampOptionSource.listOptions(
-        input.userId,
-        kind,
-        input.microSteps,
-      );
+      const options =
+        kind === "micro"
+          ? microOptions(input.microSteps)
+          : await this.rampOptionSource.listOptions(input.userId, kind);
       steps.push({ kind, options });
     }
 

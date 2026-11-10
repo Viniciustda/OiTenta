@@ -1,8 +1,4 @@
-import {
-  FixedRampOptionSource,
-  GENERIC_MICRO_STEP,
-  RampOptionSource,
-} from "../../../src";
+import { FixedRampOptionSource, RampOptionSource } from "../../../src";
 
 const USER_ID = "2f9c1b6e-8a4d-4c3e-9b1a-1d2e3f4a5b6c";
 
@@ -208,48 +204,8 @@ describe("FixedRampOptionSource", () => {
     await expect(source.listOptions(USER_ID, "log")).resolves.toEqual([]);
   });
 
-  test("micro devolve uma opcao por micro-passo da etapa, na ordem", async () => {
-    const options = await source.listOptions(USER_ID, "micro", [
-      "Abra o arquivo do trabalho e escreva o título",
-      "Liste 3 atores do sistema",
-    ]);
-
-    expect(options).toEqual([
-      {
-        id: "micro-1",
-        stepKind: "micro",
-        title: "Abra o arquivo do trabalho e escreva o título",
-        durationLabel: "1 min",
-        description: "Micro-passo",
-        icon: "footprints",
-      },
-      {
-        id: "micro-2",
-        stepKind: "micro",
-        title: "Liste 3 atores do sistema",
-        durationLabel: "1 min",
-        description: "Micro-passo",
-        icon: "footprints",
-      },
-    ]);
-  });
-
-  test("micro sem micro-passos devolve 1 opcao com o texto generico (P6)", async () => {
-    const options = await source.listOptions(USER_ID, "micro");
-
-    expect(GENERIC_MICRO_STEP).toBe(
-      "Abra o material desta etapa e faça só a primeira linha: o título ou a primeira frase.",
-    );
-    expect(options).toEqual([
-      {
-        id: "micro-1",
-        stepKind: "micro",
-        title: GENERIC_MICRO_STEP,
-        durationLabel: "1 min",
-        description: "Micro-passo",
-        icon: "footprints",
-      },
-    ]);
+  test("micro devolve lista vazia (o BuildRamp monta o micro-passo)", async () => {
+    await expect(source.listOptions(USER_ID, "micro")).resolves.toEqual([]);
   });
 
   test("devolve copias: alterar o retorno nao altera o catalogo", async () => {

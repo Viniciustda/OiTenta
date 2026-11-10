@@ -1,10 +1,5 @@
-import {
-  ChallengeProblem,
-  GENERIC_MICRO_STEP,
-  RampOption,
-  RampStepKind,
-} from "../model";
-import { RampOptionSource } from "./ramp-option-source";
+import { ChallengeProblem, RampOption, RampStepKind } from "../model";
+import { RampOptionSource } from "./ramp-option-source.provider";
 
 type CatalogOption = Omit<RampOption, "id" | "stepKind">;
 
@@ -169,17 +164,6 @@ const FOCUS: CatalogOption[] = [
   },
 ];
 
-function microOptions(microSteps: string[]): CatalogOption[] {
-  const texts = microSteps.length > 0 ? microSteps : [GENERIC_MICRO_STEP];
-
-  return texts.map((text) => ({
-    title: text,
-    durationLabel: "1 min",
-    description: "Micro-passo",
-    icon: "footprints",
-  }));
-}
-
 function copyOption(
   stepKind: RampStepKind,
   option: CatalogOption,
@@ -202,12 +186,12 @@ export class FixedRampOptionSource implements RampOptionSource {
   async listOptions(
     _userId: string,
     stepKind: RampStepKind,
-    microSteps: string[] = [],
   ): Promise<RampOption[]> {
+    // O degrau micro vem da etapa atual e é montado pelo BuildRamp.
     const catalog: Record<RampStepKind, CatalogOption[]> = {
       warmup: WARMUP,
       challenge: CHALLENGE,
-      micro: microOptions(microSteps),
+      micro: [],
       focus: FOCUS,
       log: [],
     };
