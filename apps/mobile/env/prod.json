@@ -1,0 +1,4 @@
+{
+  "ENV_NAME": "prod",
+  "API_URL": "https://DEFINIR-NA-SEXTA-prod.example.com"
+}

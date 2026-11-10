@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Bora mobile · local (simulador)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": ["--dart-define-from-file=env/local-simulator.json"]
+    },
+    {
+      "name": "Bora mobile · local (iPhone físico)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": ["--dart-define-from-file=env/local-iphone.json"]
+    },
+    {
+      "name": "Bora mobile · developer (hospedado)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": ["--dart-define-from-file=env/developer.json"]
+    },
+    {
+      "name": "Bora mobile · prod (hospedado)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "toolArgs": ["--dart-define-from-file=env/prod.json"]
+    }
+  ]
+}
