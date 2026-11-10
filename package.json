@@ -12,7 +12,7 @@
     "prettier": "3.9.6",
     "ts-node": "^10.9.2",
     "turbo": "^2.11.10",
-    "typescript": "7.0.2"
+    "typescript": "^5.9.2"
   },
   "engines": {
     "node": ">=24"
@@ -27,5 +27,9 @@
     "apps/*",
     "modules/*",
     "packages/*"
-  ]
+  ],
+  "overrides": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  }
 }
