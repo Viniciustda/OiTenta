@@ -1,4 +1,4 @@
-import { PageResult, UseCase } from "@poupig/shared";
+import { PageResult, UseCase } from "@oitenta/shared";
 import { __AGGREGATE_CLASS_NAME__ } from "../model";
 import {
   __AGGREGATE_CLASS_NAME__PageParams,

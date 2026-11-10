@@ -1,4 +1,4 @@
-import { Entity, EntityState } from "@poupig/shared";
+import { Entity, EntityState } from "@oitenta/shared";
 
 export interface __AGGREGATE_CLASS_NAME__State extends EntityState {}
 
