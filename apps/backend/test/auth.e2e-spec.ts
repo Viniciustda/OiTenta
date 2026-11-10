@@ -89,6 +89,33 @@ describe('auth (integração)', () => {
     expect((me.body as UserBody).user.timezone).toBe('America/Recife');
   });
 
+  it('P19: cadastro sem e-mail → 400', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({ name: 'Ana Souza', password: 'Senha@123' });
+
+    expect(res.status).toBe(400);
+  });
+
+  it('P19: cadastro com campo não previsto (userId) → 400', async () => {
+    const res = await request(app.getHttpServer()).post('/auth/register').send({
+      name: 'Ana Souza',
+      email: unique(),
+      password: 'Senha@123',
+      userId: '00000000-0000-4000-8000-000000000000',
+    });
+
+    expect(res.status).toBe(400);
+  });
+
+  it('P19: login com tipo errado → 400', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 123, password: 'Senha@123' });
+
+    expect(res.status).toBe(400);
+  });
+
   it('/auth/me sem token → 401', async () => {
     const res = await request(app.getHttpServer()).get('/auth/me');
 
