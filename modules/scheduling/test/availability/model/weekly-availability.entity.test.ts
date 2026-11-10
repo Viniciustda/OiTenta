@@ -206,6 +206,15 @@ describe("mergeTouchingWindows", () => {
     ]);
   });
 
+  test("janelas com o mesmo inicio ficam ordenadas pelo fim", () => {
+    const merged = mergeTouchingWindows([
+      { weekday: 3, startMinute: 600, endMinute: 720 },
+      { weekday: 3, startMinute: 600, endMinute: 660 },
+    ]);
+
+    expect(merged.map((window) => window.endMinute)).toEqual([660, 720]);
+  });
+
   test("lista vazia devolve lista vazia", () => {
     expect(mergeTouchingWindows([])).toEqual([]);
   });
