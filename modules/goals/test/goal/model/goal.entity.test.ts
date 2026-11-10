@@ -104,6 +104,15 @@ describe("Goal", () => {
     expect(() => goal.validate()).toThrow(ValidationException);
   });
 
+  test("deve rejeitar prazo vazio ou so com espacos, sem normalizar para null (P3)", () => {
+    const empty = new Goal(makeState({ deadline: "" }));
+    const blank = new Goal(makeState({ deadline: "   " }));
+
+    expect(getValidationMessages(() => empty.validate())).toEqual(["goal.deadline.required"]);
+    expect(getValidationMessages(() => blank.validate())).toEqual(["goal.deadline.required"]);
+    expect(empty.deadline).toBe("");
+  });
+
   test("deve rejeitar prazo fora do formato YYYY-MM-DD ou inexistente", () => {
     expect(
       getValidationMessages(() =>

@@ -129,7 +129,11 @@ export class Goal extends Entity<GoalState> {
       {
         code: "goal.deadline",
         value: this.deadline,
-        rules: [new RegexRule(LOCAL_DATE_PATTERN), new DateStringRule()],
+        rules: [
+          ...(this.deadline === null ? [] : [new RequiredRule()]),
+          new RegexRule(LOCAL_DATE_PATTERN),
+          new DateStringRule(),
+        ],
       },
       {
         code: "goal.kind",

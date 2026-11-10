@@ -131,6 +131,19 @@ describe("CreateGoal", () => {
     expect(goalRepository.goals).toEqual([]);
   });
 
+  test("prazo vazio ou so com espacos lanca ValidationException e nao grava (P3)", async () => {
+    const { goalRepository, useCase } = makeSut();
+
+    await expect(useCase.execute(makeInput({ deadline: "" }))).rejects.toThrow(
+      ValidationException,
+    );
+    await expect(useCase.execute(makeInput({ deadline: "   " }))).rejects.toThrow(
+      ValidationException,
+    );
+    expect(goalRepository.createCalls).toBe(0);
+    expect(goalRepository.goals).toEqual([]);
+  });
+
   test("etapa invalida (20 min) lanca ValidationException e nao grava", async () => {
     const { goalRepository, useCase } = makeSut();
 
