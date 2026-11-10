@@ -30,6 +30,7 @@ export * from "./date-range.rule";
 export * from "./future-date.rule";
 export * from "./past-date.rule";
 export * from "./time-string.rule";
+export * from "./timezone.rule";
 export * from "./uuid.rule";
 export * from "./slug.rule";
 export * from "./hex-color.rule";

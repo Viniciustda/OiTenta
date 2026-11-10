@@ -164,7 +164,7 @@ Resposta 201:
 ### `GET /scheduling/plan/day?date=YYYY-MM-DD`
 
 - **Resposta:** 200 `{ date, blocks[{id, start, end, status, goalId, goalTitle, colorIndex, stepId, stepTitle}], usedMinutes, limitMinutes }`.
-- **Erros:** 400 (data inválida), 401.
+- **Erros:** 400 (data malformada), 401, 404 (sem disponibilidade cadastrada, P12).
 - **Caso de uso:** `GetDayPlan` + `ListGoals` (orquestrador `day-view`).
 - **Telas:** web W12 (timeline do Hoje); mobile M01 (timeline do Hoje).
 
@@ -178,7 +178,7 @@ Resposta 201:
 ### `GET /scheduling/plan/week?start=YYYY-MM-DD` (segunda-feira)
 
 - **Resposta:** 200 `{ days[7]{date, blocks[…], usedMinutes, limitMinutes} }`.
-- **Erros:** 400 (data inválida ou que não é segunda), 401.
+- **Erros:** 400 (data malformada), 401, 404 (sem disponibilidade cadastrada, P12), 422 (`start` que não é segunda-feira: regra do domínio).
 - **Caso de uso:** `GetWeekPlan` + `ListGoals` (orquestrador `week-view`).
 - **Telas:**
   - web W15 (semana, Execução, "3h de 3h") e W16 (detalhe do bloco: só leitura nesta fase);
@@ -186,7 +186,7 @@ Resposta 201:
 
 **Integração:**
 1. Semana com blocos → 7 dias.
-2. `start` numa quarta → 400.
+2. `start` numa quarta → 422.
 3. Isolamento entre usuários.
 4. Sem token → 401.
 
@@ -198,7 +198,7 @@ As visões Prazos, Mês e Dia (W17–W20, M20–M21) e as ações do detalhe do 
 
 ### `GET /activation/ramp?goalId=…&stepId=…&energy=…&availableTime=…`
 
-- **Resposta:** 200 `{ steps[5]{kind, options[{id, title, durationLabel, durationSeconds, description, icon, steps?, problems?}]}, suggested }`.
+- **Resposta:** 200 `{ steps[5]{kind, options[{id, title, durationLabel, durationSeconds?, description, icon, steps?, problems?}]}, suggested }`.
 - **Erros:** 400 (`energy` inválida), 401, 404 (objetivo ou etapa inexistente ou de outro usuário).
 - **Caso de uso:** `GetGoal` → `BuildRamp` (orquestrador `ramp`).
 - **Telas:**

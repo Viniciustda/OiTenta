@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import type {
   LoginUserIn,
   LoginUserOut,
@@ -22,6 +22,12 @@ export class RegisterUserBody implements RegisterUserIn {
       'Mínimo 8 caracteres, com maiúscula, minúscula, número e símbolo.',
   })
   password!: string;
+
+  @ApiPropertyOptional({
+    example: 'America/Sao_Paulo',
+    description: 'Fuso IANA do usuário. Padrão: America/Sao_Paulo.',
+  })
+  timezone?: string;
 }
 
 export class LoginUserBody implements LoginUserIn {
@@ -41,6 +47,9 @@ export class PublicUserResponse implements PublicUser {
 
   @ApiProperty()
   email!: string;
+
+  @ApiProperty({ example: 'America/Sao_Paulo' })
+  timezone!: string;
 }
 
 export class UserResponse implements RegisterUserOut {

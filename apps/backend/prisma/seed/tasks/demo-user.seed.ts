@@ -24,6 +24,7 @@ export async function seedDemoUser(prisma: PrismaClient): Promise<void> {
     name: DEMO_NAME,
     email,
     password: await hash(password, 12),
+    timezone: 'America/Sao_Paulo',
   });
   user.validate();
 
@@ -33,6 +34,7 @@ export async function seedDemoUser(prisma: PrismaClient): Promise<void> {
       name: user.name,
       email: user.email,
       password: user.password,
+      timezone: user.timezone,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       deletedAt: null,
