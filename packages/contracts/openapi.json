@@ -180,17 +180,78 @@
         ]
       }
     },
-    "/scheduling": {
+    "/scheduling/availability": {
       "get": {
-        "operationId": "SchedulingController_getScheduling",
+        "operationId": "SchedulingController_getAvailability",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeeklyAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado."
+          },
+          "404": {
+            "description": "O usuário ainda não fez o onboarding."
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
-          "Scheduling"
+          "scheduling"
+        ]
+      },
+      "put": {
+        "operationId": "SchedulingController_setAvailability",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetWeeklyAvailabilityBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeeklyAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corpo malformado ou campo não previsto."
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado."
+          },
+          "422": {
+            "description": "Zero janelas, janela inválida ou limite fora de 60–480 / não múltiplo de 30."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "scheduling"
         ]
       }
     },
@@ -499,6 +560,81 @@
           "progressPct",
           "done",
           "total"
+        ]
+      },
+      "AvailabilityWindowBody": {
+        "type": "object",
+        "properties": {
+          "weekday": {
+            "type": "number",
+            "example": 0,
+            "description": "0 = segunda … 6 = domingo."
+          },
+          "startMinute": {
+            "type": "number",
+            "example": 1140,
+            "description": "Minutos desde 00:00 (local)."
+          },
+          "endMinute": {
+            "type": "number",
+            "example": 1380,
+            "description": "Minutos desde 00:00 (local)."
+          }
+        },
+        "required": [
+          "weekday",
+          "startMinute",
+          "endMinute"
+        ]
+      },
+      "WeeklyAvailabilityView": {
+        "type": "object",
+        "properties": {
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityWindowBody"
+            }
+          },
+          "dailyLimitMinutes": {
+            "type": "number",
+            "example": 180
+          }
+        },
+        "required": [
+          "windows",
+          "dailyLimitMinutes"
+        ]
+      },
+      "WeeklyAvailabilityResponse": {
+        "type": "object",
+        "properties": {
+          "availability": {
+            "$ref": "#/components/schemas/WeeklyAvailabilityView"
+          }
+        },
+        "required": [
+          "availability"
+        ]
+      },
+      "SetWeeklyAvailabilityBody": {
+        "type": "object",
+        "properties": {
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityWindowBody"
+            }
+          },
+          "dailyLimitMinutes": {
+            "type": "number",
+            "example": 180,
+            "description": "Limite diário em minutos: de 60 a 480, múltiplo de 30."
+          }
+        },
+        "required": [
+          "windows",
+          "dailyLimitMinutes"
         ]
       }
     }
