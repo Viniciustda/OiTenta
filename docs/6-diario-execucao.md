@@ -4,7 +4,7 @@ Este diário permite que qualquer sessão continue o trabalho de onde a anterior
 
 ## Painel
 
-- **Próxima ação:** aguardar os relatórios dos subagentes B1–B5 (rodando em `/Users/arthursetragni/Hackaton/wt-b1` … `wt-b5`), passar cada entrega pelo revisor e integrar. Em paralelo, a C1 só depois da B1 (depende do domínio de goals).
+- **Próxima ação:** integrar a B2 (em correção) e a C1 (em revisão); depois a C2 (backend de scheduling, depende da B2). B4 e B5 seguem com os subagentes.
 - **Estado da developer:** verde; último commit integrado: ver a linha da tarefa mais recente abaixo.
 - **Main intocada:** sim (`7b8a85e`, landing em produção).
 
@@ -42,7 +42,7 @@ Não havia diário anterior.
 |---|---|---|---|---|---|---|---|
 | A-dec | `docs/decisoes-etapa-a` | integrada | `bbde72c` | n/a (docs) | verde | n/a (sem subagente) | — |
 | 5.1 | `chore/dependencias-etapa-b` | integrada | `fe59234` | n/a (configuração). O Vitest foi validado com um teste temporário (jsdom + React + alias `@`), que passou e foi removido | verde; `flutter build ios --simulator` ok | n/a | Instalado: frontend `vitest@4.1.12`, `@testing-library/react@16.3.3`, `jsdom@29.1.1`, `@playwright/test@1.65.0` (o `@testing-library/dom` veio como peer dependency automática); backend `class-validator@0.15.1`, `class-transformer@0.5.1` (o `ValidationPipe` entra na Etapa C); mobile `go_router@17.5.0`, `google_fonts@8.2.1`, `phosphor_flutter@2.1.0`, `http@1.6.0`. O `flutter pub add` gerou `Podfile`/`Podfile.lock` e ajustes no projeto do Xcode (CocoaPods, porque há plugins nativos). Script `test` do frontend = `vitest run --passWithNoTests`; `test:e2e` = `playwright test`. Os navegadores do Playwright serão instalados na Etapa E. |
-| B1, B2, B4, B5 | `feat/goals-dominio`, `feat/scheduling-dominio`, `feat/web-telas-fatia`, `feat/mobile-telas-fatia` | em andamento (subagentes) | — | — | — | — | Worktrees em `/Users/arthursetragni/Hackaton/wt-b1..b5`, sem rastrear a `developer`. Preparação (P28): `npm ci`, `.env` a partir do `.env.example`, `prisma:generate` e `npm run build`; `flutter pub get` na b5. Regras comuns entregues aos subagentes: `scratchpad/brief-comum-subagentes.md` (cópia das seções 2 e 3 do prompt). |
+| B2, B4, B5 | `feat/scheduling-dominio`, `feat/web-telas-fatia`, `feat/mobile-telas-fatia` | em andamento (B2 em correção; B4 e B5 com os subagentes) | — | — | — | — | Worktrees em `/Users/arthursetragni/Hackaton/wt-b1..b5`, sem rastrear a `developer`. Preparação (P28): `npm ci`, `.env` a partir do `.env.example`, `prisma:generate` e `npm run build`; `flutter pub get` na b5. Regras comuns entregues aos subagentes: `scratchpad/brief-comum-subagentes.md` (cópia das seções 2 e 3 do prompt). |
 | C0 | `feat/auth-timezone` | integrada | `189cd98` | **Vermelho → verde:** `TimezoneRule` (`TypeError: TimezoneRule is not a constructor` → 3/3); `auth` (9 falhando → 31/31); integração (`/auth/me` sem o fuso → 6/6) | verde (138 unidade + 6 integração; 100% no domínio; flutter ok; grep 0) | n/a (feita pelo orquestrador) | Ver "Problemas e achados" abaixo. |
 
 ## Problemas e achados
@@ -58,6 +58,14 @@ Não havia diário anterior.
 5. O verificador completo agora inclui `npm --workspace apps/backend run test:e2e` (precisa do Postgres no ar), também registrado na regra do processo (§4).
 | B3 | `feat/activation-dominio` | integrada | `28a3e82` | **Vermelho → verde:** entidade e classes (17 falhando, `FocusSession/RampSuggestion/FixedRampOptionSource is not a constructor` → 29/29); casos de uso (10 falhando → 39/39); correção do revisor (3 falhando → 38/38). Saídas em `scratchpad/b3-red1.txt` e `b3-red2.txt` | verde (175 unidade + 6 integração; activation 100%) | 1º ciclo: **corrigir** `RampOptionSource.listOptions` com um 3º parâmetro fora da §4.4 → voltou a `(userId, stepKind)`, e o micro (incluindo a genérica da P6) passou a ser montado no `BuildRamp`; arquivos renomeados para `*.provider.ts`. 2º olhar: APROVADO | Ver "Pendências da B3" abaixo. |
 
+| B1 | `feat/goals-dominio` | integrada | `9745f71` | **Vermelho → verde:** entidades e calculadora (49 falhando, `Step is not a constructor` → 49/49); casos de uso (22 falhando → 72/72); correção do revisor (2 falhando → 74/74) | verde (248 unidade + 6 integração; goals 100%) | 1º ciclo: **corrigir** prazo `""` aceito → agora `goal.deadline.required`; a cor P4 virou pergunta ao usuário. 2º olhar: APROVADO | Regras locais (`MultipleOfRule`) em `modules/goals`, candidatas ao shared; campos extras nas saídas (`kind`, `source`, `status`, `aiEstimatedMinutes`, `microSteps`), que a C4 documenta no OpenAPI. |
+| C1 | `feat/backend-goals` (worktree `wt-b1`) | em revisão | — | **Vermelho → verde:** integração (`Cannot find module goal.prisma` + 3 casos da P19 com 500/201 → 16/16) | verde na worktree | em revisão | Migration `goals` (tabelas `goals`, `goal_steps`, FK para `users`) feita pelo orquestrador. `ValidationPipe` global ligado (P19). |
+
+## Ajustes de consistência feitos pelo orquestrador (10/11/2026, revisar)
+
+- **`GetDayPlan` alinhado ao contrato:** a modelagem (§3.6) dizia `{ blocks }`, o contrato aprovado (docs/4 §4) pede `{ date, blocks, usedMinutes, limitMinutes }`, e o orquestrador `day-view` não pode calcular (5.9). Prevaleceu o contrato; a modelagem foi corrigida.
+- **Códigos de erro do plano:** a semana que não começa na segunda é regra do domínio e responde **422** (o contrato dizia 400). O dia e a semana sem disponibilidade respondem **404** (P12), que o contrato não listava. Contrato corrigido.
+
 ## Pendências da B3 (aceitas pelo revisor, registradas para a Etapa C ou para o usuário)
 
 - Opções do micro-passo: `durationLabel '1 min'`, `description 'Micro-passo'`, `icon 'footprints'`, ids `micro-<n>`, vindos do protótipo (`Bora App.dc.html`, lista "trocar").
@@ -70,6 +78,13 @@ Não havia diário anterior.
 
 ## Perguntas para o usuário
 
+(As perguntas 2 a 6 vêm da revisão da B2. Até a decisão, o comportamento atual se mantém.)
+
 1. **Cor do objetivo (P4), leitura ambígua.** A decisão diz "próximo índice de 1 a 4 entre os objetivos ativos, voltando ao 1 depois do 4". A B1 implementou `(nº de ativos % 4) + 1`, que repete cor entre ativos. Exemplo: com A=1, B=2 e C=3, se B for concluído, o próximo recebe 3, a mesma cor de C.
    - Sugestão do revisor: usar o menor índice de 1 a 4 que nenhum ativo usa; se os 4 estiverem ocupados, a cor menos usada, com desempate pelo menor índice. Isso mantém os cenários atuais ({1,2} → 3; {1..4} → 1) e dá {1,3} → 2.
    - Até a decisão, fica a implementação atual (leitura literal). A mudança é pequena: um teste novo e uma função.
+2. **Horizonte do plano para objetivos sem prazo.** Hoje vai até o maior prazo ou até hoje + 28 dias (o que for mais tarde). O que passa disso fica como `unscheduledMinutes`, com `feasible` continuando `true`. Ok?
+3. **Resto menor que 30 ao dividir uma etapa.** O motor evita deixar um resto menor que 30 min, o que a P10 não exige. Em casos raros isso torna inviável um plano que caberia (ex.: 90 min com 75 livres vira 60 + 30). Manter a heurística ou seguir o guloso puro?
+4. **Bloco fixado ou em andamento no recálculo.** Hoje um bloco fixado no futuro (ou um `planned` em andamento) ocupa o horário, mas não desconta os minutos da etapa, que é alocada de novo por inteiro. Deve descontar? (No MVP não há como fixar bloco, então o impacto hoje é baixo.)
+5. **Blocos `missed` no "3h de 3h".** Hoje os blocos não feitos contam no `usedMinutes` do dia e da semana e no limite do recálculo do mesmo dia. Devem contar?
+6. **Tamanho do título do compromisso.** Sem limite hoje; usar os mesmos 120 caracteres da P2?

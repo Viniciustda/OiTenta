@@ -274,7 +274,7 @@ Saída:
 | `SetWeeklyAvailability` | `userId`, `windows[]`, `dailyLimitMinutes` | `{ availability }` | UC01, W07–W10, T02–T03 |
 | `GetWeeklyAvailability` | `userId` | `{ availability }` ou `NotFoundError` | M27 |
 | `GeneratePlan` | `userId`, `timezone`, `now`, `goals[…]` (montado pelo orquestrador) | `{ blocks, goals[feasibility], summary }` | UC05, UC09, D 4g |
-| `GetDayPlan` | `userId`, `date` (local), `timezone` | `{ blocks[] }` | UC06, W12, M01 |
+| `GetDayPlan` | `userId`, `date` (local), `timezone` | `{ date, blocks[], usedMinutes, limitMinutes }` (mesmo cálculo do `GetWeekPlan` para um dia; `NotFoundError` sem disponibilidade; alinhado ao contrato em 10/11/2026) | UC06, W12, M01 |
 | `GetWeekPlan` | `userId`, `weekStart` (segunda, local), `timezone` | `{ days[7]{date, blocks[], usedMinutes, limitMinutes} }` | UC07, W15 ("3h de 3h"), M03 |
 | `RecordBlockOutcome` | `userId`, `blockId`, `outcome: 'done'\|'partial'\|'missed'` | `{ block }` | UC08, D 4h |
 | `GetGoalsFeasibility` | `userId`, `timezone`, `now`, `goals[…]` (montado pelo orquestrador) | `{ goals[{goalId, feasible, slackDays, unscheduledMinutes}] }`, calculado pelo `PlanCalculator` sem gravar (modo simulação, D 4g) | M02 "folga", W21 |
