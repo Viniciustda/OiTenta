@@ -1,7 +1,8 @@
-import { UseCase, Validator } from "@oitenta/shared";
+import { NotFoundError, UseCase, Validator } from "@oitenta/shared";
+import { WeeklyAvailabilityRepository } from "../../availability/provider";
 import { addDays, localDateRules, localToUtc } from "../../common";
-import { ScheduledBlock } from "../model";
 import { ScheduledBlockRepository } from "../provider";
+import { buildDayPlan, DayPlan } from "./day-plan";
 
 export interface GetDayPlanIn {
   userId: string;
@@ -10,21 +11,27 @@ export interface GetDayPlanIn {
   timezone: string;
 }
 
-export interface GetDayPlanOut {
-  blocks: ScheduledBlock[];
-}
+export type GetDayPlanOut = DayPlan;
 
-/** Blocos que começam no dia local pedido (P13), em ordem de início. */
+/** Blocos que começam no dia local pedido (P13), com os minutos usados e o limite diário. */
 export class GetDayPlan implements UseCase<GetDayPlanIn, GetDayPlanOut> {
-  constructor(private readonly blockRepository: ScheduledBlockRepository) {}
+  constructor(
+    private readonly blockRepository: ScheduledBlockRepository,
+    private readonly availabilityRepository: WeeklyAvailabilityRepository,
+  ) {}
 
   async execute(input: GetDayPlanIn): Promise<GetDayPlanOut> {
     Validator.validate([{ code: "dayPlan.date", value: input.date, rules: localDateRules() }]);
+
+    const availability = await this.availabilityRepository.findByUser(input.userId);
+    if (!availability) {
+      throw new NotFoundError("Disponibilidade não encontrada.");
+    }
 
     const from = localToUtc(input.date, 0, input.timezone);
     const to = localToUtc(addDays(input.date, 1), 0, input.timezone);
     const blocks = await this.blockRepository.findByUserInRange(input.userId, from, to);
 
-    return { blocks: [...blocks].sort((a, b) => a.start.getTime() - b.start.getTime()) };
+    return buildDayPlan(input.date, blocks, input.timezone, availability.dailyLimitMinutes);
   }
 }

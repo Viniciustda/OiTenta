@@ -78,6 +78,42 @@ describe("SetWeeklyAvailability", () => {
     validateSpy.mockRestore();
   });
 
+  test("cenario 3: janela invertida encostada em outra nao e unida e nao grava", async () => {
+    const repository = new FakeWeeklyAvailabilityRepository();
+    const useCase = new SetWeeklyAvailability(repository);
+
+    await expect(
+      useCase.execute({
+        userId: USER_A,
+        windows: [
+          { weekday: 0, startMinute: 60, endMinute: 120 },
+          { weekday: 0, startMinute: 120, endMinute: 90 },
+        ],
+        dailyLimitMinutes: 120,
+      }),
+    ).rejects.toThrow(ValidationException);
+
+    expect(repository.saveCalls).toBe(0);
+  });
+
+  test("cenario 3: janela de duracao zero encostada em outra nao some e nao grava", async () => {
+    const repository = new FakeWeeklyAvailabilityRepository();
+    const useCase = new SetWeeklyAvailability(repository);
+
+    await expect(
+      useCase.execute({
+        userId: USER_A,
+        windows: [
+          { weekday: 0, startMinute: 0, endMinute: 60 },
+          { weekday: 0, startMinute: 60, endMinute: 60 },
+        ],
+        dailyLimitMinutes: 120,
+      }),
+    ).rejects.toThrow(ValidationException);
+
+    expect(repository.saveCalls).toBe(0);
+  });
+
   test("cenario 4 (posse): B salvar a dele nao muda a de A", async () => {
     const ofA = makeAvailability(USER_A, 120);
     const repository = new FakeWeeklyAvailabilityRepository([ofA]);

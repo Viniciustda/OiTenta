@@ -19,6 +19,13 @@ export class SetWeeklyAvailability
   constructor(private readonly availabilityRepository: WeeklyAvailabilityRepository) {}
 
   async execute(input: SetWeeklyAvailabilityIn): Promise<SetWeeklyAvailabilityOut> {
+    // Valida as janelas como vieram: unir antes esconderia janela invertida ou vazia.
+    new WeeklyAvailability({
+      userId: input.userId,
+      windows: input.windows,
+      dailyLimitMinutes: input.dailyLimitMinutes,
+    }).validate();
+
     const windows = mergeTouchingWindows(input.windows);
     const existing = await this.availabilityRepository.findByUser(input.userId);
     const availability = existing

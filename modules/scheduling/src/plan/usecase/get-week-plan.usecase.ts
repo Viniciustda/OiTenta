@@ -1,8 +1,8 @@
 import { NotFoundError, UseCase, ValidationRule, Validator } from "@oitenta/shared";
 import { WeeklyAvailabilityRepository } from "../../availability/provider";
-import { addDays, LocalDateRule, localDateRules, localToUtc, toLocalParts, weekdayOf } from "../../common";
-import { ScheduledBlock } from "../model";
+import { addDays, LocalDateRule, localDateRules, localToUtc, weekdayOf } from "../../common";
 import { ScheduledBlockRepository } from "../provider";
+import { buildDayPlan, DayPlan } from "./day-plan";
 
 export interface GetWeekPlanIn {
   userId: string;
@@ -11,12 +11,7 @@ export interface GetWeekPlanIn {
   timezone: string;
 }
 
-export interface WeekPlanDay {
-  date: string;
-  blocks: ScheduledBlock[];
-  usedMinutes: number;
-  limitMinutes: number;
-}
+export type WeekPlanDay = DayPlan;
 
 export interface GetWeekPlanOut {
   days: WeekPlanDay[];
@@ -48,20 +43,15 @@ export class GetWeekPlan implements UseCase<GetWeekPlanIn, GetWeekPlanOut> {
 
     const from = localToUtc(input.weekStart, 0, input.timezone);
     const to = localToUtc(addDays(input.weekStart, 7), 0, input.timezone);
-    const blocks = [...(await this.blockRepository.findByUserInRange(input.userId, from, to))].sort(
-      (a, b) => a.start.getTime() - b.start.getTime(),
+    const blocks = await this.blockRepository.findByUserInRange(input.userId, from, to);
+    const days = Array.from({ length: 7 }, (_, index) =>
+      buildDayPlan(
+        addDays(input.weekStart, index),
+        blocks,
+        input.timezone,
+        availability.dailyLimitMinutes,
+      ),
     );
-
-    const days = Array.from({ length: 7 }, (_, index) => {
-      const date = addDays(input.weekStart, index);
-      const ofDay = blocks.filter((block) => toLocalParts(block.start, input.timezone).date === date);
-      return {
-        date,
-        blocks: ofDay,
-        usedMinutes: ofDay.reduce((total, block) => total + block.durationMinutes, 0),
-        limitMinutes: availability.dailyLimitMinutes,
-      };
-    });
 
     return { days };
   }

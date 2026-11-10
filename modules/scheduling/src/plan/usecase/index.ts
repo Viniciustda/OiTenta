@@ -1,3 +1,4 @@
+export * from "./day-plan";
 export * from "./generate-plan.usecase";
 export * from "./get-day-plan.usecase";
 export * from "./get-goals-feasibility.usecase";
