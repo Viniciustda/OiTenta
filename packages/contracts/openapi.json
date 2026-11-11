@@ -255,20 +255,6 @@
         ]
       }
     },
-    "/activation": {
-      "get": {
-        "operationId": "ActivationController_getActivation",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Activation"
-        ]
-      }
-    },
     "/gamification": {
       "get": {
         "operationId": "GamificationController_getGamification",
