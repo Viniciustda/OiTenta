@@ -250,6 +250,18 @@ describe('plano do dia e da semana (integração)', () => {
       expect(res.status).toBe(400);
     });
 
+    it('data inexistente (2026-02-30) → 422', async () => {
+      const res = await getDay(owner.token, '?date=2026-02-30');
+
+      expect(res.status).toBe(422);
+    });
+
+    it('token inválido → 401', async () => {
+      const res = await getDay('abc', `?date=${MONDAY}`);
+
+      expect(res.status).toBe(401);
+    });
+
     it('sem disponibilidade → 404 com a mensagem do domínio', async () => {
       const fresh = await registerAndLogin();
 
@@ -318,6 +330,12 @@ describe('plano do dia e da semana (integração)', () => {
 
     it('start numa quarta → 422', async () => {
       const res = await getWeek(owner.token, '?start=2030-11-20');
+
+      expect(res.status).toBe(422);
+    });
+
+    it('data inexistente (2026-02-30) → 422', async () => {
+      const res = await getWeek(owner.token, '?start=2026-02-30');
 
       expect(res.status).toBe(422);
     });

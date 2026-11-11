@@ -295,6 +295,41 @@ describe('POST /activation/sessions (integração)', () => {
     }).toEqual({ status: 404, message: 'Etapa não encontrada.', sessions: 0 });
   });
 
+  it('bloco do próprio usuário de outra etapa → 404 "Bloco não encontrado." e nada é gravado', async () => {
+    const s = await scenario();
+    const blockOfStep2 = (await futureBlocks(s.login.user.id)).find(
+      (item) => item.stepId === s.stepIds[1],
+    ) as ScheduledBlock;
+
+    const res = await post(
+      s.login.token,
+      body(s, { stepId: s.stepIds[0], blockId: blockOfStep2.id }),
+    );
+
+    expect({
+      status: res.status,
+      message: (res.body as { message: string }).message,
+      sessions: (await sessionsOf(s.login.user.id, s.stepIds[0])).length,
+      progress: await stepProgress(s.login.user.id, s.goalId),
+      block: await blockStatus(s.login.user.id, blockOfStep2.id),
+    }).toEqual({
+      status: 404,
+      message: 'Bloco não encontrado.',
+      sessions: 0,
+      progress: [0, 0],
+      block: 'planned',
+    });
+  });
+
+  it('token inválido → 401', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/activation/sessions')
+      .set('Authorization', 'Bearer abc')
+      .send({});
+
+    expect(res.status).toBe(401);
+  });
+
   it('partial sem % → 422 e nada é gravado', async () => {
     const s = await scenario();
 

@@ -182,6 +182,12 @@ describe('scheduling (integração)', () => {
       expect(res.status).toBe(401);
     });
 
+    it('token inválido → 401', async () => {
+      const res = await put('abc', VALID_BODY);
+
+      expect(res.status).toBe(401);
+    });
+
     it('zero janelas → 422', async () => {
       const { token } = await registerAndLogin();
 

@@ -86,10 +86,14 @@ export class RecordProgressOrchestrator {
       throw new NotFoundError('Etapa não encontrada.');
     }
     if (input.blockId) {
-      await new GetBlock(this.blockRepository).execute({
+      const { block } = await new GetBlock(this.blockRepository).execute({
         userId,
         blockId: input.blockId,
       });
+      // Bloco do próprio usuário, mas de outra etapa: mesmo 404 do bloco inexistente.
+      if (block.goalId !== goalId || block.stepId !== stepId) {
+        throw new NotFoundError('Bloco não encontrado.');
+      }
     }
 
     const { session } = await new RecordFocusSession(

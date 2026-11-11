@@ -167,6 +167,12 @@ describe('goals: orquestradores (integração)', () => {
       expect(res.status).toBe(401);
     });
 
+    it('token inválido → 401', async () => {
+      const res = await postGoal('abc', goalBody());
+
+      expect(res.status).toBe(401);
+    });
+
     it('zero etapas → 422', async () => {
       const { token } = await onboarded();
 

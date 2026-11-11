@@ -11,10 +11,15 @@ import {
 import { IsDateString, IsIn, IsInt, IsOptional, IsUUID } from 'class-validator';
 import { StepResponse } from '../modules/goals/goals.dto';
 import { PlanResponse } from './plan.dto';
+import type { RecordProgressIn } from './record-progress.orchestrator';
 
 // Contrato: docs/4-contrato-api.md §5. Os decorators checam só o formato (400, P19);
 // `partial` sem %, % fora de 1–99 e endedAt antes de startedAt são do domínio (422).
-export class RecordSessionBody {
+// As datas chegam como texto ISO e viram Date no controller (por isso o Omit).
+export class RecordSessionBody implements Omit<
+  RecordProgressIn,
+  'userId' | 'startedAt' | 'endedAt'
+> {
   @ApiProperty({ format: 'uuid' })
   @IsUUID()
   goalId!: string;

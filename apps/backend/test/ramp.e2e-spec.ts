@@ -183,6 +183,12 @@ describe('GET /activation/ramp (integração)', () => {
     expect(res.status).toBe(400);
   });
 
+  it('token inválido → 401', async () => {
+    const res = await getRamp('abc', query());
+
+    expect(res.status).toBe(401);
+  });
+
   it('sem token → 401', async () => {
     const res = await request(app.getHttpServer())
       .get('/activation/ramp')
