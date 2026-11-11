@@ -492,7 +492,7 @@ Cada tarefa numa branch própria a partir da `developer`, com TDD (vermelho → 
 
 \* As tarefas 2 e 3 mexem no mesmo workspace (`goals`, inclusive os `index.ts`): em paralelo só em worktrees separadas, aceitando um conflito simples de export; ou em sequência (3 é pequena).
 
-**Caminho mínimo até sexta (13/11):** 0 → 1 ∥ 2 ∥ 4 → 5 → 7 (mobile já tem tela) e 9 ∥ 10 para levar números de qualidade e latência à reunião. O web (8) depende de um [DECIDIR] e é a tarefa mais longa de tela.
+**Caminho mínimo até sexta (13/11):** 0 → 1 ∥ 2 ∥ 4 → 5 → 7 (mobile já tem tela) e, em paralelo a partir da 2, 9 → 10 para levar números de qualidade e latência à reunião. O web (8) depende de um [DECIDIR] e é a tarefa mais longa de tela.
 
 ---
 
