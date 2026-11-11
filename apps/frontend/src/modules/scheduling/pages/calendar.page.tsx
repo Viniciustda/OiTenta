@@ -69,8 +69,9 @@ export default function CalendarPage() {
       addPlans(week.days);
       setAvailability(av?.availability ?? null);
       setGoals(list.goals);
-      setWeekStart(monday);
-      setDay(today);
+      // O relógio real muda a cada minuto e reexecuta este efeito: só inicializa a navegação uma vez.
+      setWeekStart((w) => w || monday);
+      setDay((d) => d || today);
       setReady(true);
     })();
   }, [now]);
@@ -105,8 +106,10 @@ export default function CalendarPage() {
 
   const columns = dates.map((date) => ({ date, plan: plans[date] }));
   const visibleBlocks = columns.flatMap((c) => c.plan?.blocks ?? []);
+  // Partes da etapa entre todos os planos já carregados (o protótipo conta o plano inteiro), em ordem.
+  const loadedBlocks = Object.values(plans).flatMap((p) => p.blocks).sort((a, b) => a.start.localeCompare(b.start));
   const selB = mode === "exec" ? (visibleBlocks.find((b) => b.id === sel) ?? null) : null;
-  const partsOf = (b: PlanBlock) => visibleBlocks.filter((x) => x.stepId === b.stepId && x.status !== "done");
+  const partsOf = (b: PlanBlock) => loadedBlocks.filter((x) => x.stepId === b.stepId && x.status !== "done");
   const selGoal = mode === "prazos" ? goals.find((g) => g.id === selGoalId) : undefined;
 
   const pickMode = (m: CalendarMode) => {
@@ -178,7 +181,7 @@ export default function CalendarPage() {
             />
           ) : mode === "prazos" ? (
             <CalendarDeadlineGrid
-              columns={dates.map((date) => ({ date, items: deadlinesOn(goals, date, hidden) }))}
+              columns={dates.map((date) => ({ date, canOpen: inHorizon(date, today), items: deadlinesOn(goals, date, hidden) }))}
               today={today}
               selectedId={selGoalId}
               emptyLabel={prazosEmptyLabel(view, goals, dates[dates.length - 1], hidden)}
@@ -187,7 +190,7 @@ export default function CalendarPage() {
             />
           ) : (
             <CalendarTimeGrid
-              columns={columns}
+              columns={columns.map((c) => ({ ...c, canOpen: inHorizon(c.date, today) }))}
               today={today}
               now={now}
               tz={tz}

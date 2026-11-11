@@ -49,7 +49,19 @@ export default function CalendarMonth({ cells, mode, today, selectedId, onOpenDa
               style={{ opacity: c.opacity }}
             >
               <span className="flex items-center justify-between">
-                <span className={`flex h-7 w-7 items-center justify-center rounded-full font-fredoka text-[15px]/none font-semibold ${isToday ? "bg-pri text-pri-tx" : "text-tx"}`}>{dayOfMonth(c.date)}</span>
+                {c.canOpen ? (
+                  // Botão para o teclado; o clique na célula inteira (mouse) faz o mesmo.
+                  <button
+                    type="button"
+                    aria-label={dayAriaLabel(c.date)}
+                    onClick={(e) => { e.stopPropagation(); onOpenDay(c.date); }}
+                    className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-full font-fredoka text-[15px]/none font-semibold ${isToday ? "bg-pri text-pri-tx" : "bg-transparent text-tx"}`}
+                  >
+                    {dayOfMonth(c.date)}
+                  </button>
+                ) : (
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-full font-fredoka text-[15px]/none font-semibold ${isToday ? "bg-pri text-pri-tx" : "text-tx"}`}>{dayOfMonth(c.date)}</span>
+                )}
                 {!prazos && <span className="text-[12px]/[16px] font-semibold text-tx2">{summary.load}</span>}
               </span>
               {prazos

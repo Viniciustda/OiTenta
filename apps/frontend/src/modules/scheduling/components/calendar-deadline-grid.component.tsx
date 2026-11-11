@@ -11,7 +11,8 @@ export interface DeadlineItem {
 }
 
 interface CalendarDeadlineGridProps {
-  columns: { date: string; items: DeadlineItem[] }[];
+  /** canOpen: o cabeçalho abre o Dia só dentro do horizonte de navegação. */
+  columns: { date: string; canOpen: boolean; items: DeadlineItem[] }[];
   today: string;
   selectedId: string | null;
   emptyLabel: string;
@@ -28,8 +29,8 @@ export default function CalendarDeadlineGrid({ columns, today, selectedId, empty
     <>
       <div className="grid border-b border-border" style={{ gridTemplateColumns: `56px repeat(${n}, minmax(0,1fr))` }}>
         <span />
-        {columns.map(({ date, items }) => (
-          <button key={date} type="button" aria-label={dayAriaLabel(date)} onClick={() => onOpenDay(date)} className="flex cursor-pointer flex-col items-center gap-1 border-l border-border bg-transparent px-1 py-2.5 text-tx">
+        {columns.map(({ date, canOpen, items }) => (
+          <button key={date} type="button" aria-label={dayAriaLabel(date)} disabled={!canOpen} onClick={() => onOpenDay(date)} className="flex cursor-pointer flex-col disabled:cursor-default items-center gap-1 border-l border-border bg-transparent px-1 py-2.5 text-tx">
             <span className={KICKER}>{weekdayShort(date)}</span>
             <span className={`flex h-9 w-9 items-center justify-center rounded-full font-fredoka text-[20px]/none font-semibold ${date === today ? "bg-pri text-pri-tx" : "text-tx"}`}>{dayOfMonth(date)}</span>
             <span className="text-[12px]/[16px] font-semibold text-tx2">{deadlineCountLabel(items.length)}</span>

@@ -5,6 +5,8 @@ import type { AvailabilityWindow } from "../data/scheduling.types";
 export const HOUR_HEIGHT = 40;
 export const FIRST_MINUTE = 8 * 60;
 export const GRID_HOURS_COUNT = 15;
+/** Fundo das faixas livres da grade e da legenda. */
+export const FREE_BG = "var(--free)";
 
 const toTop = (minute: number) => ((minute - FIRST_MINUTE) / 60) * HOUR_HEIGHT;
 

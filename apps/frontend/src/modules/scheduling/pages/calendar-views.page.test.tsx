@@ -1,5 +1,6 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { clock } from "@/modules/core/data/clock";
 import { exampleBackend } from "@/modules/core/data/example-backend";
 import CalendarPage from "./calendar.page";
 
@@ -183,5 +184,56 @@ describe("W15–W20 Execução × Prazos nas três visualizações", () => {
     mode("Execução");
     expect(deadlineItems(ENG)).toHaveLength(0);
     expect(await screen.findAllByText("Simulado 1")).not.toHaveLength(0);
+  });
+});
+
+describe("revisão W2: relógio, partes da etapa, teclado e horizonte", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("o relógio avançar não devolve a navegação para a semana atual", async () => {
+    const now = vi.spyOn(clock, "now").mockReturnValue("2026-11-16T22:40:00.000Z");
+    await open();
+    fireEvent.click(screen.getByRole("button", { name: "Próximo" }));
+    expect(await screen.findByText("23–29 de novembro")).toBeTruthy();
+    now.mockReturnValue("2026-11-16T22:41:00.000Z");
+    mode("Prazos");
+    await act(async () => {});
+    expect(screen.getByText("23–29 de novembro")).toBeTruthy();
+    view("Dia");
+    fireEvent.click(screen.getByRole("button", { name: "Próximo" }));
+    now.mockReturnValue("2026-11-16T22:42:00.000Z");
+    mode("Execução");
+    await act(async () => {});
+    expect(screen.getByText("Terça, 24/11")).toBeTruthy();
+  });
+
+  it("na visão Dia, etapa dividida em dias diferentes mostra \"Parte 1 de 2\"", async () => {
+    await open();
+    view("Dia");
+    fireEvent.click(screen.getByRole("button", { name: "Próximo" }));
+    await screen.findByText("Terça, 17/11");
+    fireEvent.click(await screen.findByTitle("Portfólio · Fotos e prints · 22:30–23:00"));
+    expect(screen.getByText("Parte 1 de 2 desta etapa")).toBeTruthy();
+  });
+
+  it("mês: o dia dentro do horizonte tem botão (teclado); dia passado não", async () => {
+    await open();
+    view("Mês");
+    await screen.findByText("Novembro de 2026");
+    expect(screen.queryByRole("button", { name: "Seg, 26/10" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Qua, 18/11" }));
+    expect(await screen.findByText("Quarta, 18/11")).toBeTruthy();
+  });
+
+  it("cabeçalho do dia fora do horizonte não abre o Dia (Execução e Prazos)", async () => {
+    vi.spyOn(clock, "now").mockReturnValue("2026-11-18T22:40:00.000Z");
+    await open();
+    const past = screen.getByRole("button", { name: "Seg, 16/11" }) as HTMLButtonElement;
+    expect(past.disabled).toBe(true);
+    fireEvent.click(past);
+    expect(screen.getByText("16–22 de novembro")).toBeTruthy();
+    mode("Prazos");
+    expect((screen.getByRole("button", { name: "Seg, 16/11" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "Qui, 19/11" }) as HTMLButtonElement).disabled).toBe(false);
   });
 });

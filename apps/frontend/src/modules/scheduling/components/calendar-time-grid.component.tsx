@@ -1,8 +1,7 @@
 import { KICKER, objColor } from "@/modules/core/components/ui";
 import { dayOfMonth, formatHm, localMinute, weekdayIndex, weekdayShort } from "@/modules/core/format/time.format";
 import type { DayPlan, PlanBlock, WeeklyAvailability } from "../data";
-import { FIRST_MINUTE, GRID_HOURS_COUNT, HOUR_HEIGHT, blockGeometry, dayAriaLabel, dayLoadLabel, freeRects } from "../logic/calendar.logic";
-import { FREE_BG } from "./calendar-filters.component";
+import { FIRST_MINUTE, FREE_BG, GRID_HOURS_COUNT, HOUR_HEIGHT, blockGeometry, dayAriaLabel, dayLoadLabel, freeRects } from "../logic/calendar.logic";
 
 // Grade de horas do calendário em Execução (W15 semana, W20 dia): blocos das etapas alocados no tempo.
 // Sem faixas de ocupado: não há compromissos no MVP (P8). Sem arrastar (só leitura nesta fase).
@@ -13,6 +12,8 @@ export interface CalendarColumn {
   date: string;
   /** Ausente enquanto o plano do dia carrega. */
   plan?: DayPlan;
+  /** O cabeçalho abre o Dia só dentro do horizonte de navegação. */
+  canOpen?: boolean;
 }
 
 interface CalendarTimeGridProps {
@@ -38,12 +39,12 @@ export default function CalendarTimeGrid({ columns, today, now, tz, availability
     <>
       <div className="grid border-b border-border" style={{ gridTemplateColumns: `56px repeat(${n}, minmax(0,1fr))` }}>
         <span />
-        {columns.map(({ date, plan }) => {
+        {columns.map(({ date, plan, canOpen }) => {
           const isToday = date === today;
           const used = plan?.usedMinutes ?? 0;
           const limit = plan?.limitMinutes ?? 0;
           return (
-            <button key={date} type="button" aria-label={dayAriaLabel(date)} onClick={() => onOpenDay(date)} className="flex cursor-pointer flex-col items-center gap-1 border-l border-border bg-transparent px-1 py-2.5 text-tx">
+            <button key={date} type="button" aria-label={dayAriaLabel(date)} disabled={!canOpen} onClick={() => onOpenDay(date)} className="flex cursor-pointer flex-col disabled:cursor-default items-center gap-1 border-l border-border bg-transparent px-1 py-2.5 text-tx">
               <span className={KICKER}>{weekdayShort(date)}</span>
               <span className={`flex h-9 w-9 items-center justify-center rounded-full font-fredoka text-[20px]/none font-semibold ${isToday ? "bg-pri text-pri-tx" : "text-tx"}`}>{dayOfMonth(date)}</span>
               <span className={`text-[12px]/[16px] font-semibold ${used >= limit && used ? "text-pri" : "text-tx2"}`}>{plan ? dayLoadLabel(used, limit) : " "}</span>

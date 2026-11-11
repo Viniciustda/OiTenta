@@ -1,8 +1,7 @@
 import { objColor, objInk } from "@/modules/core/components/ui";
-import type { CalendarMode } from "../logic/calendar.logic";
+import { type CalendarMode, FREE_BG } from "../logic/calendar.logic";
 
 // Filtros por objetivo e legenda (AppCalendario.dc.html). A dica muda com o modo: arrastar blocos × clicar num prazo.
-export const FREE_BG = "var(--free)";
 
 interface FilterGoal {
   id: string;
