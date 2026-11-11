@@ -7,6 +7,7 @@ import { ExampleGoalsRepository } from "@/modules/goals/data/example-goals.repos
 import { HttpGoalsRepository } from "@/modules/goals/data/http-goals.repository";
 import { ExampleSchedulingRepository } from "@/modules/scheduling/data/example-scheduling.repository";
 import { HttpSchedulingRepository } from "@/modules/scheduling/data/http-scheduling.repository";
+import { ExampleSettingsRepository } from "@/modules/settings/data/example-settings.repository";
 import { ExampleClock, SERVER_NOW, SystemClock } from "./clock";
 import { createClock, createRepositories, resolveDataSource } from "./composition";
 
@@ -59,5 +60,12 @@ describe("composição dos repositórios", () => {
   it("o relógio real padrão usa a hora do sistema no navegador", () => {
     const before = Math.floor(Date.now() / 60_000) * 60_000;
     expect(new Date(new SystemClock().now()).getTime()).toBeGreaterThanOrEqual(before);
+  });
+});
+
+describe("composição: preferências (W26)", () => {
+  it("settings usa o repositório de exemplo nas duas fontes: o contrato não tem tema nem e-mail diário", () => {
+    expect(createRepositories("example").settings).toBeInstanceOf(ExampleSettingsRepository);
+    expect(createRepositories("http").settings).toBeInstanceOf(ExampleSettingsRepository);
   });
 });

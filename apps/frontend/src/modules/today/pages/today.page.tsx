@@ -68,6 +68,9 @@ export default function TodayPage() {
 
   // Abertura pelos outros destinos (calendário, trilha, sidebar): /hoje?goal=…&step=…&block=… ou ?novo=1.
   const urlKey = params.toString();
+  // O modal fechado fica escondido até a URL mudar (router.replace é assíncrono). Quando ela muda, esquece:
+  // senão abrir de novo a mesma URL (ex.: "Novo objetivo" outra vez) não faria nada.
+  if (closedUrl !== null && urlKey !== closedUrl) setClosedUrl(null);
   const goal = params.get("goal");
   const step = params.get("step");
   const urlOpen = urlKey !== "" && urlKey !== closedUrl;

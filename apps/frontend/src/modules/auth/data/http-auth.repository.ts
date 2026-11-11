@@ -22,6 +22,10 @@ export class HttpAuthRepository implements AuthRepository {
     return this.http.get<MeResponse>("/auth/me");
   }
 
+  async logout(): Promise<void> {
+    this.http.tokens.clear();
+  }
+
   private keep(res: LoginResponse) {
     this.http.tokens.set(res.token);
     return res;
