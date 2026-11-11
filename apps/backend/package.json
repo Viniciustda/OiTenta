@@ -26,6 +26,7 @@
     "prisma:migrate:dev": "npx prisma migrate dev",
     "prisma:migrate:deploy": "npx prisma migrate deploy",
     "prisma:seed": "npx prisma db seed",
+    "db:reset-demo": "npx tsx prisma/seed/reset-demo.ts",
     "prisma:studio": "npx prisma studio",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "openapi:export": "nest build && node dist/openapi-export.js"
