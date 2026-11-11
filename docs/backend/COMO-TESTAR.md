@@ -1,6 +1,13 @@
 # Como testar o backend
 
-Hoje o backend (`apps/backend`, NestJS) tem só a **autenticação**: cadastro, login, `/auth/me` e `/auth/demo`, com documentação no Swagger. Todos os comandos abaixo são rodados **a partir da raiz do repositório** (a pasta `OiTenta`) e foram testados em 10/11/2026.
+O backend (`apps/backend`, NestJS) tem a fatia do MVP:
+- autenticação (cadastro, login, `/auth/me`, `/auth/demo`);
+- disponibilidade semanal (onboarding);
+- objetivos com etapas;
+- plano do dia e da semana;
+- rampa de ativação e registro de sessão, que recalcula o plano.
+
+O Swagger documenta tudo. Todos os comandos abaixo são rodados **a partir da raiz do repositório** (a pasta `OiTenta`) e foram testados em 10/11/2026.
 
 ## Antes de começar
 
@@ -77,7 +84,7 @@ Espere aparecer `Found 0 errors. Watching for file changes.` O backend fica em *
 
 ## 7. Abrir o Swagger
 
-Abra **http://localhost:4000/docs**. Deve aparecer a página **Bora API** com o grupo **auth** e as rotas `POST /auth/register`, `POST /auth/login`, `GET /auth/me` e `POST /auth/demo`. Nela dá para testar tudo pelo botão **Try it out**. Para a rota `/auth/me`, clique em **Authorize** (cadeado no topo) e cole o token do login.
+Abra **http://localhost:4000/docs**. Deve aparecer a página **Bora API** com as rotas de `auth`, `scheduling` (`/scheduling/availability`, `/scheduling/plan/day`, `/scheduling/plan/week`), `goals` (`/goals`, `/goals/{goalId}`) e `activation` (`/activation/ramp`, `/activation/sessions`). Nela dá para testar tudo pelo botão **Try it out**. Para as rotas protegidas, clique em **Authorize** (cadeado no topo) e cole o token do login.
 
 O contrato em JSON fica em http://localhost:4000/docs/openapi.json.
 
@@ -126,6 +133,72 @@ curl -s -X POST http://localhost:4000/auth/demo
 
 Esperado: `{"token":"eyJ...","user":{"name":"Usuária Demo","email":"demo@bora.app",...}}`. Se aparecer 404, rode o seed (passo 5).
 
+### Fluxo completo como demo (onboarding → objetivo → plano → rampa → registro)
+
+Antes, zere os dados do demo, para começar do onboarding. O comando apaga a grade, os objetivos, os blocos e as sessões do demo, e mantém o usuário:
+
+```bash
+npm --workspace apps/backend run db:reset-demo
+```
+
+Esperado: `[reset-demo] dados do usuário demo apagados (demo@bora.app).`
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:4000/auth/demo | node -pe 'JSON.parse(require("fs").readFileSync(0)).token')
+```
+
+**Disponibilidade:** de segunda a domingo, das 8h às 23h, com limite de 3h por dia (weekday 0 = segunda … 6 = domingo; minutos desde a meia-noite):
+
+```bash
+curl -s -X PUT http://localhost:4000/scheduling/availability -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"windows":[{"weekday":0,"startMinute":480,"endMinute":1380},{"weekday":1,"startMinute":480,"endMinute":1380},{"weekday":2,"startMinute":480,"endMinute":1380},{"weekday":3,"startMinute":480,"endMinute":1380},{"weekday":4,"startMinute":480,"endMinute":1380},{"weekday":5,"startMinute":480,"endMinute":1380},{"weekday":6,"startMinute":480,"endMinute":1380}],"dailyLimitMinutes":180}'
+```
+
+Esperado: `{"availability":{...},"plan":{"totalMinutes":0,"days":0,"goals":[]}}`.
+
+**Objetivo com 2 etapas:** troque o prazo por uma data cerca de 2 semanas à frente.
+
+```bash
+curl -s -X POST http://localhost:4000/goals -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"title":"Trabalho de Algoritmos","deadline":"2026-11-24","kind":"goal","steps":[{"title":"Ler o enunciado","estimatedMinutes":30,"microSteps":[]},{"title":"Escrever o resumo","estimatedMinutes":60,"microSteps":[]}]}'
+```
+
+Esperado: status 201, com `goal.id`, `goal.steps[].id` e `plan.goals[0].feasible: true`. Guarde os ids:
+
+```bash
+GOAL=$(curl -s http://localhost:4000/goals -H "Authorization: Bearer $TOKEN" | node -pe 'JSON.parse(require("fs").readFileSync(0)).goals[0].id')
+```
+
+```bash
+STEP=$(curl -s http://localhost:4000/goals/$GOAL -H "Authorization: Bearer $TOKEN" | node -pe 'JSON.parse(require("fs").readFileSync(0)).steps[0].id')
+```
+
+**Plano** (troque as datas por hoje e pela segunda-feira desta semana):
+
+```bash
+curl -s "http://localhost:4000/scheduling/plan/day?date=2026-11-10" -H "Authorization: Bearer $TOKEN"
+```
+
+```bash
+curl -s "http://localhost:4000/scheduling/plan/week?start=2026-11-09" -H "Authorization: Bearer $TOKEN"
+```
+
+Esperado: `{date, blocks[], usedMinutes, limitMinutes}` no dia e `{days[7]}` na semana. Cada bloco traz `goalTitle` e `stepTitle`. Uma semana que não começa na segunda dá 422.
+
+**Rampa:**
+
+```bash
+curl -s "http://localhost:4000/activation/ramp?goalId=$GOAL&stepId=$STEP&energy=high" -H "Authorization: Bearer $TOKEN"
+```
+
+Esperado: 5 degraus (`warmup`, `challenge`, `micro`, `focus`, `log`) e `"suggested":"micro"` (P14).
+
+**Registrar a sessão:** sem `blockId`, que é opcional. Troque as datas por instantes recentes.
+
+```bash
+curl -s -X POST http://localhost:4000/activation/sessions -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "{\"goalId\":\"$GOAL\",\"stepId\":\"$STEP\",\"energy\":\"high\",\"startedAt\":\"2026-11-10T22:00:00.000Z\",\"endedAt\":\"2026-11-10T22:25:00.000Z\",\"focusedMinutes\":25,\"outcome\":\"done\"}"
+```
+
+Esperado: status 201, `step.progressPct: 100` e o `plan` recalculado. No `GET /goals/$GOAL`, a primeira etapa aparece como `done`, e a segunda continua com `nextBlock` quando tem bloco futuro.
+
 Também dá para rodar tudo isso no VS Code com a extensão **REST Client**: abra `apps/backend/src/modules/auth/auth.integration.http` e clique em **Send Request** acima de cada requisição, de cima para baixo.
 
 ## 9. Rodar os testes
@@ -134,7 +207,7 @@ Também dá para rodar tudo isso no VS Code com a extensão **REST Client**: abr
 npm run test --workspace @oitenta/auth
 ```
 
-Esperado: `Tests: 25 passed, 25 total` e a linha `All files` com 100 em todas as colunas.
+Esperado: nenhum teste falhando e a linha `All files` com 100 em todas as colunas. O mesmo vale para `@oitenta/goals`, `@oitenta/scheduling` e `@oitenta/activation`.
 
 ```bash
 npm run test --workspaces --if-present
@@ -148,7 +221,7 @@ Roda os testes de todos os pacotes; nenhum deve falhar.
 npm --workspace apps/backend run test:e2e
 ```
 
-Esperado: `Test Suites: 2 passed` e nenhum teste falhando. O script liga a opção `--experimental-vm-modules` do Node, necessária para o Jest carregar o `@nestjs/config` (que é só ESM).
+Esperado: `Test Suites: 9 passed` e `Tests: 120 passed` (número de 10/11), sem falhas. Os testes criam usuários próprios e não mexem no demo. O script liga a opção `--experimental-vm-modules` do Node, necessária para o Jest carregar o `@nestjs/config` (que é só ESM).
 
 ## 10. Desligar
 
@@ -170,3 +243,5 @@ Os dados do banco continuam guardados para a próxima vez.
 | `has no exported member 'PrismaClient'` no build | Cliente do Prisma não gerado | Rode `npm --workspace apps/backend run prisma:generate` |
 | `Port 4000 is in use` | Outro backend já está rodando | Feche o outro terminal ou encerre o processo com `kill $(lsof -ti tcp:4000)` |
 | `/auth/demo` responde 404 | Seed não rodado | Rode o passo 5 |
+| `POST /goals` ou `GET /scheduling/plan/day` responde 404 "Disponibilidade não encontrada." | Usuário sem onboarding (P12) | Faça o `PUT /scheduling/availability` antes |
+| Erro 500 logo depois de uma migration nova | Cliente do Prisma desatualizado | Rode `prisma:generate` e `npm run build` de novo |

@@ -4,9 +4,40 @@ Este diário permite que qualquer sessão continue o trabalho de onde a anterior
 
 ## Painel
 
-- **Próxima ação:** Etapa E. Primeiro o ponta a ponta do web (Playwright), depois o do mobile (`integration_test` no simulador iOS), e por fim os COMO-TESTAR.
-- **Estado da developer:** verde; último commit integrado: ver a linha da tarefa mais recente abaixo.
+- **Próxima ação:** nenhuma pendente do plano. As Etapas A a E estão concluídas. Aguardando suas respostas às perguntas (fim deste arquivo) e o "pode mandar para a main".
+- **Estado da developer:** verde; último commit integrado: o desta atualização do diário (`docs/como-testar-e`).
 - **Main intocada:** sim (`7b8a85e`, landing em produção).
+
+## RELATÓRIO FINAL (10/11/2026, ~22h30)
+
+**O que foi entregue na `developer`** (toda tarefa com TDD, verificação completa verde e revisor antes do merge):
+- **Domínio** (`modules/goals`, `scheduling`, `activation`, mais o fuso em `auth`): 100% de cobertura e zero import de framework.
+- **Backend:** persistência Prisma (migrations `goals`, `scheduling`, `activation`, `auth_add_user_timezone`), `ValidationPipe` (P19), os 7 orquestradores e todas as rotas do contrato (docs/4). São 120 testes de integração; OpenAPI exportado.
+- **Web:** as telas da fatia, fiéis ao protótipo (comparações em `docs/frontend/comparacoes/`), ligadas ao backend real por HTTP. São 208 testes de tela/unidade e o ponta a ponta Playwright verde.
+- **Mobile:** as telas da fatia (comparações em `docs/mobile/comparacoes/`), ligadas ao backend real por HTTP. São 161 testes e o `integration_test` verde no simulador iOS (nunca no iPhone físico).
+- **Fluxo principal** (login demo → onboarding → objetivo → plano → Hoje → rampa → registrar → plano recalculado) passando de ponta a ponta no web e no mobile, contra o backend local.
+- **COMO-TESTAR** do backend, do frontend e do mobile atualizados. O fluxo de `curl` do backend foi executado e confere.
+
+**Main:** intocada em `7b8a85e`. Nada foi feito nela.
+
+**Decisões que eu (orquestrador) tomei sem você e que valem revisar:**
+- A ordem da Etapa C (as rotas que dependem de orquestrador foram para a C4).
+- As lacunas A a D da C4: `createdAt` no `ListGoals`; os casos de uso novos `GetNextBlocks` e `GetBlock`; `blockId` opcional; `slackDays: null` em `done`. Problema 8.
+- Bloco de outra etapa → 404.
+- Tarefas leves vazias no modo real do mobile.
+- Comparações guardadas só na última rodada, em JPEG.
+- O script `db:reset-demo`.
+
+**Pendências que dependem de você:** as perguntas 1 a 21 no fim deste arquivo. As de maior impacto:
+- 15 (o progresso pode regredir);
+- 18 (persistir o token do mobile, que exige pacote novo);
+- 19 (rampa pela trilha no mobile);
+- 20 (nome do demo);
+- 1 (cor P4).
+
+**Problemas registrados:** 1 a 16 em "Problemas e achados". Nenhum bloqueia. O problema 6 (uma integração só de docs com a verificação vermelha por ambiente local) já foi corrigido no processo.
+
+**Worktrees:** `/Users/arthursetragni/Hackaton/wt-b1..wt-b5` continuam no disco, com branches já integradas. Podem ser apagadas quando quiser (`git worktree remove`).
 
 ## Sessão 1 — 10/11/2026
 
@@ -65,6 +96,13 @@ Não havia diário anterior.
    - C) o `record-progress` gravava antes de conferir a posse do bloco. Agora confere tudo antes (`GetGoal` + `GetBlock` novo), e o `blockId` é opcional. Se o `GeneratePlan` falhar depois das escritas, elas ficam; hoje isso não acontece pela API.
    - D) objetivo `done` vem com `slackDays: null`.
 9. **Efeito colateral da D1:** o teste ao vivo gravou uma grade no usuário demo do banco local. Resolvido com o `db:reset-demo`.
+10. **Sem bloco no dia, o Hoje não abre a rampa** (web e mobile): "Vamos começar?" não faz nada e aparece "Nada agendado". No web dá para abrir a rampa pela trilha ("Começar próxima etapa"). No mobile não há essa entrada (ver a pergunta 19).
+11. **A energia escolhida no Hoje se perde** quando a rampa do web é aberta pela trilha ou pelo calendário: a rampa começa no Aquecer.
+12. **Nome do demo:** o botão diz "Entrar direto como Arthur (demo)", mas o seed cria a "Usuária Demo" (aparece na saudação, na sidebar e no avatar "U" do mobile). Ver a pergunta 20.
+13. **Folga de 1 dia com prazo a 14 dias:** é o `slackDays` da P9, não bug.
+14. **Dados de exemplo × backend real:** os testes de tela usam os dados de exemplo, e por isso duas divergências do mobile só apareceram no ponta a ponta. O revisor comparou todos os `fromJson` do mobile com os DTOs reais e não achou outras.
+15. **Rampa do mobile:** o Hoje diz "Rampa de 25 min até o foco" e a escada diz "6 min de rampa". O número é inconsistente; ficou fora do escopo da E.
+16. **Ponta a ponta dependente do relógio:** o do web se adapta (caminho alternativo pela trilha). O do mobile precisa de bloco no dia atual: rode antes de ~22h45 e fora da noite de domingo.
 | B3 | `feat/activation-dominio` | integrada | `28a3e82` | **Vermelho → verde:** entidade e classes (17 falhando, `FocusSession/RampSuggestion/FixedRampOptionSource is not a constructor` → 29/29); casos de uso (10 falhando → 39/39); correção do revisor (3 falhando → 38/38). Saídas em `scratchpad/b3-red1.txt` e `b3-red2.txt` | verde (175 unidade + 6 integração; activation 100%) | 1º ciclo: **corrigir** `RampOptionSource.listOptions` com um 3º parâmetro fora da §4.4 → voltou a `(userId, stepKind)`, e o micro (incluindo a genérica da P6) passou a ser montado no `BuildRamp`; arquivos renomeados para `*.provider.ts`. 2º olhar: APROVADO | Ver "Pendências da B3" abaixo. |
 
 | B1 | `feat/goals-dominio` | integrada | `9745f71` | **Vermelho → verde:** entidades e calculadora (49 falhando, `Step is not a constructor` → 49/49); casos de uso (22 falhando → 72/72); correção do revisor (2 falhando → 74/74) | verde (248 unidade + 6 integração; goals 100%) | 1º ciclo: **corrigir** prazo `""` aceito → agora `goal.deadline.required`; a cor P4 virou pergunta ao usuário. 2º olhar: APROVADO | Regras locais (`MultipleOfRule`) em `modules/goals`, candidatas ao shared; campos extras nas saídas (`kind`, `source`, `status`, `aiEstimatedMinutes`, `microSteps`), que a C4 documenta no OpenAPI. |
@@ -77,7 +115,9 @@ Não havia diário anterior.
 | D1 | `feat/web-integracao-api` | integrada | `3a8a2c1` | **Vermelho → verde:** 7 arquivos falhando (módulos inexistentes, `createdAt` inválido) → 199/199; relógio (2 falhando → 7/7); `GoalHeader` (asserção → 38/38); total 201 | verde; ao vivo: demo, `/auth/me`, 401, 404 e 422 com `details` contra o backend real | APROVADO COM RESSALVAS, sem correção obrigatória; 3 ajustes menores feitos (tipo `GoalHeader`, nome do helper de teste, relógio do exemplo) | Cliente `fetch` em `core/data/http-client.ts`: token no `localStorage` (`bora.token`), 401 → `/entrar`. A implementação é escolhida por `NEXT_PUBLIC_DATA_SOURCE` (`http` por padrão; nos testes de tela, `example`). `SystemClock` truncado no minuto, com `SERVER_NOW` no servidor (contorno para o build do Next, pergunta 17). Perguntas 16 e 17. |
 | D2 | `feat/mobile-integracao-api` | integrada | `50cb19e` | **Vermelho → verde:** cliente e repositórios (arquivo e membros inexistentes → 152/152); revisão: `slackDays` nulo (`type 'Null' is not a subtype of type 'int'`), `details`, tarefas leves, `NextBlock.id`, timeout e redirect (vermelho provocado desligando o redirect) → 158/158 | verde; ao vivo no simulador iOS: demo real → 404 da disponibilidade → onboarding | 1º ciclo APROVADO COM RESSALVAS: **corrigir** `slackDays` nulo no plano (derrubava o parse com objetivo sem prazo), mais 5 ajustes. Correção feita | `DATA_SOURCE` no `--dart-define-from-file` (`http` por padrão). Token só em memória (pergunta 18). No modo `http`, as tarefas leves vêm vazias. Mudanças fora do escopo aceitas: `main.dart` passa a usar `fromConfig()`; `env/*.json`; `me()` na interface. |
 | E-dep | `chore/dependencias-etapa-e` | integrada | `eefc30b` | n/a (configuração) | verde | n/a | `integration_test` (SDK do Flutter) no `pubspec`; Chromium do Playwright instalado; script `db:reset-demo` (apaga sessões, blocos, objetivos e disponibilidade do usuário demo, mantendo o usuário) para o ponta a ponta começar do zero. |
-| E | `feat/e2e-fluxo-principal` | em andamento: web primeiro (subagente em `wt-b4`), depois o mobile (os dois usam o mesmo usuário demo) | — | — | — | — | — |
+| E-web | `feat/e2e-fluxo-principal` | integrada | `131b401` | **Vermelho → verde:** sem servidor (`ERR_CONNECTION_REFUSED`); depois o bug de hidratação no Hoje (`Hydration failed`); teste unitário do bug (asserção) → verde; revisão: regra do horário em função pura (2 falhando em 22:31 e 22:59 → 6/6) | verde; Playwright rodado pelo orquestrador 2× no caminho normal e 1× no alternativo (`E2E_SEM_BLOCO_HOJE=1`), todos `1 passed` | 1º ciclo APROVADO COM RESSALVAS: **corrigir** a checagem de percentual (passava em ~28% das execuções com 0%) e o caminho alternativo, que não seguia a regra do planejador (quebrava entre 22:31 e 22:59). Corrigido e conferido pelo orquestrador | Bug corrigido: o Hoje mostrava a data antes de carregar os dados, e o `SERVER_NOW` causava erro de hidratação. O teste reprova erro de console e resposta ≥ 400. `globalSetup` roda `db:reset-demo`. Achados 10 a 13. |
+| E-mobile | `feat/e2e-mobile` | integrada | `0fe60f2` | **Vermelho → verde:** escada com `log` vazio (`RangeError`); `goal{…}` sem `progressPct` (`Null is not int`); revisão: tocar no Registrar (`Expected 3, Actual 4`), `log` vazio no exemplo, parse sem `?? 0` → 161/161 | verde; `integration_test` no simulador iPhone 17, 2× seguidas em cada ciclo (`All tests passed!`, 45 s) | 1º ciclo APROVADO COM RESSALVAS: **corrigir** o toque no degrau Registrar, que ainda quebrava com a resposta real. Corrigido (o degrau sem opção não é selecionável) | Os 2 bugs vinham de dados de exemplo diferentes do backend real (`log` com opção; `progressPct` dentro de `goal`). Pod do `integration_test` commitado em `ios/` pelo orquestrador. Achados 14 e 15. |
+| E-docs | `docs/como-testar-e` | integrada | ver o commit desta linha | n/a | fluxo de `curl` do COMO-TESTAR do backend executado pelo orquestrador contra a developer final: demo → PUT (200, com `plan`) → POST /goals (201) → plano do dia e da semana (200) → rampa (5 degraus, `suggested=micro`) → sessão (201, plano recalculado) → etapa 1 `done`, etapa 2 com `nextBlock` | n/a | COMO-TESTAR do backend, do frontend e do mobile reescritos para a fatia. |
 
 ## Ajuste de sequência da Etapa C (orquestrador, 10/11/2026)
 
@@ -125,3 +165,6 @@ O `PUT /scheduling/availability` devolve o plano recalculado, e o dia e a semana
 16. **Web sem backend:** com o padrão `NEXT_PUBLIC_DATA_SOURCE=http`, um `npm run dev` sem backend mostra telas vazias e erros. Prefere `example` como padrão de desenvolvimento?
 17. **Relógio do web no servidor:** o contorno `SERVER_NOW` funciona porque as telas não mostram a hora antes de carregar os dados. A solução definitiva é ler o relógio dentro de um efeito, o que mexe nas telas. Faço numa tarefa separada?
 18. **Token do mobile só em memória:** fechar o app desloga. Para persistir a sessão é preciso aprovar um pacote, por exemplo `flutter_secure_storage`. Aprova?
+19. **Entrada para a rampa pela trilha no mobile (M18):** criar? Ela deixaria o fluxo independente do horário, como no web. É uma função nova.
+20. **Nome do usuário demo:** trocar o seed para "Arthur" (como o botão e o protótipo) ou trocar o texto do botão?
+21. **`db:reset-demo` no ponta a ponta:** o Playwright apaga os dados do demo do banco local a cada execução. Tudo bem, ou prefere um usuário só para os testes?
