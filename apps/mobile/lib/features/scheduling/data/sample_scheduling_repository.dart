@@ -62,15 +62,15 @@ class SampleSchedulingRepository implements SchedulingRepository {
     ],
   };
 
-  Map<String, dynamic> _blockJson(List<Object> w, int index) {
-    final day = w[0] as int,
+  Map<String, dynamic> _blockJson(List<Object> w, DateTime date, int index) {
+    final day = date.day,
         hour = w[1] as double,
         dur = w[2] as double,
         trail = w[3] as int;
     final title = w[4] as String, done = w[5] as bool;
     final start = DateTime(
-      2025,
-      11,
+      date.year,
+      date.month,
       day,
       hour.floor(),
       ((hour - hour.floor()) * 60).round(),
@@ -80,7 +80,10 @@ class SampleSchedulingRepository implements SchedulingRepository {
     final order = steps.indexWhere((s) => s[0] == title) + 1;
     final goal = BoraSample.goals.firstWhere((g) => g['id'] == _goalIds[trail]);
     return {
-      'id': 'block-$day-$index',
+      // Novembro mantém o id antigo (`block-6-0`); os outros meses levam a data.
+      'id': date.month == 11
+          ? 'block-$day-$index'
+          : 'block-${BoraFormat.dateKey(date)}-$index',
       'start': start.toUtc().toIso8601String(),
       'end': end.toUtc().toIso8601String(),
       'status': done ? 'done' : 'planned',
@@ -92,13 +95,24 @@ class SampleSchedulingRepository implements SchedulingRepository {
     };
   }
 
+  /// Etapas das trilhas (DATA `TRILHAS`) no dia [date], no formato de `WEEK`.
+  /// Preenche o mês (M20) fora da semana de 3 a 9/11, coerente com a trilha (M18).
+  static List<List<Object>> _trailRows(DateTime date) => [
+    for (final e in BoraSample.trails.entries)
+      for (final s in e.value)
+        if (date.year == 2025 && s[1] == date.month && s[2] == date.day)
+          [date.day, s[3], s[4], e.key, s[0], s[5]],
+  ]..sort((a, b) => (a[1] as double).compareTo(b[1] as double));
+
+  static bool _inSampleWeek(DateTime d) =>
+      d.year == 2025 && d.month == 11 && d.day >= 3 && d.day <= 9;
+
   Map<String, dynamic> _dayJson(DateTime date) {
-    final inWeek = date.year == 2025 && date.month == 11;
-    final rows = inWeek
+    final rows = _inSampleWeek(date)
         ? BoraSample.week.where((w) => w[0] == date.day).toList()
-        : <List<Object>>[];
+        : _trailRows(date);
     final blocks = [
-      for (var i = 0; i < rows.length; i++) _blockJson(rows[i], i),
+      for (var i = 0; i < rows.length; i++) _blockJson(rows[i], date, i),
     ];
     final used = rows.fold<int>(
       0,
