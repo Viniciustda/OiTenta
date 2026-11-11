@@ -59,32 +59,43 @@ class ChallengeProblem {
         b: json['b'] as int,
         op: json['op'] as String,
       );
+
+  Map<String, dynamic> toJson() => {'a': a, 'b': b, 'op': op};
 }
 
 /// Opção de um degrau: `{id, title, durationLabel, durationSeconds, description, icon, steps?, problems?}`.
+/// Opção de um degrau (`RampOption` de `ramp.types.ts`).
 class RampOption {
   const RampOption({
     required this.id,
+    required this.stepKind,
     required this.title,
     required this.durationLabel,
     required this.durationSeconds,
     required this.description,
     required this.icon,
     this.steps = const [],
+    this.operation,
     this.problems = const [],
   });
 
   final String id;
+  final RampStepKind stepKind;
   final String title;
   final String durationLabel;
   final int? durationSeconds;
   final String description;
   final String icon;
   final List<String> steps;
+
+  /// Operação do desafio: `+ | − | × | mix` (só no degrau `challenge`).
+  final String? operation;
   final List<ChallengeProblem> problems;
 
   factory RampOption.fromJson(Map<String, dynamic> json) => RampOption(
     id: json['id'] as String,
+    stepKind: RampStepKind.fromApi(json['stepKind'] as String),
+    operation: json['operation'] as String?,
     title: json['title'] as String,
     durationLabel: json['durationLabel'] as String,
     durationSeconds: json['durationSeconds'] as int?,
@@ -95,6 +106,20 @@ class RampOption {
         .map((p) => ChallengeProblem.fromJson(p as Map<String, dynamic>))
         .toList(),
   );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'stepKind': stepKind.api,
+    'title': title,
+    'durationLabel': durationLabel,
+    if (durationSeconds != null) 'durationSeconds': durationSeconds,
+    'description': description,
+    'icon': icon,
+    if (steps.isNotEmpty) 'steps': steps,
+    if (operation != null) 'operation': operation,
+    if (problems.isNotEmpty)
+      'problems': problems.map((p) => p.toJson()).toList(),
+  };
 }
 
 /// Um degrau com as suas opções.

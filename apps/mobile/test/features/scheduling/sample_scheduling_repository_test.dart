@@ -21,8 +21,9 @@ void main() {
   test('setAvailability grava a grade e devolve o plano', () async {
     final r = SampleSchedulingRepository(hasAvailability: false);
     const a = WeeklyAvailability(
+      // segunda (0 = segunda … 6 = domingo)
       windows: [
-        AvailabilityWindow(weekday: 1, startMinute: 1080, endMinute: 1380),
+        AvailabilityWindow(weekday: 0, startMinute: 1080, endMinute: 1380),
       ],
       dailyLimitMinutes: 180,
     );

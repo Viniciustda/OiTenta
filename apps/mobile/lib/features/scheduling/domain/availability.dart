@@ -1,4 +1,5 @@
 /// `{ weekday: 0–6, startMinute, endMinute }` (contrato §2; modelagem 3.1).
+/// `weekday`: 0 = segunda … 6 = domingo.
 class AvailabilityWindow {
   const AvailabilityWindow({
     required this.weekday,

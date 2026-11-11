@@ -16,9 +16,6 @@ class OnboardingController extends ChangeNotifier {
 
   static const totalSteps = 6;
 
-  /// Colunas da grade (SEG … DOM) → `weekday` do contrato (0 = domingo).
-  static const columnWeekday = [1, 2, 3, 4, 5, 6, 0];
-
   int step = 1;
   String? stuckAnswer;
   final Set<(int, FreePeriod)> _selected = {};
@@ -74,7 +71,9 @@ class OnboardingController extends ChangeNotifier {
     return [
       for (final (col, p) in list)
         AvailabilityWindow(
-          weekday: columnWeekday[col],
+          // A coluna da grade (SEG … DOM) já é o `weekday` do domínio:
+          // 0 = segunda … 6 = domingo (modelagem §2, `weekdayOf`).
+          weekday: col,
           startMinute: p.startMinute,
           endMinute: p.endMinute,
         ),

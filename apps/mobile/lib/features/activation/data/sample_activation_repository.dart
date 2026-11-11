@@ -46,6 +46,7 @@ class SampleActivationRepository implements ActivationRepository {
             for (final w in BoraSample.warmups)
               {
                 'id': 'warmup-${++i}',
+                'stepKind': 'warmup',
                 'title': w['title'],
                 'durationLabel': w['label'],
                 'durationSeconds': w['seconds'],
@@ -61,11 +62,13 @@ class SampleActivationRepository implements ActivationRepository {
             for (final c in BoraSample.challenges)
               {
                 'id': 'challenge-${++i}',
+                'stepKind': 'challenge',
                 'title': c['title'],
                 'durationLabel': '2 min',
                 'durationSeconds': 120,
                 'description': c['desc'],
                 'icon': 'calculator',
+                'operation': c['operation'],
                 'problems': [
                   for (final p in c['problems'] as List)
                     {'a': p[0], 'b': p[1], 'op': p[2]},
@@ -79,6 +82,7 @@ class SampleActivationRepository implements ActivationRepository {
             for (final t in microTexts)
               {
                 'id': 'micro-${++i}',
+                'stepKind': 'micro',
                 'title': t,
                 'durationLabel': '1 min',
                 'durationSeconds': 60,
@@ -93,6 +97,7 @@ class SampleActivationRepository implements ActivationRepository {
             for (final f in BoraSample.focus)
               {
                 'id': 'focus-${++i}',
+                'stepKind': 'focus',
                 'title': f['title'],
                 'durationLabel': '${f['min']} min',
                 'durationSeconds': (f['min'] as int) * 60,
@@ -106,6 +111,7 @@ class SampleActivationRepository implements ActivationRepository {
           'options': [
             {
               'id': 'log-1',
+              'stepKind': 'log',
               'title': 'Contar como foi',
               'durationLabel': '1 min',
               'durationSeconds': 60,

@@ -66,7 +66,7 @@ void main() {
   });
 
   test(
-    'salvar envia janelas por período (seg=1 … dom=0) e o limite em minutos',
+    'salvar envia janelas por período (seg=0 … dom=6) e o limite em minutos',
     () async {
       c.togglePeriod(0, FreePeriod.night); // segunda
       c.togglePeriod(6, FreePeriod.morning); // domingo
@@ -79,8 +79,9 @@ void main() {
       expect(
         a.windows,
         containsAll(const [
-          AvailabilityWindow(weekday: 1, startMinute: 1080, endMinute: 1380),
-          AvailabilityWindow(weekday: 0, startMinute: 360, endMinute: 720),
+          // segunda = 0 … domingo = 6 (modelagem §2, `weekdayOf`)
+          AvailabilityWindow(weekday: 0, startMinute: 1080, endMinute: 1380),
+          AvailabilityWindow(weekday: 6, startMinute: 360, endMinute: 720),
         ]),
       );
       expect(c.step, 6);

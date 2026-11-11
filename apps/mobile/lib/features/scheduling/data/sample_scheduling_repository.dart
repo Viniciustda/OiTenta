@@ -12,6 +12,7 @@ class SampleSchedulingRepository implements SchedulingRepository {
   SampleSchedulingRepository({bool hasAvailability = true}) {
     if (hasAvailability) {
       _availability = WeeklyAvailability(
+        // Todos os dias (0 = segunda … 6 = domingo), 18h–23h.
         windows: [
           for (var d = 0; d < 7; d++)
             AvailabilityWindow(weekday: d, startMinute: 1080, endMinute: 1380),

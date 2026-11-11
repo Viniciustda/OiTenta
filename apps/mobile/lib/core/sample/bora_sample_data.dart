@@ -211,6 +211,7 @@ class BoraSample {
   static const challenges = [
     {
       'title': '5 contas de soma',
+      'operation': '+',
       'desc': 'Tipo 17 + 26',
       'problems': [
         [17, 26, '+'],
@@ -222,6 +223,7 @@ class BoraSample {
     },
     {
       'title': '5 contas de subtração',
+      'operation': '−',
       'desc': 'Tipo 52 − 17',
       'problems': [
         [52, 17, '−'],
@@ -233,6 +235,7 @@ class BoraSample {
     },
     {
       'title': '5 contas de tabuada',
+      'operation': '×',
       'desc': 'Tipo 7 × 8',
       'problems': [
         [7, 8, '×'],
@@ -244,6 +247,7 @@ class BoraSample {
     },
     {
       'title': '5 contas misturadas',
+      'operation': 'mix',
       'desc': 'Soma, subtração e tabuada',
       'problems': [
         [17, 26, '+'],
