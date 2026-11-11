@@ -30,4 +30,10 @@ describe("W22 trilha do objetivo", () => {
     render(<GoalTrailPage goalId="nao-existe" />);
     expect(await screen.findByText("Objetivo não encontrado")).toBeTruthy();
   });
+
+  it("\"← Objetivos\" volta para a lista (W21)", async () => {
+    render(<GoalTrailPage goalId="goal-eng" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Objetivos" }));
+    expect(push).toHaveBeenCalledWith("/objetivos");
+  });
 });

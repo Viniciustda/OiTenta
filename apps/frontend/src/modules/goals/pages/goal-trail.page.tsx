@@ -10,8 +10,8 @@ import { DEFAULT_TIMEZONE, addDays, dayOfMonth, formatDdMm, formatDuration, loca
 import { goalsRepository, type GetGoalResponse, type GoalListItem } from "../data";
 import { slackShort, stepView, type TrailState } from "../logic/trail.logic";
 
-// W22 trilha do objetivo (AppObjetivos.dc.html, detalhe). Sem ação nesta etapa: "← Objetivos" (W21)
-// e "Editar trilha" (W23), fora da fatia.
+// W22 trilha do objetivo (AppObjetivos.dc.html, detalhe). "← Objetivos" volta para a lista (W21).
+// Sem ação nesta etapa: "Editar trilha" (W23), fora da fatia.
 const DOT: Record<TrailState, { box: string; icon: string }> = {
   done: { box: "border-solid border-pri-soft bg-pri-soft text-pri", icon: "ph-bold ph-check" },
   next: { box: "border-solid border-pri bg-pri text-pri-tx", icon: "ph-fill ph-play" },
@@ -60,7 +60,7 @@ export default function GoalTrailPage({ goalId }: { goalId: string }) {
 
   return (
     <div className="box-border max-w-[1200px] px-12 pt-10 pb-16">
-      <button type="button" className={`-ml-3 ${TERTIARY}`}>
+      <button type="button" onClick={() => router.push("/objetivos")} className={`-ml-3 ${TERTIARY}`}>
         <i className="ph-bold ph-arrow-left text-[16px]" />Objetivos
       </button>
       <div className="mt-3 flex items-end justify-between gap-6">
