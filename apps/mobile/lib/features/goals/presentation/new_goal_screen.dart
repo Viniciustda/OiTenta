@@ -11,9 +11,10 @@ import '../../../core/widgets/bora_widgets.dart';
 import 'deadline_field.dart';
 import 'new_goal_controller.dart';
 
-/// Novo objetivo (M15 começando vazia, P20): título, prazo, etapas com
-/// tempo e total, "Adicionar etapa" e "Distribuir no calendário". Sem os
-/// elementos da IA (chat, requisitos, limite).
+/// Novo objetivo (M15): título, prazo, etapas com tempo e total, "Adicionar
+/// etapa" e "Distribuir no calendário". Começa vazia no caminho manual (P20)
+/// ou preenchida pela resposta da IA do chat ("Etapas sugeridas"). Sem os
+/// requisitos e o limite diário da M15 (não estão no contrato).
 class NewGoalScreen extends StatelessWidget {
   const NewGoalScreen({
     super.key,
@@ -97,7 +98,10 @@ class NewGoalScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        SectionHeader(label: 'Etapas', trailing: state.totalLabel),
+        SectionHeader(
+          label: state.suggested ? 'Etapas sugeridas' : 'Etapas',
+          trailing: state.totalLabel,
+        ),
         const SizedBox(height: 12),
         if (state.steps.isNotEmpty)
           Container(

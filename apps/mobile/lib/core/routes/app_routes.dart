@@ -7,6 +7,11 @@ class AppRoutes {
   static const onboarding = '/onboarding';
   static const today = '/hoje';
   static const goals = '/objetivos';
+
+  /// Chat do novo objetivo (M13–M14): a resposta abre o [newGoal] preenchido.
+  static const goalChat = '/objetivos/chat';
+
+  /// Etapas editáveis (M15): vazia (P20) ou com a resposta da IA no `extra`.
   static const newGoal = '/objetivos/novo';
   static const manualTask = '/objetivos/manual';
   static const trail = '/objetivos/trilha';

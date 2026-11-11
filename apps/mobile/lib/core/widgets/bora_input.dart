@@ -14,6 +14,8 @@ class BoraInput extends StatefulWidget {
     this.keyboardType,
     this.style,
     this.semanticLabel,
+    this.textInputAction,
+    this.onSubmitted,
   });
 
   final String value;
@@ -23,6 +25,8 @@ class BoraInput extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextStyle? style;
   final String? semanticLabel;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<BoraInput> createState() => _BoraInputState();
@@ -58,6 +62,8 @@ class _BoraInputState extends State<BoraInput> {
         controller: _text,
         onChanged: widget.onChanged,
         keyboardType: widget.keyboardType,
+        textInputAction: widget.textInputAction,
+        onSubmitted: widget.onSubmitted,
         style: widget.style ?? BoraText.nunito(15, 20, color: c.tx),
         decoration: InputDecoration(
           hintText: widget.hint,

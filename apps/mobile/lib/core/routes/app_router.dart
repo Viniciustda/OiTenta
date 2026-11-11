@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/activation/presentation/activation_pages.dart';
 import '../../features/auth/presentation/auth_pages.dart';
 import '../../features/gamification/presentation/garden_screen.dart';
+import '../../features/goals/domain/goal_suggestion.dart';
 import '../../features/goals/presentation/goals_pages.dart';
 import '../../features/scheduling/presentation/scheduling_pages.dart';
 import '../di/app_dependencies.dart';
@@ -70,8 +71,17 @@ GoRouter createRouter(
             pageBuilder: (_, s) => page(s, GoalsPage(deps: deps)),
           ),
           GoRoute(
+            path: AppRoutes.goalChat,
+            builder: (_, _) => GoalChatPage(deps: deps),
+          ),
+          GoRoute(
             path: AppRoutes.newGoal,
-            builder: (_, _) => NewGoalPage(deps: deps),
+            builder: (_, s) => NewGoalPage(
+              deps: deps,
+              suggestion: s.extra is GoalSuggestion
+                  ? s.extra as GoalSuggestion
+                  : null,
+            ),
           ),
           GoRoute(
             path: AppRoutes.manualTask,

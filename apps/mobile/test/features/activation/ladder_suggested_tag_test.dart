@@ -29,10 +29,7 @@ void main() {
       isTrue,
       reason: 'a tag está coberta em $point',
     );
-    final firstBox = hit.path
-        .map((e) => e.target)
-        .whereType<RenderBox>()
-        .first;
+    final firstBox = hit.path.map((e) => e.target).whereType<RenderBox>().first;
     expect(identical(firstBox, tagBox), isTrue, reason: 'algo cobre a tag');
   }
 
@@ -45,7 +42,10 @@ void main() {
       expect(tag, findsOneWidget);
       final r = tester.getRect(tag);
       final screen = Offset.zero & tester.view.physicalSize;
-      expect(screen.contains(r.topLeft) && screen.contains(r.bottomRight), isTrue);
+      expect(
+        screen.contains(r.topLeft) && screen.contains(r.bottomRight),
+        isTrue,
+      );
       for (final p in [
         r.center,
         r.centerLeft + const Offset(2, 0),

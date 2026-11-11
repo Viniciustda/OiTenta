@@ -7,7 +7,10 @@ import '../../../core/format/bora_format.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/widgets/bora_toast.dart';
 import '../../../core/widgets/controller_host.dart';
+import '../domain/goal_suggestion.dart';
 import 'date_picker_sheet.dart';
+import 'goal_chat_controller.dart';
+import 'goal_chat_screen.dart';
 import 'goals_controller.dart';
 import 'goals_screen.dart';
 import 'manual_task_controller.dart';
@@ -53,14 +56,44 @@ class TrailPage extends StatelessWidget {
   );
 }
 
-class NewGoalPage extends StatelessWidget {
-  const NewGoalPage({super.key, required this.deps});
+/// Chat do novo objetivo (M13–M14).
+class GoalChatPage extends StatelessWidget {
+  const GoalChatPage({super.key, required this.deps});
 
   final AppDependencies deps;
 
   @override
+  Widget build(BuildContext context) => ControllerHost<GoalChatController>(
+    create: () => GoalChatController(deps.goalAssistant),
+    builder: (context, c) => GoalChatScreen(
+      state: c,
+      onBack: () =>
+          context.canPop() ? context.pop() : context.go(AppRoutes.goals),
+      // Caminho manual (P20): a M15 vazia, que oferece a M16 (tarefa única).
+      // Ver o [DECIDIR] "Destino do 'Preencher à mão' do chat".
+      onManual: () => context.push(AppRoutes.newGoal),
+      onText: c.setText,
+      onSend: () async {
+        final suggestion = await c.send();
+        if (!context.mounted || c.phase == GoalChatPhase.idle) return;
+        // Com resposta: M15 preenchida. Se a IA falhar (4f): M15 vazia.
+        context.pushReplacement(AppRoutes.newGoal, extra: suggestion);
+      },
+    ),
+  );
+}
+
+class NewGoalPage extends StatelessWidget {
+  const NewGoalPage({super.key, required this.deps, this.suggestion});
+
+  final AppDependencies deps;
+
+  /// Resposta da IA vinda do chat; `null` no caminho manual (P20).
+  final GoalSuggestion? suggestion;
+
+  @override
   Widget build(BuildContext context) => ControllerHost<NewGoalController>(
-    create: () => NewGoalController(deps.goals),
+    create: () => NewGoalController(deps.goals, suggestion: suggestion),
     builder: (context, c) => NewGoalScreen(
       state: c,
       onBack: () =>

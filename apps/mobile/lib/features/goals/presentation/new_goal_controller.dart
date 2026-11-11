@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../core/format/bora_format.dart';
 import '../data/goals_repository.dart';
 import '../domain/goal.dart';
+import '../domain/goal_suggestion.dart';
 
 /// Tempos das etapas (chips da trilha do protótipo, P5).
 const stepDurations = <(String, int)>[
@@ -21,9 +22,24 @@ class DraftStep {
   final int minutes;
 }
 
-/// Novo objetivo com etapas (M15 começando vazia, P20).
+/// Novo objetivo com etapas (M15). Começa vazia no caminho manual (P20) ou
+/// preenchida com a resposta da IA ([suggestion], chat M13–M14); nos dois
+/// casos tudo é editável antes de distribuir.
 class NewGoalController extends ChangeNotifier {
-  NewGoalController(this._repo);
+  NewGoalController(this._repo, {GoalSuggestion? suggestion})
+    : suggested = suggestion != null {
+    if (suggestion == null) return;
+    title = suggestion.title;
+    deadline = suggestion.deadline == null
+        ? null
+        : BoraFormat.parseDateKey(suggestion.deadline!);
+    steps.addAll([
+      for (final s in suggestion.steps) DraftStep(s.title, s.estimatedMinutes),
+    ]);
+  }
+
+  /// As etapas vieram da IA ("Etapas sugeridas" na M15).
+  final bool suggested;
 
   final GoalsRepository _repo;
 
