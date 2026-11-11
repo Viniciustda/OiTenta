@@ -135,7 +135,7 @@ Resposta 201:
 
 ### `GET /goals`
 
-- **Resposta:** 200 `{ goals[{id, title, deadline, colorIndex, progressPct, done, total, status, slackDays}] }`.
+- **Resposta:** 200 `{ goals[{id, title, deadline, colorIndex, progressPct, done, total, status, slackDays, createdAt}] }`. `slackDays` é `null` para objetivo `done`, que não entra no plano (C4). `createdAt` (ISO) desempata a ordem do plano.
 - **Erros:** 401.
 - **Caso de uso:** `ListGoals` + `GetGoalsFeasibility` (folga de cada objetivo no plano atual), montado pelo orquestrador `goals-view` (P17).
 - **Telas:** web W12 (coluna "objetivos" do Hoje); mobile M02 (aba Objetivos).
@@ -146,9 +146,9 @@ Resposta 201:
 
 ### `GET /goals/:goalId`
 
-- **Resposta:** 200 `{ goal{…}, steps[{id, order, title, estimatedMinutes, progressPct, status, remainingMinutes, nextBlock?}], progressPct, done, total }`.
+- **Resposta:** 200 `{ goal{…}, steps[{id, order, title, estimatedMinutes, progressPct, status, remainingMinutes, nextBlock?}], progressPct, done, total }`. `nextBlock` é `{id, start, end}` (ISO): o bloco `planned` de menor início a partir de agora. Só aparece em etapa pendente que tem bloco.
 - **Erros:** 401; 404 (inexistente ou de outro usuário).
-- **Caso de uso:** `GetGoal`.
+- **Caso de uso:** `GetGoal` + `GetNextBlocks` (orquestrador `goals-view`).
 - **Telas:** web W22 (trilha); mobile M18 (trilha).
 
 **Integração:**
@@ -198,7 +198,7 @@ As visões Prazos, Mês e Dia (W17–W20, M20–M21) e as ações do detalhe do 
 
 ### `GET /activation/ramp?goalId=…&stepId=…&energy=…&availableTime=…`
 
-- **Resposta:** 200 `{ steps[5]{kind, options[{id, title, durationLabel, durationSeconds?, description, icon, steps?, problems?}]}, suggested }`.
+- **Resposta:** 200 `{ steps[5]{kind, options[{id, stepKind, title, durationLabel, durationSeconds?, description, icon, steps?, operation?, problems?[{a, b, op}]}]}, suggested }`. Data no formato certo mas inexistente no calendário → 422.
 - **Erros:** 400 (`energy` inválida), 401, 404 (objetivo ou etapa inexistente ou de outro usuário).
 - **Caso de uso:** `GetGoal` → `BuildRamp` (orquestrador `ramp`).
 - **Telas:**
@@ -236,7 +236,9 @@ Resposta 201:
 ```
 
 - **Erros:** 400, 401, 404 (objetivo, etapa ou bloco inexistente ou de outro usuário), 422 (`partial` sem %).
-- **Caso de uso:** `RecordFocusSession` → `UpdateStepProgress` → `RecordBlockOutcome` → `GeneratePlan`.
+- **`blockId` é opcional.** Sem ele, o `RecordBlockOutcome` é pulado.
+- **Antes de qualquer escrita**, o orquestrador confere a posse com `GetGoal` (objetivo e etapa) e com `GetBlock` (quando há `blockId`). Por isso o 404 não deixa gravação parcial.
+- **Caso de uso:** `GetGoal` + `GetBlock` → `RecordFocusSession` → `UpdateStepProgress` → `RecordBlockOutcome` → `GeneratePlan`.
 - **Telas:**
   - mobile M11 (registro: Concluí / Parcial / Não rolou) e M12 (celebração; números de gamificação conforme P18);
   - web W38 (registrar), W39 (parcial), W40 (não rolou), W41 (celebração).
