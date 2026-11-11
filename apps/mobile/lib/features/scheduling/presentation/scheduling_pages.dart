@@ -108,8 +108,17 @@ class WeekPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ControllerHost<WeekController>(
-    create: () => WeekController(deps.scheduling, deps.clock),
+    create: () =>
+        WeekController(deps.scheduling, deps.clock, goals: deps.goals),
     init: (c) => c.load(),
-    builder: (context, c) => WeekScreen(state: c, onSelectDay: c.selectDay),
+    builder: (context, c) => WeekScreen(
+      state: c,
+      onSelectDay: c.selectDay,
+      onSelectDate: c.selectDate,
+      onExpand: c.expand,
+      onCollapse: c.collapse,
+      onToggleExpanded: c.toggleExpanded,
+      onMode: c.setMode,
+    ),
   );
 }
