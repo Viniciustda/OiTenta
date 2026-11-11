@@ -83,10 +83,10 @@ export default function LandingPage() {
           <a href="#como" className={NAV_LINK}>Como funciona</a>
           <a href="#estudantes" className={NAV_LINK}>Para estudantes</a>
           <span className="mx-3 h-6 w-px bg-border" />
-          <a className="flex h-11 cursor-pointer items-center rounded-full px-4 text-[16px]/none font-extrabold text-blue hover:bg-blue-soft hover:text-blue">
+          <a href="/entrar" className="flex h-11 cursor-pointer items-center rounded-full px-4 text-[16px]/none font-extrabold text-blue hover:bg-blue-soft hover:text-blue">
             Entrar
           </a>
-          <a className="ml-2 box-border flex h-[52px] cursor-pointer items-center rounded-full border-2 border-border bg-surface px-6 text-[16px]/none font-extrabold text-blue shadow-[0_3px_0_var(--border)] transition-[transform,box-shadow] duration-[80ms] hover:text-blue active:translate-y-[3px] active:bg-s2 active:shadow-none">
+          <a href="/cadastro" className="ml-2 box-border flex h-[52px] cursor-pointer items-center rounded-full border-2 border-border bg-surface px-6 text-[16px]/none font-extrabold text-blue shadow-[0_3px_0_var(--border)] transition-[transform,box-shadow] duration-[80ms] hover:text-blue active:translate-y-[3px] active:bg-s2 active:shadow-none">
             Começar grátis
           </a>
         </nav>
@@ -104,7 +104,7 @@ export default function LandingPage() {
             A IA quebra seus trabalhos em etapas, encaixa no seu calendário e te leva do zero ao foco em 25 minutos.
           </p>
           <div className="mt-10 flex items-center gap-3">
-            <a className={PRIMARY_BTN}>
+            <a href="/cadastro" className={PRIMARY_BTN}>
               Começar grátis
               <i className="ph-bold ph-arrow-right text-[18px]" />
             </a>
@@ -532,7 +532,7 @@ export default function LandingPage() {
             <p className={`mt-6 mb-0 max-w-[540px] ${LEAD}`}>
               Cada degrau cumprido rega o Broto. Comece pelo mais fácil, o resto a gente encaixa.
             </p>
-            <a className={`mt-10 w-fit ${PRIMARY_BTN}`}>
+            <a href="/cadastro" className={`mt-10 w-fit ${PRIMARY_BTN}`}>
               Começar grátis
               <i className="ph-bold ph-arrow-right text-[18px]" />
             </a>
