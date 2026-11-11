@@ -27,4 +27,8 @@ export class ExampleAuthRepository implements AuthRepository {
   async me(): Promise<MeResponse> {
     return { user: toUser(this.backend.currentUser()) };
   }
+
+  async logout(): Promise<void> {
+    this.backend.sessionUserId = null;
+  }
 }

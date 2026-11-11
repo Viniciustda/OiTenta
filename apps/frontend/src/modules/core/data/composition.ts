@@ -12,6 +12,8 @@ import { HttpGoalsRepository } from "@/modules/goals/data/http-goals.repository"
 import { ExampleSchedulingRepository } from "@/modules/scheduling/data/example-scheduling.repository";
 import { HttpSchedulingRepository } from "@/modules/scheduling/data/http-scheduling.repository";
 import type { SchedulingRepository } from "@/modules/scheduling/data/scheduling.repository";
+import { ExampleSettingsRepository } from "@/modules/settings/data/example-settings.repository";
+import type { SettingsRepository } from "@/modules/settings/data/settings.repository";
 import { type DataSource, DATA_SOURCE } from "./data-source";
 import { HttpClient } from "./http-client";
 
@@ -23,6 +25,8 @@ export interface Repositories {
   scheduling: SchedulingRepository;
   goals: GoalsRepository;
   activation: ActivationRepository;
+  /** example nas duas fontes: o contrato não tem preferências (tema, e-mail diário). */
+  settings: SettingsRepository;
 }
 
 export function createRepositories(source: DataSource, http: HttpClient = new HttpClient()): Repositories {
@@ -32,6 +36,7 @@ export function createRepositories(source: DataSource, http: HttpClient = new Ht
       scheduling: new ExampleSchedulingRepository(),
       goals: new ExampleGoalsRepository(),
       activation: new ExampleActivationRepository(),
+      settings: new ExampleSettingsRepository(),
     };
   }
   return {
@@ -39,6 +44,7 @@ export function createRepositories(source: DataSource, http: HttpClient = new Ht
     scheduling: new HttpSchedulingRepository(http),
     goals: new HttpGoalsRepository(http),
     activation: new HttpActivationRepository(http),
+    settings: new ExampleSettingsRepository(),
   };
 }
 

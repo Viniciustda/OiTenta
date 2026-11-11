@@ -87,4 +87,12 @@ describe("HttpAuthRepository", () => {
     expect(tokens.get()).toBeNull();
     expect(onUnauthorized).toHaveBeenCalledTimes(1);
   });
+
+  it("logout apaga o token guardado, sem chamar o backend (JWT sem rota de logout no contrato)", async () => {
+    const fetch = stubFetch({ status: 200, body: {} });
+    const { repo, tokens } = setup("tok-1");
+    await repo.logout();
+    expect(tokens.get()).toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
+  });
 });

@@ -49,3 +49,13 @@ describe("ExampleAuthRepository sem sessão", () => {
     expect((await new ExampleAuthRepository(new ExampleBackend()).me()).user.name).toBe("Arthur");
   });
 });
+
+describe("ExampleAuthRepository logout", () => {
+  it("logout encerra a sessão de exemplo (W26 \"Sair\")", async () => {
+    const backend = new ExampleBackend();
+    const repo = new ExampleAuthRepository(backend);
+    await repo.login({ email: "arthur@faculdade.edu.br", password: "bora1234" });
+    await repo.logout();
+    expect(backend.sessionUserId).toBeNull();
+  });
+});
