@@ -117,7 +117,8 @@ class _UserBubble extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 280),
+        // 280 de conteúdo + 14 de padding de cada lado (protótipo).
+        constraints: const BoxConstraints(maxWidth: 308),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: c.pri,

@@ -137,4 +137,41 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('3 ativos · próxima entrega 20/11'), findsOneWidget);
   });
+
+  testWidgets(
+    'o "Enviar" do teclado durante a análise não abre a M15 vazia (regressão)',
+    (tester) async {
+      await pumpApp(tester, location: '/objetivos/chat');
+      await tester.enterText(
+        find.byType(EditableText),
+        'Trabalho de Algoritmos',
+      );
+      await tester.pump();
+      await tester.tap(find.bySemanticsLabel('Enviar'));
+      await tester.pump();
+      expect(find.text('IA analisando…'), findsOneWidget);
+
+      await tester.showKeyboard(find.byType(EditableText));
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await tester.pump();
+      expect(find.text('0 min no total'), findsNothing);
+      expect(find.text('IA analisando…'), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      expect(find.text('ETAPAS SUGERIDAS'), findsOneWidget);
+      expect(find.text('8h15 no total'), findsOneWidget);
+    },
+  );
+
+  testWidgets('o "Enviar" do teclado com o campo vazio não sai do chat', (
+    tester,
+  ) async {
+    await pumpApp(tester, location: '/objetivos/chat');
+    await tester.showKeyboard(find.byType(EditableText));
+    await tester.testTextInput.receiveAction(TextInputAction.send);
+    await tester.pumpAndSettle();
+    expect(find.text(_brotoAsk), findsOneWidget);
+    expect(find.text('0 min no total'), findsNothing);
+  });
 }

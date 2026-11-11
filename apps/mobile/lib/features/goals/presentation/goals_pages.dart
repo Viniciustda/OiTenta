@@ -74,8 +74,11 @@ class GoalChatPage extends StatelessWidget {
       onManual: () => context.push(AppRoutes.newGoal),
       onText: c.setText,
       onSend: () async {
+        // Campo vazio ou análise em andamento (ex.: "Enviar" do teclado de
+        // novo): não faz nada, para não trocar a resposta pela M15 vazia.
+        if (!c.canSend) return;
         final suggestion = await c.send();
-        if (!context.mounted || c.phase == GoalChatPhase.idle) return;
+        if (!context.mounted) return;
         // Com resposta: M15 preenchida. Se a IA falhar (4f): M15 vazia.
         context.pushReplacement(AppRoutes.newGoal, extra: suggestion);
       },

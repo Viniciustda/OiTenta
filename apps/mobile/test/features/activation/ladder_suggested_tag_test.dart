@@ -41,7 +41,9 @@ void main() {
       final tag = find.text('Sugerido pra você');
       expect(tag, findsOneWidget);
       final r = tester.getRect(tag);
-      final screen = Offset.zero & tester.view.physicalSize;
+      final screen =
+          Offset.zero &
+          (tester.view.physicalSize / tester.view.devicePixelRatio);
       expect(
         screen.contains(r.topLeft) && screen.contains(r.bottomRight),
         isTrue,
