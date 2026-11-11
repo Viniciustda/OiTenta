@@ -6,15 +6,27 @@ export type AvailableTime = "15m" | "30m" | "1h" | "2h+";
 export type RampStepKind = "warmup" | "challenge" | "micro" | "focus" | "log";
 export type SessionOutcome = "done" | "partial" | "not_done";
 
+export type ChallengeSymbol = "+" | "−" | "×";
+export type ChallengeOperation = ChallengeSymbol | "mix";
+
+export interface ChallengeProblem {
+  a: number;
+  b: number;
+  op: ChallengeSymbol;
+}
+
+// Igual ao RampOption do domínio (modules/activation/src/ramp/model/ramp.types.ts).
 export interface RampOption {
   id: string;
+  stepKind: RampStepKind;
   title: string;
   durationLabel: string;
-  durationSeconds: number;
+  durationSeconds?: number;
   description: string;
   icon: string;
   steps?: string[];
-  problems?: string[];
+  operation?: ChallengeOperation;
+  problems?: ChallengeProblem[];
 }
 
 export interface RampStep {

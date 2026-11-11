@@ -190,6 +190,17 @@ function Ramp({ ramp, info, target, energy, onClose, onToast, onRecorded }: Ramp
             <p className={`m-0 font-fredoka text-[28px]/[36px] font-semibold text-balance ${isFocus ? "text-center" : "text-left"}`}>
               {isFocus ? `Foco em: ${info.stepTitle}` : option?.title}
             </p>
+            {!isFocus && !!option?.problems?.length && (
+              // Contas do desafio (catálogo do domínio). O web não tem design do teclado do mobile (M08):
+              // as contas aparecem só para fazer de cabeça.
+              <div className="flex flex-wrap gap-2">
+                {option.problems.map((p, k) => (
+                  <span key={k} className="flex h-10 items-center rounded-full bg-s2 px-4 font-fredoka text-[20px]/none font-semibold tabular-nums">
+                    {`${p.a} ${p.op} ${p.b} = ?`}
+                  </span>
+                ))}
+              </div>
+            )}
             <div className="relative" style={{ width: isFocus ? 260 : 148, height: isFocus ? 260 : 148 }}>
               <ProgressRing
                 size={isFocus ? 260 : 148}

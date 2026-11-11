@@ -1,4 +1,5 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { authRepository } from "../data";
 import LoginPage from "./login.page";
@@ -45,9 +46,20 @@ describe("W04 cadastro", () => {
     expect(screen.getByLabelText("Como você quer ser chamado?")).toBeTruthy();
   });
 
+  it("começa com os campos vazios e com placeholders", () => {
+    render(<LoginPage mode="cadastro" />);
+    const nome = screen.getByLabelText("Como você quer ser chamado?") as HTMLInputElement;
+    const email = screen.getByLabelText("E-mail") as HTMLInputElement;
+    const senha = screen.getByLabelText("Senha") as HTMLInputElement;
+    expect([nome.value, email.value, senha.value]).toEqual(["", "", ""]);
+    expect([nome.placeholder, email.placeholder, senha.placeholder]).toEqual(["Arthur", "voce@faculdade.edu.br", "••••••••"]);
+  });
+
   it("Criar conta cadastra, entra e vai para o onboarding", async () => {
     const register = vi.spyOn(authRepository, "register");
     render(<LoginPage mode="cadastro" />);
+    fireEvent.change(screen.getByLabelText("Como você quer ser chamado?"), { target: { value: "Arthur" } });
+    fireEvent.change(screen.getByLabelText("Senha"), { target: { value: "Senha123!" } });
     fireEvent.change(screen.getByLabelText("E-mail"), { target: { value: "nova@faculdade.edu.br" } });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Criar conta" })));
     expect(register).toHaveBeenCalledWith(expect.objectContaining({ name: "Arthur", email: "nova@faculdade.edu.br" }));
@@ -58,5 +70,12 @@ describe("W04 cadastro", () => {
     render(<LoginPage mode="cadastro" />);
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Pular e ver o onboarding (demo)" })));
     expect(push).toHaveBeenCalledWith("/onboarding");
+  });
+});
+
+describe("login sem dados de exemplo importados", () => {
+  it("a tela não importa core/data/example-data (os valores do protótipo ficam na própria tela)", () => {
+    const src = readFileSync(`${process.cwd()}/src/modules/auth/pages/login.page.tsx`, "utf8");
+    expect(src).not.toContain("example-data");
   });
 });

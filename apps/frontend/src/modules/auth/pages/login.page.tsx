@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ApiError } from "@/modules/core/data/api-error";
 import { PRIMARY_BTN } from "@/modules/core/components/ui";
-import { DEMO_USER } from "@/modules/core/data/example-data";
 import Broto from "@/modules/landing/components/broto.component";
 import { schedulingRepository } from "@/modules/scheduling/data";
 import { authRepository } from "../data";
 
-// W03 login e W04 cadastro (AppLogin.dc.html). Os campos vêm preenchidos como no protótipo.
+// W03 login e W04 cadastro (AppLogin.dc.html). No login, os campos vêm preenchidos como no protótipo;
+// no cadastro, começam vazios, só com os placeholders.
+const PROTOTYPE_LOGIN = { email: "arthur@faculdade.edu.br", password: "bora1234" };
 export type AuthMode = "login" | "cadastro";
 
 const TEXT = {
@@ -55,9 +56,9 @@ export default function LoginPage({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const t = TEXT[mode];
   const isCad = mode === "cadastro";
-  const [nome, setNome] = useState(DEMO_USER.name);
-  const [email, setEmail] = useState(DEMO_USER.email);
-  const [senha, setSenha] = useState(DEMO_USER.password);
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState(isCad ? "" : PROTOTYPE_LOGIN.email);
+  const [senha, setSenha] = useState(isCad ? "" : PROTOTYPE_LOGIN.password);
   const [error, setError] = useState<string | null>(null);
 
   // P12/W11: depois do login, sem disponibilidade (404) vai para o onboarding; com, para o Hoje.

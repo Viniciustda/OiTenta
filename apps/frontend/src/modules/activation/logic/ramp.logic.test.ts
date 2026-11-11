@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
-import type { RampResponse } from "../data/activation.types";
+import type { RampResponse, RampStepKind } from "../data/activation.types";
 import { createRampState, rampReducer, currentOption, stepIndexOf } from "./ramp.logic";
 
-const opt = (title: string, sec: number) => ({ id: title, title, durationLabel: `${sec / 60} min`, durationSeconds: sec, description: "", icon: "x" });
+const opt = (stepKind: RampStepKind, title: string, sec: number) => ({ id: title, stepKind, title, durationLabel: `${sec / 60} min`, durationSeconds: sec, description: "", icon: "x" });
 const ramp: RampResponse = {
   suggested: "warmup",
   steps: [
-    { kind: "warmup", options: [opt("Aquecer A", 180), opt("Aquecer B", 180)] },
-    { kind: "challenge", options: [opt("Desafio A", 120), opt("Desafio B", 120)] },
-    { kind: "micro", options: [opt("Micro A", 60)] },
-    { kind: "focus", options: [opt("25 min", 1500)] },
+    { kind: "warmup", options: [opt("warmup", "Aquecer A", 180), opt("warmup", "Aquecer B", 180)] },
+    { kind: "challenge", options: [opt("challenge", "Desafio A", 120), opt("challenge", "Desafio B", 120)] },
+    { kind: "micro", options: [opt("micro", "Micro A", 60)] },
+    { kind: "focus", options: [opt("focus", "25 min", 1500)] },
     { kind: "log", options: [] },
   ],
 };
@@ -21,6 +21,11 @@ describe("rampa (W32–W41)", () => {
     expect(s.remainingSeconds).toBe(120);
     expect(s.phase).toBe("ramp");
     expect(stepIndexOf("focus")).toBe(3);
+  });
+
+  it("opção sem durationSeconds (opcional no domínio) usa 1 min", () => {
+    const sem = { ...ramp, steps: ramp.steps.map((st) => ({ ...st, options: st.options.map((o) => ({ ...o, durationSeconds: undefined })) })) };
+    expect(createRampState(sem).remainingSeconds).toBe(60);
   });
 
   it("Concluí o degrau avança, conta o degrau e reinicia o tempo", () => {

@@ -11,6 +11,7 @@ import { CARD, KICKER, objColor, objInk } from "@/modules/core/components/ui";
 import { clock } from "@/modules/core/data/clock";
 import { DEFAULT_TIMEZONE, formatLongDateTime, localDate } from "@/modules/core/format/time.format";
 import { RECENT_BADGES, type BadgeState } from "@/modules/gamification/data/example-gamification.data";
+import MilestoneModal from "@/modules/gamification/components/milestone-modal.component";
 import NewGoalModal from "@/modules/goals/components/new-goal-modal.component";
 import { goalsRepository, type GoalListItem } from "@/modules/goals/data";
 import Broto from "@/modules/landing/components/broto.component";
@@ -39,6 +40,9 @@ export default function TodayPage() {
   const [ramp, setRamp] = useState<RampTarget | null>(null);
   const [novo, setNovo] = useState(false);
   const [toast, setToast] = useState<ToastData | null>(null);
+  // Conquista "7 dias regados" (P18): aparece uma vez, depois da primeira sessão registrada (W40).
+  const [milestone, setMilestone] = useState<"pending" | "open" | "done">("pending");
+  const closeMilestone = useCallback(() => setMilestone("done"), []);
 
   const [reloadKey, setReloadKey] = useState(0);
   const [closedUrl, setClosedUrl] = useState<string | null>(null);
@@ -266,6 +270,7 @@ export default function TodayPage() {
             setRamp(null);
             clearParams();
             if (changed) setReloadKey((k) => k + 1);
+            if (changed && milestone === "pending") setTimeout(() => setMilestone("open"), 250);
           }}
         />
       )}
@@ -281,6 +286,7 @@ export default function TodayPage() {
           }}
         />
       )}
+      {milestone === "open" && <MilestoneModal onClose={closeMilestone} />}
       {toast && <Toast toast={toast} />}
     </div>
   );

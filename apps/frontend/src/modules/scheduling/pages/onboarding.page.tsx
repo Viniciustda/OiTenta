@@ -96,7 +96,7 @@ export default function OnboardingPage() {
           <>
             <Answer>Bora!</Answer>
             <BrotoSays>
-              Primeiro, me mostra quando você tá livre. <b>Pinta os horários arrastando o mouse.</b> Aula e estágio eu já marquei como ocupados.
+              Primeiro, me mostra quando você tá livre. <b>Pinta os horários arrastando o mouse.</b>
             </BrotoSays>
           </>
         )}

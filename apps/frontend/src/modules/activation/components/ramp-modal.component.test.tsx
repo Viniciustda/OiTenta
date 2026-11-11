@@ -1,8 +1,11 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { exampleBackend } from "@/modules/core/data/example-backend";
 import { activationRepository } from "../data";
 import RampModal from "./ramp-modal.component";
 
+// Cada teste parte do backend de exemplo recém-criado: nenhum depende de outro.
+beforeEach(() => exampleBackend.reset());
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 const target = { goalId: "goal-eng", stepId: "step-e5", blockId: "block-e5-0" };
@@ -85,5 +88,19 @@ describe("W32–W41 modal da rampa", () => {
     expect(record).toHaveBeenCalledWith(expect.objectContaining({ outcome: "not_done" }));
     expect(onToast).toHaveBeenCalledWith({ title: "Tudo bem", sub: "Fica pra próxima, sem drama", icon: "plant" });
     expect(onClose).toHaveBeenCalledWith(true);
+  });
+
+  it("se o desafio traz contas (problems), a tela mostra as contas", async () => {
+    const real = await activationRepository.getRamp({ goalId: target.goalId, stepId: target.stepId, energy: "medium" });
+    real.steps[1].options[0] = {
+      ...real.steps[1].options[0],
+      title: "Soma",
+      operation: "+",
+      problems: [{ a: 7, b: 5, op: "+" }, { a: 9, b: 3, op: "−" }],
+    };
+    vi.spyOn(activationRepository, "getRamp").mockResolvedValue(real);
+    await open("medium");
+    expect(screen.getByText("7 + 5 = ?")).toBeTruthy();
+    expect(screen.getByText("9 − 3 = ?")).toBeTruthy();
   });
 });

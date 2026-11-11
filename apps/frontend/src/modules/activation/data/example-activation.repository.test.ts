@@ -40,6 +40,16 @@ describe("ExampleActivationRepository — GET /activation/ramp", () => {
     expect(ramp.steps[3].options[0]).toMatchObject({ durationSeconds: 1500, durationLabel: "25 min" });
   });
 
+  it("cada opção traz o stepKind do degrau (tipo do domínio)", async () => {
+    const { activation, block } = await setup();
+    const ramp = await activation.getRamp({ goalId: block.goalId, stepId: block.stepId, energy: "medium" });
+    ramp.steps.forEach((s) => s.options.forEach((o) => expect(o.stepKind).toBe(s.kind)));
+  });
+
+  it("o texto genérico é o mesmo do domínio (P6)", () => {
+    expect(GENERIC_MICRO_STEP).toBe("Abra o material desta etapa e faça só a primeira linha: o título ou a primeira frase.");
+  });
+
   it("o micro-passo usa os micro-passos da etapa", async () => {
     const { activation, block } = await setup();
     const ramp = await activation.getRamp({ goalId: block.goalId, stepId: block.stepId, energy: "medium" });
@@ -87,7 +97,10 @@ describe("ExampleActivationRepository — POST /activation/sessions", () => {
     const res = await activation.recordSession({ ...base, goalId: block.goalId, stepId: block.stepId, blockId: block.id, outcome: "not_done", partialPct: null });
     expect(res.goalProgressPct).toBe(62);
     expect((await goals.get(block.goalId)).steps[4].progressPct).toBe(0);
-    expect((await scheduling.getDayPlan("2026-11-16")).blocks[0].status).toBe("missed");
+    const day = await scheduling.getDayPlan("2026-11-16");
+    expect(day.blocks[0].status).toBe("missed");
+    expect(day.usedMinutes).toBe(180); // soma todos os blocos do dia, como o buildDayPlan
+
   });
 
   it("parcial sem % responde 422", async () => {

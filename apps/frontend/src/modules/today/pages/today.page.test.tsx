@@ -1,5 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { exampleBackend } from "@/modules/core/data/example-backend";
 import TodayPage from "./today.page";
 
 const push = vi.fn();
@@ -8,6 +9,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
   usePathname: () => "/hoje",
 }));
+beforeEach(() => exampleBackend.reset());
 afterEach(() => { cleanup(); push.mockReset(); });
 
 describe("W12–W14 Hoje", () => {
@@ -41,5 +43,20 @@ describe("W12–W14 Hoje", () => {
     render(<TodayPage />);
     fireEvent.click(await screen.findByRole("button", { name: /Prova de Cálculo II\s*25%/ }));
     expect(push).toHaveBeenCalledWith("/objetivos/goal-calc");
+  });
+
+  it("W40: depois de registrar, mostra a conquista \"7 dias regados\" com os valores fixos (P18)", async () => {
+    render(<TodayPage />);
+    await screen.findByText("Diagrama de casos de uso");
+    fireEvent.click(screen.getByRole("button", { name: "Elétrico" }));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Vamos começar\?/ })));
+    fireEvent.click(await screen.findByRole("button", { name: "Terminar foco" }));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Não rolou" })));
+    const marco = await screen.findByRole("dialog", { name: "Conquista" });
+    expect(marco.textContent).toContain("Conquista rara");
+    expect(marco.textContent).toContain("7 dias regados");
+    expect(marco.textContent).toContain("Uma semana inteira cuidando do Broto. Ele tá orgulhoso de você.");
+    fireEvent.click(screen.getByRole("button", { name: "Bora!" }));
+    expect(screen.queryByRole("dialog", { name: "Conquista" })).toBeNull();
   });
 });

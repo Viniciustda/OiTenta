@@ -21,6 +21,8 @@ describe("W05–W11 onboarding", () => {
     render(<OnboardingPage />);
     fireEvent.click(screen.getByRole("button", { name: "Bora!" }));
     expect(screen.getByText("Passo 2 de 4")).toBeTruthy();
+    // P8: a grade vem vazia, então o Broto não diz que já marcou aula e estágio.
+    expect(screen.queryByText(/Aula e estágio/)).toBeNull();
     const pronto = screen.getByRole("button", { name: "Pronto, esses são meus horários" }) as HTMLButtonElement;
     expect(pronto.disabled).toBe(true);
     fireEvent.click(screen.getByRole("button", { name: "Usar sugestão do Broto" }));

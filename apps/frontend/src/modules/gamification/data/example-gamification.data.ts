@@ -25,3 +25,10 @@ export const CELEBRATION = {
   rampDrops: 20,
   focusXp: 1,
 };
+
+/** Conquista rara mostrada depois da sessão (W40; Bora App.dc.html, marco "7 dias regados"). */
+export const MILESTONE = {
+  kicker: "Conquista rara",
+  title: "7 dias regados",
+  sub: "Uma semana inteira cuidando do Broto. Ele tá orgulhoso de você.",
+};

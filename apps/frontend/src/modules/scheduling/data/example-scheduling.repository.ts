@@ -45,7 +45,7 @@ export class ExampleSchedulingRepository implements SchedulingRepository {
         return { id: b.id, start: b.start, end: b.end, status: b.status, goalId: goal.id, goalTitle: goal.title, colorIndex: goal.colorIndex, stepId: step.id, stepTitle: step.title };
       });
     const used = this.backend.blocks
-      .filter((b) => localDate(b.start, tz) === date && b.status !== "missed")
+      .filter((b) => localDate(b.start, tz) === date) // todos os blocos do dia, como o buildDayPlan
       .reduce((a, b) => a + this.backend.minutesOf(b), 0);
     return { date, blocks, usedMinutes: used, limitMinutes: this.backend.availability?.dailyLimitMinutes ?? 0 };
   }

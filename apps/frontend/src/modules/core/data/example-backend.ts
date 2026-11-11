@@ -7,11 +7,13 @@ import type { BlockStatus, WeeklyAvailability } from "@/modules/scheduling/data/
 import type { FocusSession } from "@/modules/activation/data/activation.types";
 import { badRequest, conflict, notFound, unauthorized, unprocessable } from "./api-error";
 import type { PlanSummary } from "./plan-summary.types";
+import { localDate } from "../format/time.format";
 import {
   DEMO_AVAILABILITY,
   DEMO_BLOCKS,
   DEMO_GOALS,
   DEMO_USER,
+  RAMP_TEXTS,
   protoDate,
   saoPauloInstant,
 } from "./example-data";
@@ -51,8 +53,20 @@ export class ExampleBackend {
   sessions: FocusSession[] = [];
   private seq = 0;
 
-  constructor({ withDemoData = true }: { withDemoData?: boolean } = {}) {
-    if (withDemoData) this.seedDemo();
+  constructor(private readonly options: { withDemoData?: boolean } = {}) {
+    if (options.withDemoData ?? true) this.seedDemo();
+  }
+
+  /** Volta ao estado inicial (usado pelos testes de tela para não dependerem uns dos outros). */
+  reset() {
+    this.users = [{ ...DEMO_USER }];
+    this.sessionUserId = null;
+    this.availability = null;
+    this.goals = [];
+    this.blocks = [];
+    this.sessions = [];
+    this.seq = 0;
+    if (this.options.withDemoData ?? true) this.seedDemo();
   }
 
   nextId(prefix: string) {
@@ -80,7 +94,8 @@ export class ExampleBackend {
         estimatedMinutes: minutes,
         progressPct: done ? 100 : 0,
         status: done ? "done" : "pending",
-        microSteps: [],
+        // Micro-passos do protótipo web (ModalRampa.dc.html) gravados na etapa, como a IA faria.
+        microSteps: done ? [] : RAMP_TEXTS.micro(title),
       })),
     }));
     const parts: Record<string, number> = {};
@@ -131,7 +146,7 @@ export class ExampleBackend {
     const planned = this.blocks.filter((b) => b.status === "planned");
     return {
       totalMinutes: planned.reduce((a, b) => a + this.minutesOf(b), 0),
-      days: new Set(planned.map((b) => b.start.slice(0, 10))).size,
+      days: new Set(planned.map((b) => localDate(b.start, this.currentUser().timezone))).size,
       goals: this.goals.map((g) => ({
         goalId: g.id,
         feasible: g.slackDays == null || g.slackDays >= 0,
