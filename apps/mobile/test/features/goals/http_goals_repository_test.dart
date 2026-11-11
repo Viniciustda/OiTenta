@@ -142,6 +142,11 @@ void main() {
     },
   );
 
+  test('Goal.fromJson sem progressPct dentro e fora → erro de parse', () {
+    final json = Map<String, dynamic>.of(_goal)..remove('progressPct');
+    expect(() => Goal.fromJson(json), throwsA(isA<TypeError>()));
+  });
+
   test('getGoal: codifica o id na URL', () async {
     api.respond({
       'goal': _goal,

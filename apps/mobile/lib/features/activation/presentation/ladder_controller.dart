@@ -142,7 +142,9 @@ class LadderController extends ChangeNotifier with RampSwap {
 
   bool get canSwap => index < 4;
 
+  /// Degrau sem opção (Registrar, `log`) não é selecionável na escada.
   void select(int i) {
+    if (session.options(session.kindAt(i)).isEmpty) return;
     session.currentIndex = i;
     notifyListeners();
   }

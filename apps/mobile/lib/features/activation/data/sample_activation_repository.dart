@@ -106,20 +106,8 @@ class SampleActivationRepository implements ActivationRepository {
               },
           ],
         },
-        {
-          'kind': 'log',
-          'options': [
-            {
-              'id': 'log-1',
-              'stepKind': 'log',
-              'title': 'Contar como foi',
-              'durationLabel': '1 min',
-              'durationSeconds': 60,
-              'description': 'Concluí, parcial ou não rolou.',
-              'icon': 'check-circle',
-            },
-          ],
-        },
+        // Registrar não tem opções (modelagem §4.1, como o backend).
+        {'kind': 'log', 'options': <Map<String, dynamic>>[]},
       ],
     });
   }

@@ -57,6 +57,8 @@ void main() {
         600,
         2700,
       ]);
+      // Como o backend (modelagem §4.1): o degrau Registrar não tem opções.
+      expect(r.step(RampStepKind.log).options, isEmpty);
     },
   );
 

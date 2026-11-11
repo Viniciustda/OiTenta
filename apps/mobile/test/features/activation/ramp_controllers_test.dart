@@ -89,6 +89,11 @@ void main() {
         final c = LadderController(session);
         expect(c.steps.last.duration, '1 min');
         expect(c.caption, 'Degrau 4 de 5 · Foco');
+        // Tocar no 5º degrau (Registrar, sem opção) não seleciona nada.
+        c.select(4);
+        expect(c.index, 3);
+        expect(c.caption, 'Degrau 4 de 5 · Foco');
+        expect(c.currentOption.stepKind, RampStepKind.focus);
       },
     );
 
@@ -120,8 +125,9 @@ void main() {
       expect(c.caption, 'Degrau 4 de 5 · Foco');
       expect(c.canSkip, isFalse);
       expect(c.canSwap, isTrue);
+      // Registrar (sem opção, como no backend) não é selecionável.
       c.select(4);
-      expect(c.canSwap, isFalse);
+      expect(c.caption, 'Degrau 4 de 5 · Foco');
     });
 
     test('trocar a opção do degrau atual', () async {

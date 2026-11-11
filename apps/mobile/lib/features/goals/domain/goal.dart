@@ -122,7 +122,7 @@ class Goal {
     title: json['title'] as String,
     deadline: json['deadline'] as String?,
     colorIndex: json['colorIndex'] as int,
-    progressPct: (json['progressPct'] as int?) ?? progressPct ?? 0,
+    progressPct: (json['progressPct'] as int?) ?? progressPct as int,
   );
 }
 

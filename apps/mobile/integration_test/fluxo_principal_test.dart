@@ -9,6 +9,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:oitenta/app.dart';
 import 'package:oitenta/core/di/app_dependencies.dart';
 import 'package:oitenta/core/format/bora_format.dart';
+import 'package:oitenta/features/goals/presentation/deadline_field.dart';
 
 /// Repete `pump` até [finder] aparecer (as chamadas HTTP são assíncronas de
 /// verdade; `pumpAndSettle` pode voltar antes da resposta chegar).
@@ -47,6 +48,36 @@ Future<void> tapLabel(WidgetTester tester, Pattern label) async {
   await tester.pump(const Duration(milliseconds: 300));
   await tester.tap(f);
   await tester.pump(const Duration(milliseconds: 300));
+}
+
+/// O menor ancestral de [anchor] (um cartão/linha) que também contém [target];
+/// devolve só os [target] dentro dele. Se esse ancestral também contém algum
+/// [exclude], o [target] não é daquele cartão: devolve um finder vazio.
+Finder inCardOf(
+  Finder anchor,
+  Finder target, {
+  List<Finder> exclude = const [],
+}) {
+  Element? card;
+  anchor.evaluate().first.visitAncestorElements((a) {
+    final inA = find.descendant(
+      of: find.byElementPredicate((e) => identical(e, a)),
+      matching: target,
+    );
+    if (inA.evaluate().isNotEmpty) {
+      card = a;
+      return false;
+    }
+    return true;
+  });
+  final scope = find.byElementPredicate((e) => identical(e, card));
+  if (card == null ||
+      exclude.any(
+        (x) => find.descendant(of: scope, matching: x).evaluate().isNotEmpty,
+      )) {
+    return find.byKey(const ValueKey('nenhum-cartão'));
+  }
+  return find.descendant(of: scope, matching: target);
 }
 
 void main() {
@@ -124,7 +155,16 @@ void main() {
     if (deadline.month != today.month) await tapLabel(tester, 'Próximo mês');
     await tapLabel(tester, BoraFormat.fullDate(deadline));
     await tapText(tester, 'Confirmar');
-    await pumpUntil(tester, find.text(BoraFormat.fullDate(deadline)));
+    // A data confirmada no campo Prazo (não o cabeçalho do seletor).
+    await pumpUntil(
+      tester,
+      find.descendant(
+        of: find.byType(DeadlineField),
+        matching: find.text(BoraFormat.fullDate(deadline)),
+      ),
+      reason: 'prazo confirmado',
+    );
+    expect(find.text('Nenhuma data escolhida'), findsNothing);
 
     await tapText(tester, 'Distribuir no calendário');
 
@@ -144,7 +184,14 @@ void main() {
       find.text(step1),
       reason: 'sem bloco hoje: o mobile só abre a rampa pelo Hoje',
     );
-    expect(find.text('Próxima'), findsWidgets);
+    expect(
+      inCardOf(
+        find.text(step1),
+        find.text('Próxima'),
+        exclude: [find.text(step2)],
+      ),
+      findsOneWidget,
+    );
     await tapText(tester, 'Vamos começar?');
 
     // Check-in de energia (M05): Elétrico → Foco.
@@ -183,16 +230,47 @@ void main() {
     // --- Plano recalculado ---------------------------------------------------
     await pumpUntil(tester, find.text('Concluída'), reason: 'Hoje');
     expect(find.text('Não deu pra carregar o seu dia.'), findsNothing);
+    expect(
+      inCardOf(
+        find.text(step1),
+        find.text('Concluída'),
+        exclude: [find.text(step2)],
+      ),
+      findsOneWidget,
+    );
     await tapText(tester, 'Objetivos');
     await pumpUntil(tester, find.text(goalTitle));
-    expect(find.text('50%'), findsWidgets);
+    expect(inCardOf(find.text(goalTitle), find.text('50%')), findsOneWidget);
     await tapText(tester, goalTitle);
     await pumpUntil(
       tester,
       find.textContaining('1 de 2 etapas concluídas'),
       reason: 'trilha',
     );
-    expect(find.text('Concluída ·'), findsOneWidget);
     expect(find.text('Não achei esse objetivo.'), findsNothing);
+    expect(
+      inCardOf(
+        find.text(step1),
+        find.text('Concluída ·'),
+        exclude: [find.text(step2)],
+      ),
+      findsOneWidget,
+    );
+    // A etapa 2 continua no plano: é a próxima e tem data e hora na trilha.
+    final step2Row = find.text(step2);
+    expect(
+      inCardOf(step2Row, find.text('Próxima'), exclude: [find.text(step1)]),
+      findsOneWidget,
+    );
+    expect(
+      inCardOf(
+        step2Row,
+        // Meta da linha: "<data> · <hora> ·".
+        find.textContaining(RegExp(r'\d.* ·$')),
+        exclude: [find.text(step1)],
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Sem data · será encaixada ·'), findsNothing);
   });
 }
