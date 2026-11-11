@@ -200,7 +200,9 @@ test("fluxo principal: login demo → onboarding → objetivo → plano → ramp
     await expect(page).toHaveURL(/\/objetivos\//);
     await expect(page.getByText("1/2 concluídas")).toBeVisible();
     // Na trilha, a etapa 2 tem horário marcado e é a próxima a começar.
-    const step2 = page.getByText(steps[1], { exact: true }).locator("..");
+    // O pai é o <div> da linha da trilha. Logo depois da navegação, o card do Hoje (um <button>
+    // com o mesmo título quando a etapa 2 cai hoje) ainda pode estar no DOM; "parent::div" o exclui.
+    const step2 = page.getByText(steps[1], { exact: true }).locator("xpath=parent::div");
     await expect(step2).toContainText(/\d{2}:\d{2} · 30 min$/);
     await expect(step2).not.toContainText("Ainda sem horário");
     await expect(page.getByRole("button", { name: "Começar próxima etapa" })).toBeVisible();
