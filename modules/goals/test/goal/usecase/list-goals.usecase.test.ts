@@ -48,7 +48,18 @@ describe("ListGoals", () => {
         done: 1,
         total: 4,
         status: "active",
+        createdAt: goal.createdAt,
       },
     ]);
+  });
+
+  test("C4 (decisao A): a saida traz o createdAt de cada objetivo, para montar a entrada do plano", async () => {
+    const createdAt = new Date("2026-11-03T12:00:00.000Z");
+    const goal = buildGoal({ userId: USER_A, createdAt });
+    const useCase = new ListGoals(new FakeGoalRepository([goal]));
+
+    const output = await useCase.execute({ userId: USER_A });
+
+    expect(output.goals.map((item) => item.createdAt)).toEqual([createdAt]);
   });
 });

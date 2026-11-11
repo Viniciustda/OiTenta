@@ -10,7 +10,7 @@ import { configureApp } from '../src/app.setup';
 import { PrismaGoalRepository } from '../src/modules/goals/goal.prisma';
 
 // Integração do goals contra o banco local (docs/4-contrato-api.md §3). Exige o Postgres no ar.
-// O POST /goals é da C4: aqui o objetivo é gravado pelo CreateGoal com o repositório Prisma.
+// Aqui o objetivo é gravado pelo CreateGoal com o repositório Prisma; o POST /goals está em goals-orchestrators.e2e-spec.ts (C4).
 interface LoginBody {
   token: string;
   user: { id: string };
