@@ -1,0 +1,24 @@
+// Módulo activation: entidade FocusSession (modules/activation/src/session/model).
+// Objetivo, etapa e bloco são referenciados só por id, sem FK entre módulos (D 4d).
+
+model FocusSession {
+  id             String    @id @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  goalId         String    @map("goal_id") @db.Uuid
+  stepId         String    @map("step_id") @db.Uuid
+  blockId        String?   @map("block_id") @db.Uuid
+  energy         String
+  availableTime  String?   @map("available_time")
+  startedAt      DateTime  @map("started_at")
+  endedAt        DateTime  @map("ended_at")
+  focusedMinutes Int       @map("focused_minutes")
+  outcome        String
+  partialPct     Int?      @map("partial_pct")
+  createdAt      DateTime  @map("created_at")
+  updatedAt      DateTime  @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  user           User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, stepId])
+  @@map("focus_sessions")
+}

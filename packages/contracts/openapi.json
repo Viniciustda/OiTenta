@@ -136,45 +136,122 @@
         ]
       }
     },
-    "/goals": {
+    "/goals/{goalId}": {
       "get": {
-        "operationId": "GoalsController_getGoals",
-        "parameters": [],
+        "operationId": "GoalsController_getGoal",
+        "parameters": [
+          {
+            "name": "goalId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetGoalResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "goalId não é um UUID."
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado."
+          },
+          "404": {
+            "description": "Objetivo inexistente ou de outro usuário."
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
-          "Goals"
+          "goals"
         ]
       }
     },
-    "/scheduling": {
+    "/scheduling/availability": {
       "get": {
-        "operationId": "SchedulingController_getScheduling",
+        "operationId": "SchedulingController_getAvailability",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeeklyAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado."
+          },
+          "404": {
+            "description": "O usuário ainda não fez o onboarding."
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
-          "Scheduling"
+          "scheduling"
         ]
-      }
-    },
-    "/activation": {
-      "get": {
-        "operationId": "ActivationController_getActivation",
+      },
+      "put": {
+        "operationId": "SchedulingController_setAvailability",
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetWeeklyAvailabilityBody"
+              }
+            }
           }
         },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeeklyAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corpo malformado ou campo não previsto."
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado."
+          },
+          "422": {
+            "description": "Zero janelas, janela inválida ou limite fora de 60–480 / não múltiplo de 30."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
-          "Activation"
+          "scheduling"
         ]
       }
     },
@@ -239,6 +316,11 @@
             "type": "string",
             "example": "Senha@123",
             "description": "Mínimo 8 caracteres, com maiúscula, minúscula, número e símbolo."
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Sao_Paulo",
+            "description": "Fuso IANA do usuário. Padrão: America/Sao_Paulo."
           }
         },
         "required": [
@@ -259,12 +341,17 @@
           },
           "email": {
             "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Sao_Paulo"
           }
         },
         "required": [
           "id",
           "name",
-          "email"
+          "email",
+          "timezone"
         ]
       },
       "UserResponse": {
@@ -309,6 +396,231 @@
         "required": [
           "token",
           "user"
+        ]
+      },
+      "GoalHeaderResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "example": "TCC"
+          },
+          "deadline": {
+            "type": "string",
+            "nullable": true,
+            "example": "2026-12-15",
+            "description": "Data local YYYY-MM-DD."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "goal",
+              "single"
+            ]
+          },
+          "colorIndex": {
+            "type": "number",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "ai"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "done"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "deadline",
+          "kind",
+          "colorIndex",
+          "source",
+          "status"
+        ]
+      },
+      "StepResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order": {
+            "type": "number",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Ler os artigos"
+          },
+          "estimatedMinutes": {
+            "type": "number",
+            "example": 60
+          },
+          "aiEstimatedMinutes": {
+            "type": "number",
+            "nullable": true
+          },
+          "progressPct": {
+            "type": "number",
+            "example": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "done",
+              "superseded"
+            ]
+          },
+          "microSteps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remainingMinutes": {
+            "type": "number",
+            "example": 60,
+            "description": "Minutos restantes, arredondados para cima em blocos de 15."
+          }
+        },
+        "required": [
+          "id",
+          "order",
+          "title",
+          "estimatedMinutes",
+          "aiEstimatedMinutes",
+          "progressPct",
+          "status",
+          "microSteps",
+          "remainingMinutes"
+        ]
+      },
+      "GetGoalResponse": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "$ref": "#/components/schemas/GoalHeaderResponse"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StepResponse"
+            }
+          },
+          "progressPct": {
+            "type": "number",
+            "example": 0
+          },
+          "done": {
+            "type": "number",
+            "example": 0
+          },
+          "total": {
+            "type": "number",
+            "example": 2
+          }
+        },
+        "required": [
+          "goal",
+          "steps",
+          "progressPct",
+          "done",
+          "total"
+        ]
+      },
+      "AvailabilityWindowBody": {
+        "type": "object",
+        "properties": {
+          "weekday": {
+            "type": "number",
+            "example": 0,
+            "description": "0 = segunda … 6 = domingo."
+          },
+          "startMinute": {
+            "type": "number",
+            "example": 1140,
+            "description": "Minutos desde 00:00 (local)."
+          },
+          "endMinute": {
+            "type": "number",
+            "example": 1380,
+            "description": "Minutos desde 00:00 (local)."
+          }
+        },
+        "required": [
+          "weekday",
+          "startMinute",
+          "endMinute"
+        ]
+      },
+      "WeeklyAvailabilityView": {
+        "type": "object",
+        "properties": {
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityWindowBody"
+            }
+          },
+          "dailyLimitMinutes": {
+            "type": "number",
+            "example": 180
+          }
+        },
+        "required": [
+          "windows",
+          "dailyLimitMinutes"
+        ]
+      },
+      "WeeklyAvailabilityResponse": {
+        "type": "object",
+        "properties": {
+          "availability": {
+            "$ref": "#/components/schemas/WeeklyAvailabilityView"
+          }
+        },
+        "required": [
+          "availability"
+        ]
+      },
+      "SetWeeklyAvailabilityBody": {
+        "type": "object",
+        "properties": {
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityWindowBody"
+            }
+          },
+          "dailyLimitMinutes": {
+            "type": "number",
+            "example": 180,
+            "description": "Limite diário em minutos: de 60 a 480, múltiplo de 30."
+          }
+        },
+        "required": [
+          "windows",
+          "dailyLimitMinutes"
         ]
       }
     }
