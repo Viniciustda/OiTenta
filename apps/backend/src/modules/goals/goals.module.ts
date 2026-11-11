@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { DbModule } from '../../db/db.module';
 import { PrismaGoalRepository } from './goal.prisma';
-import { GoalsController } from './goals.controller';
 
+// As rotas de /goals moram nos orquestradores create-goal e goals-view (C4),
+// porque juntam dados do scheduling (plano, folga e próximo bloco).
 @Module({
   imports: [DbModule],
-  controllers: [GoalsController],
   providers: [PrismaGoalRepository],
   exports: [PrismaGoalRepository],
 })

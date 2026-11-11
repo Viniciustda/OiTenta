@@ -1,21 +1,15 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
-  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import {
-  GetWeeklyAvailability,
-  SetWeeklyAvailability,
-} from '@oitenta/scheduling';
+import { GetWeeklyAvailability } from '@oitenta/scheduling';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import {
-  SetWeeklyAvailabilityBody,
   toAvailabilityResponse,
   WeeklyAvailabilityResponse,
 } from './scheduling.dto';
@@ -27,6 +21,7 @@ import { PrismaWeeklyAvailabilityRepository } from './weekly-availability.prisma
 @ApiUnauthorizedResponse({
   description: 'Token ausente, inválido ou expirado.',
 })
+// O PUT /scheduling/availability mora no orquestrador set-availability (C4), porque devolve o plano.
 @Controller('scheduling')
 export class SchedulingController {
   constructor(
@@ -41,33 +36,6 @@ export class SchedulingController {
   ): Promise<WeeklyAvailabilityResponse> {
     const useCase = new GetWeeklyAvailability(this.availabilityRepository);
     const { availability } = await useCase.execute({ userId });
-    return toAvailabilityResponse(availability);
-  }
-
-  // O campo `plan` da resposta (docs/4 §2) entra na C4, com o orquestrador set-availability.
-  @Put('availability')
-  @ApiOkResponse({ type: WeeklyAvailabilityResponse })
-  @ApiBadRequestResponse({
-    description: 'Corpo malformado ou campo não previsto.',
-  })
-  @ApiUnprocessableEntityResponse({
-    description:
-      'Zero janelas, janela inválida ou limite fora de 60–480 / não múltiplo de 30.',
-  })
-  async setAvailability(
-    @CurrentUser('id') userId: string,
-    @Body() body: SetWeeklyAvailabilityBody,
-  ): Promise<WeeklyAvailabilityResponse> {
-    const useCase = new SetWeeklyAvailability(this.availabilityRepository);
-    const { availability } = await useCase.execute({
-      userId,
-      windows: body.windows.map(({ weekday, startMinute, endMinute }) => ({
-        weekday,
-        startMinute,
-        endMinute,
-      })),
-      dailyLimitMinutes: body.dailyLimitMinutes,
-    });
     return toAvailabilityResponse(availability);
   }
 }

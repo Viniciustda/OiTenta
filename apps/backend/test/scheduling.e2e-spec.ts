@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { CreateGoal } from '@oitenta/goals';
 import { BlockOrigin, BlockStatus, ScheduledBlock } from '@oitenta/scheduling';
 import { NotFoundError } from '@oitenta/shared';
 import { randomUUID } from 'node:crypto';
@@ -7,12 +8,13 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { configureApp } from '../src/app.setup';
+import { PrismaGoalRepository } from '../src/modules/goals/goal.prisma';
 import { EmptyCommitmentRepository } from '../src/modules/scheduling/commitment.empty';
 import { PrismaScheduledBlockRepository } from '../src/modules/scheduling/scheduled-block.prisma';
 import { PrismaWeeklyAvailabilityRepository } from '../src/modules/scheduling/weekly-availability.prisma';
 
 // Integração do scheduling contra o banco local (docs/4-contrato-api.md §2). Exige o Postgres no ar.
-// GET /scheduling/plan/day e /week e o `plan` do PUT ficam para a C4 (orquestradores).
+// O `plan` do PUT vem do orquestrador set-availability (C4); o dia e a semana estão em plan-views.e2e-spec.ts.
 interface LoginBody {
   token: string;
   user: { id: string };
@@ -23,6 +25,16 @@ const VALID_BODY = {
     { weekday: 0, startMinute: 1140, endMinute: 1380 },
     { weekday: 2, startMinute: 480, endMinute: 600 },
   ],
+  dailyLimitMinutes: 180,
+};
+
+// Todo dia das 06:00 às 23:00 locais: há tempo livre nos próximos dias qualquer que seja a hora do teste.
+const EVERY_DAY_BODY = {
+  windows: [0, 1, 2, 3, 4, 5, 6].map((weekday) => ({
+    weekday,
+    startMinute: 360,
+    endMinute: 1380,
+  })),
   dailyLimitMinutes: 180,
 };
 
@@ -68,14 +80,66 @@ describe('scheduling (integração)', () => {
   });
 
   describe('PUT /scheduling/availability', () => {
-    it('corpo válido → 200 com a disponibilidade', async () => {
+    it('corpo válido → 200 com a disponibilidade e o plano recalculado (vazio sem objetivos)', async () => {
       const { token } = await registerAndLogin();
 
       const res = await put(token, VALID_BODY);
 
       expect({ status: res.status, body: res.body as unknown }).toEqual({
         status: 200,
-        body: { availability: VALID_BODY },
+        body: {
+          availability: VALID_BODY,
+          plan: { totalMinutes: 0, days: 0, goals: [] },
+        },
+      });
+    });
+
+    it('com um objetivo ativo → o plano devolvido encaixa o objetivo e grava os blocos', async () => {
+      const { token, user } = await registerAndLogin();
+      const deadline = new Date(Date.now() + 21 * 86_400_000)
+        .toISOString()
+        .slice(0, 10);
+      const { goal } = await new CreateGoal(
+        app.get(PrismaGoalRepository),
+      ).execute({
+        userId: user.id,
+        title: 'TCC',
+        deadline,
+        kind: 'goal',
+        steps: [
+          { title: 'Ler', estimatedMinutes: 60 },
+          { title: 'Escrever', estimatedMinutes: 90 },
+        ],
+      });
+
+      const res = await put(token, EVERY_DAY_BODY);
+      const blocks = await app
+        .get(PrismaScheduledBlockRepository)
+        .findByUserInRange(
+          user.id,
+          new Date(),
+          new Date(Date.now() + 30 * 86_400_000),
+        );
+
+      expect({
+        plan: (res.body as { plan: unknown }).plan,
+        blockMinutes: blocks.reduce((sum, b) => sum + b.durationMinutes, 0),
+      }).toEqual({
+        plan: {
+          totalMinutes: 150,
+          days: expect.any(Number) as number,
+          goals: [
+            {
+              goalId: goal.id,
+              feasible: true,
+              usedSlack: true,
+              slackDays: 1,
+              scheduledMinutes: 150,
+              unscheduledMinutes: 0,
+            },
+          ],
+        },
+        blockMinutes: 150,
       });
     });
 
