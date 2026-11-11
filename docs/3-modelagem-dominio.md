@@ -124,7 +124,7 @@ Arquivo: `modules/goals/src/goal/model/goal-progress.calculator.ts`.
 | Caso de uso | Entrada | Saída | Origem |
 |---|---|---|---|
 | `CreateGoal` | `userId`, `title`, `deadline?`, `kind`, `steps[{title, estimatedMinutes, microSteps?}]` | `{ goal }` | UC30, UC04 (sem IA), D 4d |
-| `ListGoals` | `userId` | `{ goals[{id, title, deadline, colorIndex, progressPct, done, total, status}] }` | UC12, M02, W21 |
+| `ListGoals` | `userId` | `{ goals[{id, title, deadline, colorIndex, progressPct, done, total, status, createdAt}] }` (`createdAt` acrescentado na C4: o `PlanCalculator` desempata por ele) | UC12, M02, W21 |
 | `GetGoal` | `userId`, `goalId` | `{ goal, steps[{…, remainingMinutes}], progressPct }` | UC10, M18, W22 |
 | `UpdateStepProgress` | `userId`, `goalId`, `stepId`, `progressPct` | `{ goalProgressPct, step }` | UC08, D 4h |
 
@@ -278,6 +278,8 @@ Saída:
 | `GetWeekPlan` | `userId`, `weekStart` (segunda, local), `timezone` | `{ days[7]{date, blocks[], usedMinutes, limitMinutes} }` | UC07, W15 ("3h de 3h"), M03 |
 | `RecordBlockOutcome` | `userId`, `blockId`, `outcome: 'done'\|'partial'\|'missed'` | `{ block }` | UC08, D 4h |
 | `GetGoalsFeasibility` | `userId`, `timezone`, `now`, `goals[…]` (montado pelo orquestrador) | `{ goals[{goalId, feasible, slackDays, unscheduledMinutes}] }`, calculado pelo `PlanCalculator` sem gravar (modo simulação, D 4g) | M02 "folga", W21 |
+| `GetNextBlocks` (C4) | `userId`, `goalId`, `now` | `{ byStep: Record<stepId, {id, start, end}> }`: por etapa, o bloco `planned` de menor início ≥ `now`, até 366 dias | `nextBlock` da trilha (W22, M18) |
+| `GetBlock` (C4) | `userId`, `blockId` | `{ block }` ou `NotFoundError('Bloco não encontrado.')` (de outro usuário também) | posse antes de gravar no `record-progress` |
 
 ### 3.7 Cenários de teste — `scheduling`
 
@@ -470,11 +472,11 @@ Um arquivo por fluxo; eles só encadeiam casos de uso e nunca calculam.
 |---|---|---|
 | `set-availability.orchestrator.ts` | `SetWeeklyAvailability` → `GeneratePlan` | onboarding |
 | `create-goal.orchestrator.ts` | `CreateGoal` → (`ListGoals` + `GetGoal` para montar a entrada) → `GeneratePlan` | novo objetivo |
-| `record-progress.orchestrator.ts` | `RecordFocusSession` → `UpdateStepProgress` (`done` = 100; `partial` = `partialPct`; `not_done` = não muda) → `RecordBlockOutcome` (`done`/`partial`/`missed`) → `GeneratePlan` | registrar da rampa |
-| `day-view.orchestrator.ts` | `GetDayPlan` + `ListGoals` (títulos, cores e % para a tela Hoje) | Hoje |
-| `week-view.orchestrator.ts` | `GetWeekPlan` + `ListGoals` | calendário |
+| `record-progress.orchestrator.ts` | posse primeiro, sem gravar nada: `GetGoal` (objetivo e etapa) + `GetBlock` (se houver `blockId`, que é opcional) → `RecordFocusSession` → `UpdateStepProgress` (`done` = 100; `partial` = `partialPct`; `not_done` = não muda) → `RecordBlockOutcome` (`done`/`partial`/`missed`) → `GeneratePlan` | registrar da rampa |
+| `day-view.orchestrator.ts` | `GetAuthenticatedUser` (fuso) → `GetDayPlan` + `GetGoal` de cada objetivo presente nos blocos (título, cor e título da etapa; o `ListGoals` não traz etapas, decisão da C4) | Hoje |
+| `week-view.orchestrator.ts` | `GetAuthenticatedUser` (fuso) → `GetWeekPlan` + `GetGoal` de cada objetivo presente | calendário |
 | `ramp.orchestrator.ts` | `GetGoal` (micro-passos da etapa) → `BuildRamp` | rampa |
-| `goals-view.orchestrator.ts` | `ListGoals` → `GetGoalsFeasibility` (folga de cada objetivo) | lista de objetivos, coluna do Hoje |
+| `goals-view.orchestrator.ts` | `ListGoals` → `GetGoalsFeasibility` (folga de cada objetivo; `done` → `slackDays: null`); trilha: `GetGoal` + `GetNextBlocks` | lista de objetivos, coluna do Hoje, trilha |
 
 O `GeneratePlan` sempre recebe do orquestrador:
 - o `timezone` do usuário (P1);
