@@ -1,24 +1,24 @@
 import { expect, test, type Page } from "@playwright/test";
 import path from "node:path";
+import { todayRoom } from "./support/today-room";
 
 // Etapa E (web): fluxo principal de ponta a ponta contra o backend local real (NEXT_PUBLIC_DATA_SOURCE=http).
 // login demo → onboarding → novo objetivo → plano no Hoje e no calendário → rampa → registrar → plano recalculado.
-// O relógio é o real: o prazo é relativo (hoje + 14 dias) e, se o dia corrente não tiver mais horário
-// livre, a rampa abre pela trilha do objetivo ("Começar próxima etapa").
+// O relógio é o real: o prazo é relativo (hoje + 14 dias) e, se o dia corrente não tiver mais 30 min
+// livres (regra do planejador, support/today-room.ts), a rampa abre pela trilha ("Começar próxima etapa").
 
 const TZ = "America/Sao_Paulo";
 const GRID_DAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-const LAST_GRID_HOUR = 22; // a grade vai de 08h a 23h (última célula 22h–23h)
 const SHOTS = process.env.E2E_SHOTS_DIR ?? path.join(__dirname, "..", "test-results", "fluxo-principal");
 
 function localNow(date = new Date()) {
   const parts = Object.fromEntries(
-    new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23", weekday: "short" })
+    new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23", weekday: "short" })
       .formatToParts(date)
       .map((p) => [p.type, p.value]),
   );
   const weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(parts.weekday);
-  return { ymd: `${parts.year}-${parts.month}-${parts.day}`, hour: Number(parts.hour), weekday };
+  return { ymd: `${parts.year}-${parts.month}-${parts.day}`, hour: Number(parts.hour), minute: Number(parts.minute), weekday };
 }
 
 function addDays(ymd: string, days: number) {
@@ -31,31 +31,42 @@ function addDays(ymd: string, days: number) {
 // hydration mismatch quando a captura acontece antes da hidratação.
 const shot = (page: Page, name: string) => page.screenshot({ path: path.join(SHOTS, `${name}.png`), fullPage: true, caret: "initial" });
 
-// Único erro HTTP esperado: GET /scheduling/availability → 404 logo depois do login demo (sem
-// disponibilidade, vai para o onboarding; P12).
-const expectedFailure = (status: number, url: string) => status === 404 && new URL(url).pathname === "/scheduling/availability";
+// Único erro HTTP esperado: GET /scheduling/availability → 404 logo depois do login demo, antes de o
+// onboarding terminar (sem disponibilidade, vai para o onboarding; P12).
+const isAvailability404 = (status: number, url: string) => status === 404 && new URL(url).pathname === "/scheduling/availability";
+
+/** Espera as animações finitas (entrada de modal) terminarem, para a captura não sair no meio. */
+const settle = (page: Page) =>
+  page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
 
 test("fluxo principal: login demo → onboarding → objetivo → plano → rampa → registro → plano recalculado", async ({ page }) => {
-  test.setTimeout(120_000);
   // Erros do navegador (console e exceções não tratadas) também reprovam o fluxo.
   const browserErrors: string[] = [];
   page.on("pageerror", (e) => browserErrors.push(`pageerror: ${e.message}`));
   page.on("console", (m) => {
     if (m.type() === "error" && !m.text().startsWith("Failed to load resource")) browserErrors.push(`console: ${m.text()}`);
   });
+  let onboardingDone = false;
   page.on("response", (r) => {
-    if (r.status() >= 400 && !expectedFailure(r.status(), r.url())) browserErrors.push(`http ${r.status()}: ${r.request().method()} ${r.url()}`);
+    if (r.status() >= 400 && !(!onboardingDone && isAvailability404(r.status(), r.url()))) browserErrors.push(`http ${r.status()}: ${r.request().method()} ${r.url()}`);
   });
   const now = localNow();
   const stamp = Date.now().toString(36);
-  const goalTitle = `Trabalho E2E ${stamp}`;
+  // O título termina sempre em letra: o card do objetivo cola o título ao percentual.
+  const goalTitle = `Trabalho ${stamp} E2E`;
   const steps = [`Ler o enunciado ${stamp}`, `Escrever o resumo ${stamp}`];
   const deadline = addDays(now.ymd, 14);
-  // Horas livres de hoje a partir da hora atual (o plano começa em "agora").
-  // E2E_SEM_BLOCO_HOJE=1 força o caminho sem bloco no dia (rampa aberta pela trilha do objetivo).
-  const todayHours = process.env.E2E_SEM_BLOCO_HOJE === "1"
-    ? []
-    : Array.from({ length: Math.max(0, LAST_GRID_HOUR - Math.max(8, now.hour) + 1) }, (_, i) => Math.max(8, now.hour) + i);
+  // Horas livres de hoje pela regra do planejador. E2E_SEM_BLOCO_HOJE=1 força o caminho sem bloco no dia.
+  const room = process.env.E2E_SEM_BLOCO_HOJE === "1" ? { hours: [], hasBlockToday: false } : todayRoom(now.hour, now.minute);
+  const todayHours = room.hours;
+  const blockTodayExpected = room.hasBlockToday;
 
   await test.step("login demo", async () => {
     await page.goto("/entrar");
@@ -85,6 +96,7 @@ test("fluxo principal: login demo → onboarding → objetivo → plano → ramp
     await expect(page.getByText("3h30 por dia", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Ir pro meu dia" }).click();
     await expect(page).toHaveURL(/\/hoje$/);
+    onboardingDone = true;
   });
 
   await test.step("novo objetivo com 2 etapas (W30 vazia) e Encaixar", async () => {
@@ -105,42 +117,46 @@ test("fluxo principal: login demo → onboarding → objetivo → plano → ramp
   await test.step("o plano aparece no calendário", async () => {
     await expect(page).toHaveURL(/\/calendario$/);
     await expect(page.getByRole("button", { name: new RegExp(`^${goalTitle} \\d+%`) })).toBeVisible();
-    // A semana corrente tem horário livre de hoje em diante (hoje e os dias seguintes até domingo).
-    const weekHasRoom = todayHours.length > 0 || now.weekday < 6;
+    // A semana corrente tem bloco se hoje ainda cabe um (30 min até as 23h) ou se ainda há dias até
+    // domingo. Domingo sem 30 min livres: os blocos ficam todos na semana seguinte.
+    const weekHasRoom = blockTodayExpected || now.weekday < 6;
     if (weekHasRoom) {
       await expect(page.getByTitle(new RegExp(`^${goalTitle} · ${steps[0]} · `))).toBeVisible();
     } else {
-      test.info().annotations.push({ type: "sem-bloco-na-semana", description: "domingo após 23h: os blocos ficam na semana seguinte" });
+      test.info().annotations.push({ type: "sem-bloco-na-semana", description: "domingo sem 30 min livres até 23h: os blocos ficam na semana seguinte" });
     }
     await shot(page, "05-calendario");
   });
 
   const blockToday = page.getByRole("button", { name: new RegExp(steps[0]) }).filter({ hasText: goalTitle });
+  const goalCard = page.getByRole("button", { name: new RegExp(`^${goalTitle} \\d+%`) });
+  // Só o elemento do percentual do card (sem depender do texto colado ao título).
+  const goalPct = goalCard.getByText(/^\d+%$/);
 
   await test.step("o plano aparece no Hoje", async () => {
     await page.getByRole("navigation").getByRole("button", { name: "Hoje" }).click();
     await expect(page).toHaveURL(/\/hoje$/);
-    const card = page.getByRole("button", { name: new RegExp(`^${goalTitle} \\d+%`) });
-    await expect(card).toBeVisible();
-    await expect(card).toContainText("0%");
-    if (todayHours.length > 0) await expect(blockToday).toBeVisible();
+    await expect(goalCard).toBeVisible();
+    await expect(goalPct).toHaveText(/^0%$/);
+    if (blockTodayExpected) await expect(blockToday).toBeVisible();
     await shot(page, "06-hoje");
   });
 
   await test.step("rampa: check-in de energia e degrau", async () => {
-    if (todayHours.length > 0) {
+    if (blockTodayExpected) {
       await page.getByRole("button", { name: "Alta", exact: true }).click();
       await expect(page.getByRole("button", { name: "Alta", exact: true })).toHaveAttribute("aria-pressed", "true");
       await blockToday.click();
     } else {
       // Sem bloco hoje: abre pela trilha do objetivo. A energia não atravessa a navegação (ver relatório).
-      await page.getByRole("button", { name: new RegExp(`^${goalTitle} \\d+%`) }).click();
+      await goalCard.click();
       await page.getByRole("button", { name: "Começar próxima etapa" }).click();
     }
     const ramp = page.getByRole("dialog", { name: "Rampa até o foco" });
     await expect(ramp).toBeVisible();
     await expect(ramp.getByRole("heading", { name: steps[0] })).toBeVisible();
-    if (todayHours.length > 0) await expect(ramp.getByText("Degrau 3 de 5 · Micro-passo")).toBeVisible();
+    if (blockTodayExpected) await expect(ramp.getByText("Degrau 3 de 5 · Micro-passo")).toBeVisible();
+    await settle(page);
     await shot(page, "07-rampa");
     // Sobe a rampa até o registro: conclui o degrau atual e termina o foco.
     const question = ramp.getByText(`Quanto você avançou em “${steps[0]}”?`);
@@ -152,6 +168,7 @@ test("fluxo principal: login demo → onboarding → objetivo → plano → ramp
       await (await finishFocus.isVisible() ? finishFocus : finishStep).click();
     }
     await expect(question).toBeVisible();
+    await settle(page);
     await shot(page, "08-registrar");
   });
 
@@ -160,6 +177,7 @@ test("fluxo principal: login demo → onboarding → objetivo → plano → ramp
     await ramp.getByRole("button", { name: /Concluí$/ }).click();
     await expect(ramp.getByText(`“${steps[0]}” concluída`)).toBeVisible();
     await expect(ramp.getByText(new RegExp(`${goalTitle} agora em [1-9]\\d*%`))).toBeVisible();
+    await settle(page);
     await shot(page, "09-celebracao");
     await ramp.getByRole("button", { name: "Voltar pro meu dia" }).click();
     const milestone = page.getByRole("dialog", { name: "Conquista" });
@@ -169,17 +187,23 @@ test("fluxo principal: login demo → onboarding → objetivo → plano → ramp
 
   await test.step("plano recalculado", async () => {
     await page.goto("/hoje");
-    const card = page.getByRole("button", { name: new RegExp(`^${goalTitle} \\d+%`) });
-    await expect(card).toBeVisible();
-    await expect(card).not.toContainText(/(^|\D)0%/);
-    if (todayHours.length > 0) {
+    await expect(goalCard).toBeVisible();
+    await expect(goalPct).toHaveText(/^[1-9]\d*%$/);
+    if (blockTodayExpected) {
       // O bloco registrado fica como concluído (sem abrir a rampa de novo).
       await expect(blockToday).toContainText("Concluída");
     }
+    // A etapa 2 continua no plano: "Próxima: …" no Hoje quando ela cai hoje; senão, "Nada agendado".
+    await expect(page.getByText(new RegExp(`^(Próxima: ${steps[1]} · .+|Nada agendado)$`))).toBeVisible();
     await shot(page, "10-hoje-recalculado");
-    await card.click();
+    await goalCard.click();
     await expect(page).toHaveURL(/\/objetivos\//);
     await expect(page.getByText("1/2 concluídas")).toBeVisible();
+    // Na trilha, a etapa 2 tem horário marcado e é a próxima a começar.
+    const step2 = page.getByText(steps[1], { exact: true }).locator("..");
+    await expect(step2).toContainText(/\d{2}:\d{2} · 30 min$/);
+    await expect(step2).not.toContainText("Ainda sem horário");
+    await expect(page.getByRole("button", { name: "Começar próxima etapa" })).toBeVisible();
     await shot(page, "11-trilha");
   });
 

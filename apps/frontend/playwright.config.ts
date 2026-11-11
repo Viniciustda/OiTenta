@@ -5,6 +5,8 @@ import { defineConfig } from "@playwright/test";
 // (porta 3000). O globalSetup zera os dados do usuário demo antes de cada execução.
 export default defineConfig({
   testDir: "./e2e",
+  // Só os *.spec.ts: os *.test.ts de e2e/support são do Vitest.
+  testMatch: "**/*.spec.ts",
   globalSetup: "./e2e/global-setup.ts",
   workers: 1,
   timeout: 120_000,
