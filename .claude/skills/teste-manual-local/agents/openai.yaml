@@ -1,0 +1,4 @@
+interface:
+  display_name: "Teste Manual Local"
+  short_description: "Subir banco, backend, web e app no simulador iOS para teste manual, seguindo os COMO-TESTAR.md"
+  default_prompt: "Use $teste-manual-local para deixar o ambiente local pronto para teste manual: banco no Docker, backend, web aberto no navegador e app mobile no simulador iOS apontando para o backend local, seguindo a cada execucao docs/backend/COMO-TESTAR.md, docs/frontend/COMO-TESTAR.md e docs/mobile/COMO-TESTAR.md, sem copiar comandos deles e parando para reportar qualquer passo ambiguo ou com erro."
