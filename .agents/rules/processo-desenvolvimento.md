@@ -43,8 +43,8 @@ Tudo verde, ou não há merge.
 ## 5. Escopo e problemas
 
 - Fazer só o que a etapa atual pede. Nada de funcionalidade, tela, campo, endpoint, dependência ou refatoração fora do plano aprovado (`docs/5-plano-execucao.md`).
-- Problema, erro ou dúvida: **parar e reportar** (o que fazia, o erro exato, a causa provável, as opções). Não contornar nem inventar solução. Subagente que parar devolve o problema ao agente principal, que devolve ao usuário; ninguém decide pelo usuário.
-- Se o design ou os docs não definirem algo, não inventar: listar como pendência.
+- Problema, erro ou dúvida: **parar e reportar** (o que fazia, o erro exato, a causa provável, as opções). Não contornar nem inventar solução. Subagente que parar devolve o problema ao agente principal, que devolve ao usuário; ninguém decide pelo usuário. Todo problema reportado vai para o `afazeres.md` (seção 10).
+- Se o design ou os docs não definirem algo, não inventar: registrar como [DECIDIR] no `afazeres.md`.
 - Mobile: desenvolver e testar **só no simulador iOS**. O iPhone físico é testado à mão pelo usuário.
 
 ## 6. Fontes da verdade, nesta ordem
@@ -70,7 +70,7 @@ Ao fim de cada etapa: verificar, relatar e **esperar o "aprovado" do usuário** 
 ## 8. Orquestração de subagentes
 
 - Cada subagente recebe: a tarefa exata (copiada do plano aprovado), a branch, as pastas que pode alterar, os cenários que deve implementar primeiro, os arquivos para ler antes, as skills, os critérios de pronto e esta regra inteira.
-- **Arquivos compartilhados só o agente principal altera:** `package.json` e `package-lock.json` da raiz, `turbo.json`, `app.module.ts`, prisma (schema e migrations), `openapi.json`, `docs/**` e `.agents/**`. Se um subagente precisar de algo neles, ele para e pede.
+- **Arquivos compartilhados só o agente principal altera:** `package.json` e `package-lock.json` da raiz, `turbo.json`, `app.module.ts`, prisma (schema e migrations), `openapi.json`, `afazeres.md`, `docs/**` e `.agents/**`. Se um subagente precisar de algo neles, ele para e pede.
 - Nenhum subagente roda `npm install`. Dependência nova só se estiver no plano aprovado, e quem instala é o agente principal.
 - Nenhum subagente faz merge nem push. Quem integra na `developer` é o agente principal (seções 2 e 4).
 - Relatório fixo de cada subagente: branch, arquivos alterados, teste falhando antes e passando depois, comandos de verificação com saída, pendências, problemas.
@@ -80,3 +80,22 @@ Ao fim de cada etapa: verificar, relatar e **esperar o "aprovado" do usuário** 
 ## 9. Relatório de cada portão
 
 (a) o que foi entregue, por subagente e por branch; (b) a saída da verificação completa; (c) a prova do TDD (vermelho → verde) por tarefa; (d) o que o revisor apontou e como ficou; (e) diferenças em relação ao design; (f) perguntas e problemas em aberto; (g) o estado da `developer` e a confirmação de que a `main` não foi tocada; (h) a próxima etapa e o que ela vai fazer.
+
+## 10. Afazeres (`afazeres.md` na raiz)
+
+Definido pelo usuário em 11/11/2026. Vale para todo agente, em toda execução.
+
+- **Todo erro, problema, pergunta ou pendência** encontrado por qualquer agente vai para o `afazeres.md` com a tag certa. Nada fica só no relatório ou no diário.
+- **Só o orquestrador (agente principal) edita o `afazeres.md`.** Os subagentes reportam os itens para ele no relatório, já no formato abaixo.
+- Estrutura: `# Afazeres`, com as seções `## Frontend (web)`, `## Mobile` e `## Backend (inclui domínio modules/*, banco e contrato)`. Item que envolve mais de um projeto fica no projeto onde a correção acontece, com referência cruzada nos outros.
+- Formato de cada item: `- [ ] [TAG] Título curto — (origem: arquivo/tarefa/data)`. Concluído vira `- [x]`, com o commit ou a decisão que fechou o item. **Não apague itens concluídos.**
+- Tags:
+  - **[INVESTIGAR]**: algo deu errado e a causa ainda não é conhecida. Descreva o sintoma, como reproduzir, o erro exato e onde já se olhou. Ainda não há decisão a tomar.
+  - **[DECIDIR]**: o problema é conhecido e há mais de um jeito de resolver; espera decisão do usuário. Obrigatório, escrito para quem não participou da conversa:
+    - contexto (o que é, onde aparece, por que importa);
+    - o problema;
+    - alternativas numeradas, cada uma com o que implica no código, nas telas e no prazo, vantagens e desvantagens;
+    - a recomendação do agente e o motivo.
+  - **[EXECUTAR]**: a decisão já está tomada; falta só implementar. Descreva o que fazer e o critério de pronto.
+- Quando um [DECIDIR] for decidido, ele vira [EXECUTAR] com a decisão escrita no item, e a decisão vai também para `docs/2-decisoes-mvp.md`.
+- Nenhum agente decide um [DECIDIR] pelo usuário.

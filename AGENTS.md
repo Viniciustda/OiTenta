@@ -39,7 +39,8 @@ cd apps/mobile && flutter run                    # mobile
 - `.agents/rules/nomenclatura-e-estrutura.md`: nomes, sufixos e onde cada arquivo mora.
 - `.agents/rules/arquitetura-limpa.md`: domínio sem framework, posse pelo token, erros → HTTP.
 - `.agents/rules/testes-e-cobertura.md`: 100% no domínio, sem banco, teste negativo de posse.
-- `.agents/rules/processo-desenvolvimento.md`: **leia antes de qualquer mudança.** Main intocável, fluxo de branches, TDD, verificação completa, portões e subagentes.
+- `.agents/rules/processo-desenvolvimento.md`: **leia antes de qualquer mudança.** Main intocável, fluxo de branches, TDD, verificação completa, portões, subagentes e o `afazeres.md`.
+- `afazeres.md` (raiz): todo erro, problema, pergunta ou pendência vai para lá, com a tag [INVESTIGAR], [DECIDIR] ou [EXECUTAR]. Só o orquestrador edita; subagentes reportam (regra do processo, seção 10).
 - `.agents/rules/mobile-flutter.md`: telas só com dados e callbacks, backend em `data/`, um `ChangeNotifier` por tela, rotas no go_router, URL por `--dart-define-from-file`.
 
 ## Skills, na ordem de uso
