@@ -28,10 +28,42 @@ describe("RegisterUser", () => {
       id: userRepository.users[0].id,
       name: "Ana Souza",
       email: "ana@bora.app",
+      timezone: "America/Sao_Paulo",
     });
     expect(output.user).not.toHaveProperty("password");
 
     validateSpy.mockRestore();
+  });
+
+  test("C0-3: deve gravar o fuso informado no cadastro", async () => {
+    const { userRepository, useCase } = makeSut();
+
+    const output = await useCase.execute({
+      name: "Ana Souza",
+      email: "ana@bora.app",
+      password: "Strong@123",
+      timezone: "America/Manaus",
+    });
+
+    expect(userRepository.users[0].timezone).toBe("America/Manaus");
+    expect(output.user.timezone).toBe("America/Manaus");
+  });
+
+  test("C0-4: sem fuso no cadastro, deve gravar America/Sao_Paulo", async () => {
+    const { userRepository, useCase } = makeSut();
+
+    await useCase.execute({ name: "Ana Souza", email: "ana@bora.app", password: "Strong@123" });
+
+    expect(userRepository.users[0].timezone).toBe("America/Sao_Paulo");
+  });
+
+  test("deve rejeitar fuso invalido sem persistir", async () => {
+    const { userRepository, useCase } = makeSut();
+
+    await expect(
+      useCase.execute({ name: "Ana Souza", email: "ana@bora.app", password: "Strong@123", timezone: "Lua/Base" }),
+    ).rejects.toThrow(ValidationException);
+    expect(userRepository.users).toEqual([]);
   });
 
   test("deve rejeitar senha fraca antes de qualquer efeito colateral", async () => {

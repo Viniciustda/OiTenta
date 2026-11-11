@@ -33,6 +33,7 @@ Vale para toda mudança no repositório (código e documentação), para o agent
 - `npm run build`;
 - lint de todos os workspaces (`npx turbo run lint`);
 - testes de todos os workspaces (`npm run test --workspaces --if-present`);
+- testes de integração do backend (`npm --workspace apps/backend run test:e2e`, com o Postgres no ar);
 - cobertura de 100% no domínio;
 - `flutter analyze` e `flutter test` em `apps/mobile`;
 - zero import de framework no domínio: `grep -rnE "@nestjs|@prisma/client|from ['\"]express|bcrypt|jsonwebtoken" modules/*/src packages/shared/src` (a regra `BcryptHashRule` do `shared` é falso positivo conhecido).

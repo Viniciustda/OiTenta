@@ -1,0 +1,131 @@
+@baseUrl = http://localhost:4000
+@scenarioVersion = {{$timestamp}}
+@password = Senha@123
+
+### Cadastro do dono → 201
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ana Souza",
+  "email": "scheduling.dono.{{scenarioVersion}}@bora.app",
+  "password": "{{password}}"
+}
+
+### Login do dono → 200 com token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{register.request.body.$.email}}",
+  "password": "{{password}}"
+}
+
+### Cadastro de outro usuário → 201
+# @name registerOther
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Bruno Lima",
+  "email": "scheduling.outro.{{scenarioVersion}}@bora.app",
+  "password": "{{password}}"
+}
+
+### Login do outro usuário → 200 com token
+# @name loginOther
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{registerOther.request.body.$.email}}",
+  "password": "{{password}}"
+}
+
+### Usuário novo pede a disponibilidade → 404 "Disponibilidade não encontrada."
+GET {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Grava a disponibilidade do dono → 200 { availability }
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "windows": [
+    { "weekday": 0, "startMinute": 1140, "endMinute": 1380 },
+    { "weekday": 2, "startMinute": 480, "endMinute": 600 }
+  ],
+  "dailyLimitMinutes": 180
+}
+
+### Lê a disponibilidade do dono → 200 com os dados gravados
+GET {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Outro usuário pede a disponibilidade (o dono já salvou) → 404
+GET {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{loginOther.response.body.$.token}}
+
+### Zero janelas → 422
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "windows": [], "dailyLimitMinutes": 180 }
+
+### Limite 25 → 422
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "windows": [{ "weekday": 0, "startMinute": 1140, "endMinute": 1380 }],
+  "dailyLimitMinutes": 25
+}
+
+### Corpo com userId (campo não previsto) → 400
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "userId": "{{loginOther.response.body.$.user.id}}",
+  "windows": [{ "weekday": 0, "startMinute": 1140, "endMinute": 1380 }],
+  "dailyLimitMinutes": 180
+}
+
+### windows que não é array → 400
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "windows": "segunda à noite", "dailyLimitMinutes": 180 }
+
+### weekday string → 400
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "windows": [{ "weekday": "segunda", "startMinute": 1140, "endMinute": 1380 }],
+  "dailyLimitMinutes": 180
+}
+
+### PUT sem token → 401
+PUT {{baseUrl}}/scheduling/availability
+Content-Type: application/json
+
+{
+  "windows": [{ "weekday": 0, "startMinute": 1140, "endMinute": 1380 }],
+  "dailyLimitMinutes": 180
+}
+
+### GET sem token → 401
+GET {{baseUrl}}/scheduling/availability
+
+### GET com token inválido → 401
+GET {{baseUrl}}/scheduling/availability
+Authorization: Bearer token-invalido
