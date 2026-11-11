@@ -117,6 +117,8 @@ describe('activation (integração)', () => {
       focusedMinutes: s.focusedMinutes,
       outcome: s.outcome,
       partialPct: s.partialPct,
+      createdAt: s.createdAt,
+      updatedAt: s.updatedAt,
       deletedAt: s.deletedAt ?? null,
     });
 
@@ -157,6 +159,50 @@ describe('activation (integração)', () => {
       expect(await repository.findAllByUserAndStep(otherId, stepId)).toEqual(
         [],
       );
+    });
+
+    it('findAllByUserAndStep devolve só as sessões da etapa pedida', async () => {
+      const inStepA = session(ownerId);
+      await repository.create(inStepA);
+      await repository.create(session(ownerId, { stepId: randomUUID() }));
+
+      const found = await repository.findAllByUserAndStep(ownerId, stepId);
+      expect(found.map((s) => s.id)).toEqual([inStepA.id]);
+    });
+
+    it('findAllByUserAndStep ordena por startedAt crescente e desempata pelo createdAt', async () => {
+      const at = (iso: string) => new Date(`2030-03-04T${iso}:00.000Z`);
+      const late = session(ownerId, {
+        startedAt: at('11:00'),
+        endedAt: at('11:25'),
+      });
+      const tieSecond = session(ownerId, {
+        startedAt: at('10:00'),
+        endedAt: at('10:25'),
+        createdAt: at('12:30'),
+        updatedAt: at('12:30'),
+      });
+      const tieFirst = session(ownerId, {
+        startedAt: at('10:00'),
+        endedAt: at('10:25'),
+        createdAt: at('12:00'),
+        updatedAt: at('12:00'),
+      });
+      const early = session(ownerId, {
+        startedAt: at('09:00'),
+        endedAt: at('09:25'),
+      });
+      for (const s of [late, tieSecond, tieFirst, early]) {
+        await repository.create(s);
+      }
+
+      const found = await repository.findAllByUserAndStep(ownerId, stepId);
+      expect(found.map((s) => s.id)).toEqual([
+        early.id,
+        tieFirst.id,
+        tieSecond.id,
+        late.id,
+      ]);
     });
 
     it('sessão com deletedAt não aparece', async () => {
