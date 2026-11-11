@@ -41,19 +41,22 @@ interface Account {
 
 export default function SettingsPage() {
   const router = useRouter();
-  const now = clock.now();
   const [account, setAccount] = useState<Account | null>(null);
   const [grid, setGrid] = useState<HourGrid>(emptyGrid);
   const [limit, setLimit] = useState(LIMIT_DEFAULT);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [today, setToday] = useState<PlanBlock[]>([]);
   const pending = useRef<{ timer: ReturnType<typeof setTimeout>; save: () => void } | null>(null);
+  // Depois que o usuário mexe na grade ou no limite, a tela é a fonte da verdade: uma carga que termine
+  // depois (ex.: a Activity do Next reexibindo a tela) não sobrescreve a edição, pendente ou já gravada.
+  const edited = useRef(false);
 
+  // Carrega uma vez por exibição. O "agora" é lido aqui dentro: a tela não precisa recarregar a cada minuto.
   useEffect(() => {
     let alive = true;
     (async () => {
       const { user } = await authRepository.me();
-      const date = localDate(now, user.timezone);
+      const date = localDate(clock.now(), user.timezone);
       const [avail, p, day] = await Promise.all([
         schedulingRepository.getAvailability().catch(() => null),
         settingsRepository.getPreferences(),
@@ -61,7 +64,7 @@ export default function SettingsPage() {
       ]);
       if (!alive) return;
       setAccount({ name: user.name, email: user.email, timezone: user.timezone, dateLabel: `${weekdayLong(date)}, ${dayOfMonth(date)} de ${monthName(date)}` });
-      if (avail) {
+      if (avail && !edited.current && !pending.current) {
         setGrid(windowsToGrid(avail.availability.windows));
         setLimit(avail.availability.dailyLimitMinutes);
       }
@@ -71,7 +74,7 @@ export default function SettingsPage() {
     return () => {
       alive = false;
     };
-  }, [now]);
+  }, []);
 
   const flush = useCallback(() => {
     const p = pending.current;
@@ -85,6 +88,7 @@ export default function SettingsPage() {
   useEffect(() => flush, [flush]);
 
   const scheduleSave = (g: HourGrid, l: number) => {
+    edited.current = true;
     if (pending.current) clearTimeout(pending.current.timer);
     const windows = gridToWindows(g);
     const save = () => {

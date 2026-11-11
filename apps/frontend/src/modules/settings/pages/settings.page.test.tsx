@@ -1,6 +1,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { authRepository } from "@/modules/auth/data";
+import { clock } from "@/modules/core/data/clock";
 import { exampleBackend } from "@/modules/core/data/example-backend";
 import { schedulingRepository } from "@/modules/scheduling/data";
 import { settingsRepository } from "../data";
@@ -96,5 +97,36 @@ describe("W26 Configurações", () => {
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Sair" })));
     expect(logout).toHaveBeenCalled();
     expect(push).toHaveBeenCalledWith("/entrar");
+  });
+
+  it("o relógio avançar durante uma edição pendente não desfaz a edição na tela", async () => {
+    const getAvailability = vi.spyOn(schedulingRepository, "getAvailability");
+    const now = vi.spyOn(clock, "now");
+    await open();
+    now.mockReturnValue("2026-11-16T22:41:00.000Z"); // virou o minuto
+    fireEvent.mouseDown(screen.getByTitle("Seg 8h–9h"));
+    fireEvent.mouseUp(window);
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
+    });
+    expect(screen.getByText("Livre · 26h por semana")).toBeTruthy();
+    expect(getAvailability).toHaveBeenCalledTimes(1);
+  });
+
+  it("dados do servidor que chegam depois de uma edição não sobrescrevem a edição", async () => {
+    let release: () => void = () => {};
+    const real = schedulingRepository.getAvailability.bind(schedulingRepository);
+    vi.spyOn(schedulingRepository, "getAvailability").mockImplementation(
+      () => new Promise((resolve) => { release = () => resolve(real()); }),
+    );
+    render(<SettingsPage />);
+    await screen.findByText("Livre · 0h por semana");
+    fireEvent.mouseDown(screen.getByTitle("Seg 8h–9h"));
+    fireEvent.mouseUp(window);
+    await act(async () => {
+      release();
+      await new Promise((r) => setTimeout(r, 50));
+    });
+    expect(screen.getByText("Livre · 1h por semana")).toBeTruthy();
   });
 });
