@@ -15,6 +15,8 @@ export interface GoalListItem {
   done: number;
   total: number;
   status: GoalStatus;
+  /** Desempate do plano entre objetivos com o mesmo prazo (PlanGoalInput.createdAt). */
+  createdAt: Date;
 }
 
 export interface ListGoalsOut {
@@ -36,6 +38,7 @@ export class ListGoals implements UseCase<ListGoalsIn, ListGoalsOut> {
         progressPct: GoalProgressCalculator.goalProgressPct(goal.steps),
         ...GoalProgressCalculator.summary(goal.steps),
         status: goal.status,
+        createdAt: goal.createdAt,
       })),
     };
   }
