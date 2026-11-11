@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "./api-error";
-import { callOf, MemoryTokenStore, stubFetch } from "./fetch-mock";
+import { callOf, MemoryTokenStore, stubFetch } from "./fetch-mock.test-utils";
 import { API_URL, HttpClient, LocalStorageTokenStore, TOKEN_KEY } from "./http-client";
 
 const setup = (token: string | null = "tok-1") => {

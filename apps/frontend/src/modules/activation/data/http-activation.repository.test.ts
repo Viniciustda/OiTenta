@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { callOf, MemoryTokenStore, stubFetch } from "@/modules/core/data/fetch-mock";
+import { callOf, MemoryTokenStore, stubFetch } from "@/modules/core/data/fetch-mock.test-utils";
 import { HttpClient } from "@/modules/core/data/http-client";
 import { HttpActivationRepository } from "./http-activation.repository";
 import type { RecordSessionInput } from "./activation.types";

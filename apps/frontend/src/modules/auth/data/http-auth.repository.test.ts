@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/modules/core/data/api-error";
-import { callOf, MemoryTokenStore, stubFetch } from "@/modules/core/data/fetch-mock";
+import { callOf, MemoryTokenStore, stubFetch } from "@/modules/core/data/fetch-mock.test-utils";
 import { HttpClient } from "@/modules/core/data/http-client";
 import { HttpAuthRepository } from "./http-auth.repository";
 

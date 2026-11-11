@@ -1,9 +1,13 @@
 import { clone, ExampleBackend, exampleBackend, type ExampleGoal } from "@/modules/core/data/example-backend";
 import type { GoalsRepository } from "./goals.repository";
-import type { CreateGoalInput, CreateGoalResponse, GetGoalResponse, Goal, GoalStepDetail, ListGoalsResponse } from "./goals.types";
+import type { CreateGoalInput, CreateGoalResponse, GetGoalResponse, Goal, GoalHeader, GoalStepDetail, ListGoalsResponse } from "./goals.types";
 
 const toGoal = ({ id, title, deadline, kind, colorIndex, progressPct, status }: ExampleGoal): Goal => ({
   id, title, deadline, kind, colorIndex, progressPct, status,
+});
+// Os objetivos de exemplo são todos tratados como manuais (o exemplo não tem IA).
+const toHeader = ({ id, title, deadline, kind, colorIndex, status }: ExampleGoal): GoalHeader => ({
+  id, title, deadline, kind, colorIndex, source: "manual", status,
 });
 const remaining = (minutes: number, pct: number) => (pct >= 100 ? 0 : Math.ceil((minutes * (1 - pct / 100)) / 15) * 15);
 const summary = (g: ExampleGoal) => ({ done: g.steps.filter((s) => s.status === "done").length, total: g.steps.filter((s) => s.status !== "superseded").length });
@@ -33,7 +37,7 @@ export class ExampleGoalsRepository implements GoalsRepository {
         ...(next ? { nextBlock: { id: next.id, start: next.start, end: next.end } } : {}),
       };
     });
-    return clone({ goal: toGoal(g), steps, progressPct: g.progressPct, ...summary(g) });
+    return clone({ goal: toHeader(g), steps, progressPct: g.progressPct, ...summary(g) });
   }
 
   async create(input: CreateGoalInput): Promise<CreateGoalResponse> {

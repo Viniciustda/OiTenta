@@ -6,6 +6,7 @@ import type { CreateGoalInput, Goal, GoalStep } from "@/modules/goals/data/goals
 import type { BlockStatus, WeeklyAvailability } from "@/modules/scheduling/data/scheduling.types";
 import type { FocusSession } from "@/modules/activation/data/activation.types";
 import { badRequest, conflict, notFound, unauthorized, unprocessable } from "./api-error";
+import { ExampleClock } from "./clock";
 import type { PlanSummary } from "./plan-summary.types";
 import { localDate } from "../format/time.format";
 import {
@@ -43,6 +44,9 @@ export interface ExampleBlock {
   end: string;
   status: BlockStatus;
 }
+
+// Os dados de exemplo vivem no "agora" do protótipo, independentemente da fonte de dados escolhida.
+const exampleClock = new ExampleClock();
 
 export const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 
@@ -202,7 +206,7 @@ export class ExampleBackend {
       status: "active",
       slackDays: null,
       challenge: null,
-      createdAt: new Date().toISOString(),
+      createdAt: exampleClock.now(),
       steps: input.steps.map((s, i) => ({
         id: this.nextId("step"),
         order: i + 1,

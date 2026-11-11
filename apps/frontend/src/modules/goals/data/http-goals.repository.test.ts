@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { callOf, MemoryTokenStore, stubFetch } from "@/modules/core/data/fetch-mock";
+import { callOf, MemoryTokenStore, stubFetch } from "@/modules/core/data/fetch-mock.test-utils";
 import { HttpClient } from "@/modules/core/data/http-client";
 import { HttpGoalsRepository } from "./http-goals.repository";
 import type { CreateGoalInput } from "./goals.types";
@@ -59,15 +59,19 @@ describe("HttpGoalsRepository", () => {
   });
 
   it("get faz GET /goals/:goalId e devolve nextBlock das etapas pendentes", async () => {
+    const header = { id: "g1", title: "TCC", deadline: "2026-11-24", kind: "goal", colorIndex: 1, source: "manual", status: "active" } as const;
     const body = {
-      goal, progressPct: 0, done: 0, total: 1,
+      goal: header, progressPct: 0, done: 0, total: 1,
       steps: [{
         id: "s1", order: 1, title: "Ler", estimatedMinutes: 30, progressPct: 0, status: "pending", remainingMinutes: 30,
         nextBlock: { id: "b1", start: "2026-11-10T22:00:00.000Z", end: "2026-11-10T22:30:00.000Z" },
       }],
     };
     const fetch = stubFetch({ status: 200, body });
-    expect((await setup().repo.get("g 1")).steps[0].nextBlock).toEqual(body.steps[0].nextBlock);
+    const res = await setup().repo.get("g 1");
+    expect(res.steps[0].nextBlock).toEqual(body.steps[0].nextBlock);
+    expect(res.goal).toEqual(header);
+    expect(res.goal).not.toHaveProperty("progressPct");
     const call = callOf(fetch);
     expect(call.method).toBe("GET");
     expect(call.url.pathname).toBe("/goals/g%201");
