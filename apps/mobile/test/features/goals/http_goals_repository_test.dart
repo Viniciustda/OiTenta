@@ -116,6 +116,32 @@ void main() {
     },
   );
 
+  test(
+    'getGoal: o goal{…} do backend vem sem progressPct; usa o progresso de fora',
+    () async {
+      // Formato real de GET /goals/:goalId (sem progressPct dentro de goal).
+      api.respond({
+        'goal': {
+          'id': 'g1',
+          'title': 'Trabalho de Algoritmos',
+          'deadline': '2026-11-24',
+          'kind': 'goal',
+          'colorIndex': 1,
+          'source': 'manual',
+          'status': 'active',
+        },
+        'steps': [],
+        'progressPct': 50,
+        'done': 1,
+        'total': 2,
+      });
+      final d = await repo.getGoal('g1');
+      expect(d.goal.title, 'Trabalho de Algoritmos');
+      expect(d.goal.progressPct, 50);
+      expect(d.progressPct, 50);
+    },
+  );
+
   test('getGoal: codifica o id na URL', () async {
     api.respond({
       'goal': _goal,

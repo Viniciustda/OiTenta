@@ -115,12 +115,14 @@ class Goal {
   final int colorIndex;
   final int progressPct;
 
-  factory Goal.fromJson(Map<String, dynamic> json) => Goal(
+  /// `POST /goals` traz `progressPct` dentro de `goal`; `GET /goals/:goalId`
+  /// não traz (fica fora, em [GoalDetail]), e chega por [progressPct].
+  factory Goal.fromJson(Map<String, dynamic> json, {int? progressPct}) => Goal(
     id: json['id'] as String,
     title: json['title'] as String,
     deadline: json['deadline'] as String?,
     colorIndex: json['colorIndex'] as int,
-    progressPct: json['progressPct'] as int,
+    progressPct: (json['progressPct'] as int?) ?? progressPct ?? 0,
   );
 }
 
@@ -141,7 +143,10 @@ class GoalDetail {
   final int total;
 
   factory GoalDetail.fromJson(Map<String, dynamic> json) => GoalDetail(
-    goal: Goal.fromJson(json['goal'] as Map<String, dynamic>),
+    goal: Goal.fromJson(
+      json['goal'] as Map<String, dynamic>,
+      progressPct: json['progressPct'] as int,
+    ),
     steps: (json['steps'] as List)
         .map((s) => GoalStep.fromJson(s as Map<String, dynamic>))
         .toList(),

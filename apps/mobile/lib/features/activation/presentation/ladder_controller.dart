@@ -101,6 +101,10 @@ mixin RampSwap on ChangeNotifier {
   void onSwapped() {}
 }
 
+/// Duração do degrau Registrar na escada (design system, "5 Registrar 1 min").
+/// O backend devolve o degrau `log` sem opções (modelagem 4.1, item 4).
+const registerDurationLabel = '1 min';
+
 /// Escada da rampa (M06).
 class LadderController extends ChangeNotifier with RampSwap {
   LadderController(this.session);
@@ -118,7 +122,9 @@ class LadderController extends ChangeNotifier with RampSwap {
       LadderStepView(
         kind: session.kindAt(i),
         name: rampStepNames[i],
-        duration: session.option(session.kindAt(i)).durationLabel,
+        duration: session.options(session.kindAt(i)).isEmpty
+            ? registerDurationLabel
+            : session.option(session.kindAt(i)).durationLabel,
         icon: rampStepIcons[i],
         current: i == index,
         done: session.done[i],

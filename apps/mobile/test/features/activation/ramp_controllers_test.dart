@@ -66,6 +66,32 @@ void main() {
   });
 
   group('escada (M06)', () {
+    test(
+      'degrau Registrar sem opções (como o backend devolve) não quebra a escada',
+      () async {
+        await checkin(EnergyLevel.electric);
+        final r = session.ramp!;
+        session.start(
+          target: target,
+          energy: EnergyLevel.electric,
+          availableTime: AvailableTime.h1,
+          ramp: Ramp(
+            suggested: r.suggested,
+            steps: [
+              for (final s in r.steps)
+                s.kind == RampStepKind.log
+                    ? const RampStep(kind: RampStepKind.log, options: [])
+                    : s,
+            ],
+          ),
+          startedAt: clock.now(),
+        );
+        final c = LadderController(session);
+        expect(c.steps.last.duration, '1 min');
+        expect(c.caption, 'Degrau 4 de 5 · Foco');
+      },
+    );
+
     test('subtítulo, degraus e seleção', () async {
       await checkin(EnergyLevel.low);
       final c = LadderController(session);
