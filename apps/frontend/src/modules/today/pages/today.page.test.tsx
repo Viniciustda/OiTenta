@@ -23,6 +23,12 @@ describe("W12–W14 Hoje", () => {
     expect(screen.getByText("Entrega 20/11 · folga de 2 dias")).toBeTruthy();
   });
 
+  it("só mostra a data depois de carregar os dados (o HTML do servidor não tem a hora real: sem hydration mismatch)", async () => {
+    render(<TodayPage />);
+    expect(screen.queryByText("Segunda, 16 de novembro · 19:40")).toBeNull();
+    expect(await screen.findByText("Segunda, 16 de novembro · 19:40")).toBeTruthy();
+  });
+
   it("check-in com 4 níveis; Elétrico leva direto ao foco (P14)", async () => {
     render(<TodayPage />);
     await screen.findByText("Diagrama de casos de uso");

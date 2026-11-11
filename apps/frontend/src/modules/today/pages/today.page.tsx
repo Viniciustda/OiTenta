@@ -99,7 +99,8 @@ export default function TodayPage() {
     <div className="box-border grid max-w-[1200px] grid-cols-[minmax(0,1fr)_360px] items-start gap-10 px-12 pt-10 pb-16">
       <div className="flex min-w-0 flex-col gap-8">
         <div>
-          <span className={KICKER}>{formatLongDateTime(now, tz)}</span>
+          {/* A data só aparece depois dos dados: no servidor o relógio real devolve SERVER_NOW (clock.ts). */}
+          <span className={KICKER}>{blocks ? formatLongDateTime(now, tz) : ""}</span>
           <h1 className="mt-2 mb-0 font-fredoka text-[40px]/[48px] font-semibold">{greeting(name)}</h1>
           <p className="mt-2 mb-0 text-[18px]/[28px] text-tx2">{blocks ? daySummary(blocks) : ""}</p>
         </div>
