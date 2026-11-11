@@ -39,7 +39,10 @@ class TrailController extends ChangeNotifier {
     notifyListeners();
     try {
       detail = await _repo.getGoal(goalId);
-      _slackDays = (await _repo.listGoals()).where((g) => g.id == goalId).firstOrNull?.slackDays;
+      _slackDays = (await _repo.listGoals())
+          .where((g) => g.id == goalId)
+          .firstOrNull
+          ?.slackDays;
     } catch (_) {
       error = 'Não achei esse objetivo.';
     } finally {
@@ -48,7 +51,9 @@ class TrailController extends ChangeNotifier {
     }
   }
 
-  DateTime? get _deadline => detail?.goal.deadline == null ? null : BoraFormat.parseDateKey(detail!.goal.deadline!);
+  DateTime? get _deadline => detail?.goal.deadline == null
+      ? null
+      : BoraFormat.parseDateKey(detail!.goal.deadline!);
 
   String get title => detail?.goal.title ?? '';
 
@@ -74,7 +79,9 @@ class TrailController extends ChangeNotifier {
 
   String get flagTitle {
     final d = _deadline;
-    return d == null ? 'Sem prazo final' : 'Entrega final · ${BoraFormat.shortDate(d)}';
+    return d == null
+        ? 'Sem prazo final'
+        : 'Entrega final · ${BoraFormat.shortDate(d)}';
   }
 
   String get flagSubtitle => _deadline == null ? 'Objetivo contínuo' : title;
@@ -90,8 +97,8 @@ class TrailController extends ChangeNotifier {
           meta: steps[i].isDone
               ? 'Concluída'
               : steps[i].nextBlock == null
-                  ? 'Sem data · será encaixada'
-                  : '${BoraFormat.shortDate(steps[i].nextBlock!.start.toLocal())} · ${BoraFormat.hour(steps[i].nextBlock!.start)}',
+              ? 'Sem data · será encaixada'
+              : '${BoraFormat.shortDate(steps[i].nextBlock!.start.toLocal())} · ${BoraFormat.hour(steps[i].nextBlock!.start)}',
           duration: BoraFormat.duration(steps[i].estimatedMinutes),
           done: steps[i].isDone,
           isNext: i == next,

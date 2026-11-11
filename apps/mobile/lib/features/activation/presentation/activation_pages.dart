@@ -25,7 +25,8 @@ import 'warmup_screen.dart';
 
 void _close(BuildContext context) => context.go(AppRoutes.today);
 
-void _goStep(BuildContext context, int index) => context.go(AppRoutes.rampSteps[index]);
+void _goStep(BuildContext context, int index) =>
+    context.go(AppRoutes.rampSteps[index]);
 
 /// Sem rampa montada (ex.: abriu a rota direto), volta para o Hoje.
 Widget _guard(AppDependencies deps, Widget Function() build) =>
@@ -50,19 +51,19 @@ class LadderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _guard(
-        deps,
-        () => ControllerHost<LadderController>(
-          create: () => LadderController(deps.rampSession),
-          builder: (context, c) => LadderScreen(
-            state: c,
-            onClose: () => _close(context),
-            onSelect: c.select,
-            onSwap: () => showSwapSheet(context, c),
-            onSkip: c.skipToTask,
-            onStart: () => _goStep(context, c.index),
-          ),
-        ),
-      );
+    deps,
+    () => ControllerHost<LadderController>(
+      create: () => LadderController(deps.rampSession),
+      builder: (context, c) => LadderScreen(
+        state: c,
+        onClose: () => _close(context),
+        onSelect: c.select,
+        onSwap: () => showSwapSheet(context, c),
+        onSkip: c.skipToTask,
+        onStart: () => _goStep(context, c.index),
+      ),
+    ),
+  );
 }
 
 class WarmupPage extends StatelessWidget {
@@ -72,27 +73,27 @@ class WarmupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _guard(
-        deps,
-        () => ControllerHost<WarmupController>(
-          create: () => WarmupController(deps.rampSession),
-          builder: (context, c) => PeriodicTicker(
-            onTick: c.tick,
-            child: WarmupScreen(
-              state: c,
-              onClose: () => _close(context),
-              onSwap: () => showSwapSheet(context, c),
-              onSkip: () {
-                c.skipToTask();
-                _goStep(context, 2);
-              },
-              onDone: () {
-                c.complete();
-                _goStep(context, deps.rampSession.currentIndex);
-              },
-            ),
-          ),
+    deps,
+    () => ControllerHost<WarmupController>(
+      create: () => WarmupController(deps.rampSession),
+      builder: (context, c) => PeriodicTicker(
+        onTick: c.tick,
+        child: WarmupScreen(
+          state: c,
+          onClose: () => _close(context),
+          onSwap: () => showSwapSheet(context, c),
+          onSkip: () {
+            c.skipToTask();
+            _goStep(context, 2);
+          },
+          onDone: () {
+            c.complete();
+            _goStep(context, deps.rampSession.currentIndex);
+          },
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class ChallengePage extends StatelessWidget {
@@ -102,30 +103,30 @@ class ChallengePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _guard(
-        deps,
-        () => ControllerHost<ChallengeController>(
-          create: () => ChallengeController(deps.rampSession),
-          builder: (context, c) => ChallengeScreen(
-            state: c,
-            onClose: () => _close(context),
-            onSwap: () => showSwapSheet(context, c),
-            onSkip: () {
-              c.skipToTask();
-              _goStep(context, 2);
-            },
-            onKey: (k) {
-              c.press(k);
-              if (!c.waitingNext) return;
-              final wait = c.feedback == ChallengeFeedback.correct ? 650 : 1500;
-              Future.delayed(Duration(milliseconds: wait), () {
-                if (!context.mounted) return;
-                c.next();
-                if (c.finished) _goStep(context, deps.rampSession.currentIndex);
-              });
-            },
-          ),
-        ),
-      );
+    deps,
+    () => ControllerHost<ChallengeController>(
+      create: () => ChallengeController(deps.rampSession),
+      builder: (context, c) => ChallengeScreen(
+        state: c,
+        onClose: () => _close(context),
+        onSwap: () => showSwapSheet(context, c),
+        onSkip: () {
+          c.skipToTask();
+          _goStep(context, 2);
+        },
+        onKey: (k) {
+          c.press(k);
+          if (!c.waitingNext) return;
+          final wait = c.feedback == ChallengeFeedback.correct ? 650 : 1500;
+          Future.delayed(Duration(milliseconds: wait), () {
+            if (!context.mounted) return;
+            c.next();
+            if (c.finished) _goStep(context, deps.rampSession.currentIndex);
+          });
+        },
+      ),
+    ),
+  );
 }
 
 class MicroPage extends StatelessWidget {
@@ -135,20 +136,20 @@ class MicroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _guard(
-        deps,
-        () => ControllerHost<MicroController>(
-          create: () => MicroController(deps.rampSession),
-          builder: (context, c) => MicroScreen(
-            state: c,
-            onClose: () => _close(context),
-            onSwap: () => showSwapSheet(context, c),
-            onDone: () {
-              c.done();
-              _goStep(context, deps.rampSession.currentIndex);
-            },
-          ),
-        ),
-      );
+    deps,
+    () => ControllerHost<MicroController>(
+      create: () => MicroController(deps.rampSession),
+      builder: (context, c) => MicroScreen(
+        state: c,
+        onClose: () => _close(context),
+        onSwap: () => showSwapSheet(context, c),
+        onDone: () {
+          c.done();
+          _goStep(context, deps.rampSession.currentIndex);
+        },
+      ),
+    ),
+  );
 }
 
 class FocusPage extends StatelessWidget {
@@ -158,22 +159,26 @@ class FocusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _guard(
-        deps,
-        () => ControllerHost<FocusController>(
-          create: () => FocusController(deps.rampSession),
-          builder: (context, c) {
-            if (c.ended) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (context.mounted) context.go(AppRoutes.log);
-              });
-            }
-            return PeriodicTicker(
-              onTick: c.tick,
-              child: FocusScreen(state: c, onClose: () => _close(context), onEnd: c.end),
-            );
-          },
-        ),
-      );
+    deps,
+    () => ControllerHost<FocusController>(
+      create: () => FocusController(deps.rampSession),
+      builder: (context, c) {
+        if (c.ended) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) context.go(AppRoutes.log);
+          });
+        }
+        return PeriodicTicker(
+          onTick: c.tick,
+          child: FocusScreen(
+            state: c,
+            onClose: () => _close(context),
+            onEnd: c.end,
+          ),
+        );
+      },
+    ),
+  );
 }
 
 class LogPage extends StatelessWidget {
@@ -183,31 +188,32 @@ class LogPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _guard(
-        deps,
-        () => ControllerHost<LogController>(
-          create: () => LogController(deps.activation, deps.rampSession, deps.clock),
-          builder: (context, c) => LogScreen(
-            state: c,
-            onClose: () => _close(context),
-            onChoose: c.choose,
-            onPartial: c.setPartial,
-            onSubmit: () async {
-              if (!await c.submit() || !context.mounted) return;
-              if (c.outcome == SessionOutcome.notDone) {
-                showBoraToast(
-                  context,
-                  icon: PhosphorIconsBold.arrowsClockwise,
-                  title: 'Tudo bem, recalculei pra você.',
-                  subtitle: 'A etapa volta pro plano.',
-                );
-                context.go(AppRoutes.today);
-              } else {
-                context.go(AppRoutes.celebration);
-              }
-            },
-          ),
-        ),
-      );
+    deps,
+    () => ControllerHost<LogController>(
+      create: () =>
+          LogController(deps.activation, deps.rampSession, deps.clock),
+      builder: (context, c) => LogScreen(
+        state: c,
+        onClose: () => _close(context),
+        onChoose: c.choose,
+        onPartial: c.setPartial,
+        onSubmit: () async {
+          if (!await c.submit() || !context.mounted) return;
+          if (c.outcome == SessionOutcome.notDone) {
+            showBoraToast(
+              context,
+              icon: PhosphorIconsBold.arrowsClockwise,
+              title: 'Tudo bem, recalculei pra você.',
+              subtitle: 'A etapa volta pro plano.',
+            );
+            context.go(AppRoutes.today);
+          } else {
+            context.go(AppRoutes.celebration);
+          }
+        },
+      ),
+    ),
+  );
 }
 
 class CelebrationPage extends StatelessWidget {
@@ -217,15 +223,15 @@ class CelebrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _guard(
-        deps,
-        () => ControllerHost<CelebrationController>(
-          create: () => CelebrationController(deps.gamification, deps.rampSession),
-          init: (c) => c.load(),
-          builder: (context, c) => CelebrationScreen(
-            state: c,
-            onClose: () => _close(context),
-            onBack: () => _close(context),
-          ),
-        ),
-      );
+    deps,
+    () => ControllerHost<CelebrationController>(
+      create: () => CelebrationController(deps.gamification, deps.rampSession),
+      init: (c) => c.load(),
+      builder: (context, c) => CelebrationScreen(
+        state: c,
+        onClose: () => _close(context),
+        onBack: () => _close(context),
+      ),
+    ),
+  );
 }

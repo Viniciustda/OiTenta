@@ -31,7 +31,12 @@ class WarmupScreen extends StatelessWidget {
     final c = context.bora;
     return BoraPage(
       topBar: BoraTopBar(leading: CloseNavButton(onPressed: onClose)),
-      header: RampHeader(index: 0, done: state.session.done, onSwap: onSwap, onSkip: onSkip),
+      header: RampHeader(
+        index: 0,
+        done: state.session.done,
+        onSwap: onSwap,
+        onSkip: onSkip,
+      ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       children: [
         Text(state.title, style: BoraText.h1(c.tx)),
@@ -46,17 +51,35 @@ class WarmupScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(width: 104, height: 104, child: Align(alignment: Alignment.bottomCenter, child: Broto(size: 104))),
+              const SizedBox(
+                width: 104,
+                height: 104,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Broto(size: 104),
+                ),
+              ),
               ProgressRing(
                 size: 148,
-                progress: state.progress,
+                progress: 1 - state.progress,
                 color: c.fill,
                 track: c.ringTrack,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(state.timeLabel, style: BoraText.fredoka(36, 40, color: c.tx)),
-                    Text(state.ringLabel, style: BoraText.nunito(12, 16, weight: FontWeight.w700, color: c.tx2)),
+                    Text(
+                      state.timeLabel,
+                      style: BoraText.fredoka(36, 40, color: c.tx),
+                    ),
+                    Text(
+                      state.ringLabel,
+                      style: BoraText.nunito(
+                        12,
+                        16,
+                        weight: FontWeight.w700,
+                        color: c.tx2,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -73,10 +96,18 @@ class WarmupScreen extends StatelessWidget {
                 height: 28,
                 decoration: BoxDecoration(color: c.s2, shape: BoxShape.circle),
                 alignment: Alignment.center,
-                child: Text('${i + 1}', style: BoraText.fredoka(14, 14, color: c.pri)),
+                child: Text(
+                  '${i + 1}',
+                  style: BoraText.fredoka(14, 14, color: c.pri),
+                ),
               ),
               const SizedBox(width: 12),
-              Expanded(child: Text(state.steps[i], style: BoraText.nunito(15, 20, color: c.tx))),
+              Expanded(
+                child: Text(
+                  state.steps[i],
+                  style: BoraText.nunito(15, 20, color: c.tx),
+                ),
+              ),
             ],
           ),
         ],

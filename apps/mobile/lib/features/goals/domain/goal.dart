@@ -31,16 +31,16 @@ class GoalSummary {
   final int? slackDays;
 
   factory GoalSummary.fromJson(Map<String, dynamic> json) => GoalSummary(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        deadline: json['deadline'] as String?,
-        colorIndex: json['colorIndex'] as int,
-        progressPct: json['progressPct'] as int,
-        done: json['done'] as int,
-        total: json['total'] as int,
-        status: json['status'] as String,
-        slackDays: json['slackDays'] as int?,
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    deadline: json['deadline'] as String?,
+    colorIndex: json['colorIndex'] as int,
+    progressPct: json['progressPct'] as int,
+    done: json['done'] as int,
+    total: json['total'] as int,
+    status: json['status'] as String,
+    slackDays: json['slackDays'] as int?,
+  );
 }
 
 /// Próximo bloco agendado de uma etapa: `{ start, end }` (instantes UTC).
@@ -50,8 +50,10 @@ class NextBlock {
   final DateTime start;
   final DateTime end;
 
-  factory NextBlock.fromJson(Map<String, dynamic> json) =>
-      NextBlock(start: DateTime.parse(json['start'] as String), end: DateTime.parse(json['end'] as String));
+  factory NextBlock.fromJson(Map<String, dynamic> json) => NextBlock(
+    start: DateTime.parse(json['start'] as String),
+    end: DateTime.parse(json['end'] as String),
+  );
 }
 
 /// Etapa de `GET /goals/:goalId`:
@@ -82,15 +84,17 @@ class GoalStep {
   bool get isDone => status == 'done';
 
   factory GoalStep.fromJson(Map<String, dynamic> json) => GoalStep(
-        id: json['id'] as String,
-        order: json['order'] as int,
-        title: json['title'] as String,
-        estimatedMinutes: json['estimatedMinutes'] as int,
-        progressPct: json['progressPct'] as int,
-        status: json['status'] as String,
-        remainingMinutes: json['remainingMinutes'] as int,
-        nextBlock: json['nextBlock'] == null ? null : NextBlock.fromJson(json['nextBlock'] as Map<String, dynamic>),
-      );
+    id: json['id'] as String,
+    order: json['order'] as int,
+    title: json['title'] as String,
+    estimatedMinutes: json['estimatedMinutes'] as int,
+    progressPct: json['progressPct'] as int,
+    status: json['status'] as String,
+    remainingMinutes: json['remainingMinutes'] as int,
+    nextBlock: json['nextBlock'] == null
+        ? null
+        : NextBlock.fromJson(json['nextBlock'] as Map<String, dynamic>),
+  );
 }
 
 /// O objetivo dentro de `GET /goals/:goalId` e de `POST /goals`.
@@ -110,12 +114,12 @@ class Goal {
   final int progressPct;
 
   factory Goal.fromJson(Map<String, dynamic> json) => Goal(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        deadline: json['deadline'] as String?,
-        colorIndex: json['colorIndex'] as int,
-        progressPct: json['progressPct'] as int,
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    deadline: json['deadline'] as String?,
+    colorIndex: json['colorIndex'] as int,
+    progressPct: json['progressPct'] as int,
+  );
 }
 
 /// `GET /goals/:goalId`: `{ goal, steps[], progressPct, done, total }`.
@@ -135,28 +139,43 @@ class GoalDetail {
   final int total;
 
   factory GoalDetail.fromJson(Map<String, dynamic> json) => GoalDetail(
-        goal: Goal.fromJson(json['goal'] as Map<String, dynamic>),
-        steps: (json['steps'] as List).map((s) => GoalStep.fromJson(s as Map<String, dynamic>)).toList(),
-        progressPct: json['progressPct'] as int,
-        done: json['done'] as int,
-        total: json['total'] as int,
-      );
+    goal: Goal.fromJson(json['goal'] as Map<String, dynamic>),
+    steps: (json['steps'] as List)
+        .map((s) => GoalStep.fromJson(s as Map<String, dynamic>))
+        .toList(),
+    progressPct: json['progressPct'] as int,
+    done: json['done'] as int,
+    total: json['total'] as int,
+  );
 }
 
 /// Etapa enviada em `POST /goals`.
 class NewStep {
-  const NewStep({required this.title, required this.estimatedMinutes, this.microSteps = const []});
+  const NewStep({
+    required this.title,
+    required this.estimatedMinutes,
+    this.microSteps = const [],
+  });
 
   final String title;
   final int estimatedMinutes;
   final List<String> microSteps;
 
-  Map<String, dynamic> toJson() => {'title': title, 'estimatedMinutes': estimatedMinutes, 'microSteps': microSteps};
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'estimatedMinutes': estimatedMinutes,
+    'microSteps': microSteps,
+  };
 }
 
 /// Corpo de `POST /goals`: `{ title, deadline, kind, steps[] }`.
 class NewGoal {
-  const NewGoal({required this.title, required this.deadline, required this.kind, required this.steps});
+  const NewGoal({
+    required this.title,
+    required this.deadline,
+    required this.kind,
+    required this.steps,
+  });
 
   final String title;
   final String? deadline;
@@ -166,11 +185,11 @@ class NewGoal {
   final List<NewStep> steps;
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'deadline': deadline,
-        'kind': kind,
-        'steps': steps.map((s) => s.toJson()).toList(),
-      };
+    'title': title,
+    'deadline': deadline,
+    'kind': kind,
+    'steps': steps.map((s) => s.toJson()).toList(),
+  };
 }
 
 /// Resposta 201 de `POST /goals`: `{ goal, plan }`.
@@ -180,7 +199,8 @@ class CreateGoalResult {
   final Goal goal;
   final PlanSummary plan;
 
-  factory CreateGoalResult.fromJson(Map<String, dynamic> json) => CreateGoalResult(
+  factory CreateGoalResult.fromJson(Map<String, dynamic> json) =>
+      CreateGoalResult(
         goal: Goal.fromJson(json['goal'] as Map<String, dynamic>),
         plan: PlanSummary.fromJson(json['plan'] as Map<String, dynamic>),
       );

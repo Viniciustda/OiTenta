@@ -36,7 +36,9 @@ class GoalsController extends ChangeNotifier {
     loading = true;
     notifyListeners();
     try {
-      _goals = (await _repo.listGoals()).where((g) => g.status == 'active').toList();
+      _goals = (await _repo.listGoals())
+          .where((g) => g.status == 'active')
+          .toList();
     } catch (_) {
       error = 'Não deu pra carregar seus objetivos.';
     } finally {
@@ -47,27 +49,32 @@ class GoalsController extends ChangeNotifier {
 
   String get subtitle {
     final n = _goals.length;
-    final dates = _goals.where((g) => g.deadline != null).map((g) => g.deadline!).toList()..sort();
+    final dates =
+        _goals.where((g) => g.deadline != null).map((g) => g.deadline!).toList()
+          ..sort();
     final base = '$n ${n == 1 ? 'ativo' : 'ativos'}';
     if (dates.isEmpty) return base;
     return '$base · próxima entrega ${BoraFormat.dayMonth(BoraFormat.parseDateKey(dates.first))}';
   }
 
   List<GoalItemView> get items => [
-        for (final g in _goals)
-          GoalItemView(
-            id: g.id,
-            title: g.title,
-            colorIndex: g.colorIndex,
-            progress: g.progressPct / 100,
-            percentLabel: '${g.progressPct}%',
-            meta: _meta(g),
-          ),
-      ];
+    for (final g in _goals)
+      GoalItemView(
+        id: g.id,
+        title: g.title,
+        colorIndex: g.colorIndex,
+        progress: g.progressPct / 100,
+        percentLabel: '${g.progressPct}%',
+        meta: _meta(g),
+      ),
+  ];
 
   static String _meta(GoalSummary g) {
     if (g.deadline == null) return 'Sem prazo';
-    final d = 'Entrega ${BoraFormat.dayMonth(BoraFormat.parseDateKey(g.deadline!))}';
-    return g.slackDays == null ? d : '$d · folga de ${BoraFormat.days(g.slackDays!)}';
+    final d =
+        'Entrega ${BoraFormat.dayMonth(BoraFormat.parseDateKey(g.deadline!))}';
+    return g.slackDays == null
+        ? d
+        : '$d · folga de ${BoraFormat.days(g.slackDays!)}';
   }
 }

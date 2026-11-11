@@ -40,7 +40,12 @@ class TodayBlockView {
 }
 
 class TodayLightView {
-  const TodayLightView({required this.id, required this.title, required this.subtitle, required this.checked});
+  const TodayLightView({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.checked,
+  });
 
   final String id;
   final String title;
@@ -60,7 +65,13 @@ class TodayItem {
 
 /// Hoje (M01).
 class TodayController extends ChangeNotifier {
-  TodayController(this._scheduling, this._goals, this._gamification, this._session, this._clock);
+  TodayController(
+    this._scheduling,
+    this._goals,
+    this._gamification,
+    this._session,
+    this._clock,
+  );
 
   final SchedulingRepository _scheduling;
   final GoalsRepository _goals;
@@ -74,7 +85,8 @@ class TodayController extends ChangeNotifier {
   DayPlan? _day;
   List<GoalSummary> _goalList = const [];
   final Map<String, GoalStep> _steps = {};
-  List<({String id, String title, String subtitle, String time})> _lights = const [];
+  List<({String id, String title, String subtitle, String time})> _lights =
+      const [];
   final Set<String> _checked = {};
 
   Future<void> load() async {
@@ -87,7 +99,8 @@ class TodayController extends ChangeNotifier {
       _day = await _scheduling.getDayPlan(date);
       _goalList = await _goals.listGoals();
       _lights = [
-        for (final t in await _scheduling.getLightTasks(date)) (id: t.id, title: t.title, subtitle: t.subtitle, time: t.time),
+        for (final t in await _scheduling.getLightTasks(date))
+          (id: t.id, title: t.title, subtitle: t.subtitle, time: t.time),
       ];
       _steps.clear();
       for (final goalId in _day!.blocks.map((b) => b.goalId).toSet()) {
@@ -112,13 +125,17 @@ class TodayController extends ChangeNotifier {
 
   int get lightTaskCount => _lights.length;
 
-  String get subtitle => '$dateLabel · ${_count(blockCount, 'etapa', 'etapas')} no plano';
+  String get subtitle =>
+      '$dateLabel · ${_count(blockCount, 'etapa', 'etapas')} no plano';
 
-  String get summary => '${_count(blockCount, 'etapa', 'etapas')} · ${_count(lightTaskCount, 'tarefa leve', 'tarefas leves')}';
+  String get summary =>
+      '${_count(blockCount, 'etapa', 'etapas')} · ${_count(lightTaskCount, 'tarefa leve', 'tarefas leves')}';
 
-  static String _count(int n, String one, String many) => '$n ${n == 1 ? one : many}';
+  static String _count(int n, String one, String many) =>
+      '$n ${n == 1 ? one : many}';
 
-  bool _stepDone(PlanBlock b) => b.status == 'done' || (_steps[b.stepId]?.isDone ?? false);
+  bool _stepDone(PlanBlock b) =>
+      b.status == 'done' || (_steps[b.stepId]?.isDone ?? false);
 
   /// A primeira etapa ainda não feita é a "Próxima" e é a da rampa.
   PlanBlock? get nextBlock {
@@ -145,18 +162,27 @@ class TodayController extends ChangeNotifier {
               title: b.stepTitle,
               colorIndex: b.colorIndex,
               durationLabel: BoraFormat.duration(b.minutes),
-              pill: done ? 'Concluída' : (identical(b, next) ? 'Próxima' : 'Hoje $time'),
+              pill: done
+                  ? 'Concluída'
+                  : (identical(b, next) ? 'Próxima' : 'Hoje $time'),
               isNext: identical(b, next),
               done: done,
               progressPct: pct,
-              progressLabel: done ? 'Feita hoje' : (pct > 0 ? '$pct% · continua de ontem' : ''),
+              progressLabel: done
+                  ? 'Feita hoje'
+                  : (pct > 0 ? '$pct% · continua de ontem' : ''),
             ),
           );
         }(),
       for (final l in _lights)
         TodayItem(
           time: l.time,
-          light: TodayLightView(id: l.id, title: l.title, subtitle: l.subtitle, checked: _checked.contains(l.id)),
+          light: TodayLightView(
+            id: l.id,
+            title: l.title,
+            subtitle: l.subtitle,
+            checked: _checked.contains(l.id),
+          ),
         ),
     ];
     int minutes(String t) {

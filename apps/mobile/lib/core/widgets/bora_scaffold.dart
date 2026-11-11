@@ -24,9 +24,13 @@ class BoraTopBar extends StatelessWidget {
           children: [
             ?leading,
             if (leading != null && center != null) const SizedBox(width: 10),
-            if (center != null) Flexible(child: center!),
-            const Spacer(),
-            if (trailing != null) Flexible(child: trailing!),
+            if (center != null)
+              Expanded(
+                child: Align(alignment: Alignment.centerLeft, child: center),
+              )
+            else
+              const Spacer(),
+            if (trailing != null) ...[const SizedBox(width: 10), trailing!],
           ],
         ),
       ),
@@ -41,8 +45,11 @@ class BackNavButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) =>
-      CircleNavButton(icon: PhosphorIconsBold.arrowLeft, onPressed: onPressed, semanticLabel: 'Voltar');
+  Widget build(BuildContext context) => CircleNavButton(
+    icon: PhosphorIconsBold.arrowLeft,
+    onPressed: onPressed,
+    semanticLabel: 'Voltar',
+  );
 }
 
 /// Botão "Fechar" (x) do topo, usado na rampa.
@@ -52,8 +59,11 @@ class CloseNavButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) =>
-      CircleNavButton(icon: PhosphorIconsBold.x, onPressed: onPressed, semanticLabel: 'Fechar');
+  Widget build(BuildContext context) => CircleNavButton(
+    icon: PhosphorIconsBold.x,
+    onPressed: onPressed,
+    semanticLabel: 'Fechar',
+  );
 }
 
 /// Tela com área segura no topo, a linha do topo e o conteúdo rolável com
@@ -90,7 +100,10 @@ class BoraPage extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 padding: padding,
-                child: Column(crossAxisAlignment: crossAxisAlignment, children: children),
+                child: Column(
+                  crossAxisAlignment: crossAxisAlignment,
+                  children: children,
+                ),
               ),
             ),
           ],
@@ -136,16 +149,22 @@ class PlaceholderScreen extends StatelessWidget {
         const SizedBox(height: 4),
         Text(description, style: BoraText.small(c.tx2)),
         const SizedBox(height: 8),
-        Text('Tela provisória: ainda sem design.', style: BoraText.caption(c.tx2)),
+        Text(
+          'Tela provisória: ainda sem design.',
+          style: BoraText.caption(c.tx2),
+        ),
         const SizedBox(height: 28),
-        if (actionLabel != null) PrimaryButton(label: actionLabel!, onPressed: onAction),
+        if (actionLabel != null)
+          PrimaryButton(label: actionLabel!, onPressed: onAction),
         if (secondaryLabel != null) ...[
           const SizedBox(height: 12),
           SecondaryButton(label: secondaryLabel!, onPressed: onSecondary),
         ],
         if (tertiaryLabel != null) ...[
           const SizedBox(height: 8),
-          Center(child: TertiaryButton(label: tertiaryLabel!, onPressed: onTertiary)),
+          Center(
+            child: TertiaryButton(label: tertiaryLabel!, onPressed: onTertiary),
+          ),
         ],
       ],
     );

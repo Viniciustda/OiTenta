@@ -20,7 +20,8 @@ class LogController extends ChangeNotifier {
 
   String get title => 'Quanto você avançou em ‘${session.target!.stepTitle}’?';
 
-  String get subtitle => 'Você focou ${session.focusedMinutes} min. Qualquer avanço conta.';
+  String get subtitle =>
+      'Você focou ${session.focusedMinutes} min. Qualquer avanço conta.';
 
   bool get canSubmit => outcome != null && !busy;
 
@@ -43,20 +44,24 @@ class LogController extends ChangeNotifier {
     error = null;
     notifyListeners();
     try {
-      await _repo.recordSession(RecordSession(
-        goalId: t.goalId,
-        stepId: t.stepId,
-        blockId: t.blockId,
-        energy: session.energy!,
-        availableTime: session.availableTime,
-        startedAt: session.startedAt!,
-        endedAt: _clock.now(),
-        focusedMinutes: session.focusedMinutes,
-        outcome: outcome!,
-        partialPct: outcome == SessionOutcome.partial ? partialPct : null,
-      ));
+      await _repo.recordSession(
+        RecordSession(
+          goalId: t.goalId,
+          stepId: t.stepId,
+          blockId: t.blockId,
+          energy: session.energy!,
+          availableTime: session.availableTime,
+          startedAt: session.startedAt!,
+          endedAt: _clock.now(),
+          focusedMinutes: session.focusedMinutes,
+          outcome: outcome!,
+          partialPct: outcome == SessionOutcome.partial ? partialPct : null,
+        ),
+      );
       session.outcome = outcome;
-      session.partialPct = outcome == SessionOutcome.partial ? partialPct : null;
+      session.partialPct = outcome == SessionOutcome.partial
+          ? partialPct
+          : null;
       session.done[4] = true;
       return true;
     } catch (_) {

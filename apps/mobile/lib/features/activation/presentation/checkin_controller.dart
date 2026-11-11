@@ -47,7 +47,13 @@ class CheckinController extends ChangeNotifier {
         energy: energy!,
         availableTime: time,
       );
-      _session.start(target: target, energy: energy!, availableTime: time, ramp: ramp, startedAt: _clock.now());
+      _session.start(
+        target: target,
+        energy: energy!,
+        availableTime: time,
+        ramp: ramp,
+        startedAt: _clock.now(),
+      );
       return true;
     } catch (_) {
       error = 'Não deu pra montar a rampa. Tenta de novo?';

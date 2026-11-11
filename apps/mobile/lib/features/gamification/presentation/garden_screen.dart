@@ -8,7 +8,8 @@ class GardenScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const PlaceholderScreen(
-        title: 'Jardim',
-        description: 'O Broto, o nível, os dias regados e as conquistas entram depois do MVP.',
-      );
+    title: 'Jardim',
+    description:
+        'O Broto, o nível, os dias regados e as conquistas entram depois do MVP.',
+  );
 }

@@ -33,7 +33,9 @@ class BoraCard extends StatelessWidget {
         color: color ?? c.surface,
         borderRadius: BorderRadius.circular(radius),
         border: border ?? Border.all(color: c.border),
-        boxShadow: [BoxShadow(color: c.shadow, offset: const Offset(0, 1), blurRadius: 2)],
+        boxShadow: [
+          BoxShadow(color: c.shadow, offset: const Offset(0, 1), blurRadius: 2),
+        ],
       ),
       child: child,
     );
@@ -53,7 +55,9 @@ class SectionHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Expanded(child: Text(label.toUpperCase(), style: BoraText.label(c.tx2))),
+        Expanded(
+          child: Text(label.toUpperCase(), style: BoraText.label(c.tx2)),
+        ),
         if (trailing != null) Text(trailing!, style: BoraText.caption(c.tx2)),
       ],
     );
@@ -91,7 +95,9 @@ class OptionCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: dense ? const EdgeInsets.fromLTRB(6, 6, 12, 6) : const EdgeInsets.fromLTRB(10, 10, 14, 10),
+          padding: dense
+              ? const EdgeInsets.fromLTRB(6, 6, 12, 6)
+              : const EdgeInsets.fromLTRB(10, 10, 14, 10),
           decoration: BoxDecoration(
             color: selected ? c.priSoft : c.surface,
             borderRadius: BorderRadius.circular(16),
@@ -103,7 +109,10 @@ class OptionCard extends StatelessWidget {
                   Container(
                     width: 44,
                     height: 44,
-                    decoration: BoxDecoration(color: c.s2, borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(
+                      color: c.s2,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     alignment: Alignment.center,
                     child: Icon(icon, size: 22, color: c.pri),
                   ),
@@ -112,12 +121,21 @@ class OptionCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name, style: BoraText.nunito(15, 20, weight: FontWeight.w800, color: c.tx)),
+                    Text(
+                      name,
+                      style: BoraText.nunito(
+                        15,
+                        20,
+                        weight: FontWeight.w800,
+                        color: c.tx,
+                      ),
+                    ),
                     Text(description, style: BoraText.caption(c.tx2)),
                   ],
                 ),
               ),
-              if (selected) Icon(PhosphorIconsFill.checkCircle, size: 22, color: c.pri),
+              if (selected)
+                Icon(PhosphorIconsFill.checkCircle, size: 22, color: c.pri),
             ],
           ),
         ),
@@ -128,7 +146,13 @@ class OptionCard extends StatelessWidget {
 
 /// Chip de escolha (36 de altura, borda 2px; selecionado em `--priSoft`).
 class BoraChip extends StatelessWidget {
-  const BoraChip({super.key, required this.label, required this.selected, required this.onTap, this.height = 36});
+  const BoraChip({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.height = 36,
+  });
 
   final String label;
   final bool selected;
@@ -151,8 +175,18 @@ class BoraChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
             border: Border.all(color: selected ? c.pri : c.border, width: 2),
           ),
-          alignment: Alignment.center,
-          child: Text(label, style: BoraText.nunito(13, 13, weight: FontWeight.w800, color: c.tx)),
+          child: Center(
+            widthFactor: 1,
+            child: Text(
+              label,
+              style: BoraText.nunito(
+                13,
+                13,
+                weight: FontWeight.w800,
+                color: c.tx,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -161,7 +195,13 @@ class BoraChip extends StatelessWidget {
 
 /// Pílula pequena de estado ("Próxima", "Hoje 14:00", "Concluída").
 class StatusPill extends StatelessWidget {
-  const StatusPill({super.key, required this.label, required this.bg, required this.fg, this.icon});
+  const StatusPill({
+    super.key,
+    required this.label,
+    required this.bg,
+    required this.fg,
+    this.icon,
+  });
 
   final String label;
   final Color bg;
@@ -172,12 +212,21 @@ class StatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(999),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[Icon(icon, size: 12, color: fg), const SizedBox(width: 4)],
-          Text(label, style: BoraText.nunito(12, 16, weight: FontWeight.w800, color: fg)),
+          if (icon != null) ...[
+            Icon(icon, size: 12, color: fg),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            label,
+            style: BoraText.nunito(12, 16, weight: FontWeight.w800, color: fg),
+          ),
         ],
       ),
     );
@@ -192,13 +241,22 @@ class Dot extends StatelessWidget {
   final double size;
 
   @override
-  Widget build(BuildContext context) =>
-      Container(width: size, height: size, decoration: BoxDecoration(color: color, shape: BoxShape.circle));
+  Widget build(BuildContext context) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
 }
 
 /// Barra de progresso arredondada.
 class ProgressBar extends StatelessWidget {
-  const ProgressBar({super.key, required this.value, required this.color, this.height = 6, this.track});
+  const ProgressBar({
+    super.key,
+    required this.value,
+    required this.color,
+    this.height = 6,
+    this.track,
+  });
 
   final double value;
   final Color color;
@@ -216,7 +274,12 @@ class ProgressBar extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: FractionallySizedBox(
           widthFactor: value.clamp(0, 1).toDouble(),
-          child: Container(decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(999))),
+          child: Container(
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
         ),
       ),
     );
@@ -248,7 +311,12 @@ class ProgressRing extends StatelessWidget {
       width: size,
       height: size,
       child: CustomPaint(
-        painter: _RingPainter(progress.clamp(0, 1).toDouble(), color, track, strokeRatio),
+        painter: _RingPainter(
+          progress.clamp(0, 1).toDouble(),
+          color,
+          track,
+          strokeRatio,
+        ),
         child: Center(child: child),
       ),
     );
@@ -267,22 +335,38 @@ class _RingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final s = size.width / 148;
     final stroke = strokeRatio * size.width;
-    final rect = Rect.fromCircle(center: size.center(Offset.zero), radius: 64 * s);
-    canvas.drawArc(rect, 0, math.pi * 2, false, Paint()
-      ..color = track
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke);
-    if (progress > 0) {
-      canvas.drawArc(rect, -math.pi / 2, math.pi * 2 * progress, false, Paint()
-        ..color = color
+    final rect = Rect.fromCircle(
+      center: size.center(Offset.zero),
+      radius: 64 * s,
+    );
+    canvas.drawArc(
+      rect,
+      0,
+      math.pi * 2,
+      false,
+      Paint()
+        ..color = track
         ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round
-        ..strokeWidth = stroke);
+        ..strokeWidth = stroke,
+    );
+    if (progress > 0) {
+      canvas.drawArc(
+        rect,
+        -math.pi / 2,
+        math.pi * 2 * progress,
+        false,
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = stroke,
+      );
     }
   }
 
   @override
-  bool shouldRepaint(covariant _RingPainter old) => old.progress != progress || old.color != color;
+  bool shouldRepaint(covariant _RingPainter old) =>
+      old.progress != progress || old.color != color;
 }
 
 /// Slider do protótipo (trilho 8px, bolinha 28 com borda `--pri` e lábio).
@@ -314,55 +398,71 @@ class BoraSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.bora;
-    return LayoutBuilder(builder: (context, box) {
-      final w = box.maxWidth;
-      final p = (value - min) / (max - min);
-      final x = 14 + (w - 28) * p;
-      return Semantics(
-        slider: true,
-        label: semanticLabel,
-        value: value.toString(),
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (d) => _set(d.localPosition.dx, w),
-          onHorizontalDragUpdate: (d) => _set(d.localPosition.dx, w),
-          child: SizedBox(
-            height: 28,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 10,
-                  child: Container(height: 8, decoration: BoxDecoration(color: c.s2, borderRadius: BorderRadius.circular(999))),
-                ),
-                Positioned(
-                  left: 0,
-                  top: 10,
-                  width: x,
-                  child: Container(height: 8, decoration: BoxDecoration(color: c.fill, borderRadius: BorderRadius.circular(999))),
-                ),
-                Positioned(
-                  left: x - 14,
-                  top: 0,
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: c.knob,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: c.pri, width: 2),
-                      boxShadow: [BoxShadow(color: c.lip, offset: const Offset(0, 2))],
+    return LayoutBuilder(
+      builder: (context, box) {
+        final w = box.maxWidth;
+        final p = (value - min) / (max - min);
+        final x = 14 + (w - 28) * p;
+        return Semantics(
+          slider: true,
+          label: semanticLabel,
+          value: value.toString(),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (d) => _set(d.localPosition.dx, w),
+            onHorizontalDragUpdate: (d) => _set(d.localPosition.dx, w),
+            child: SizedBox(
+              height: 28,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 10,
+                    child: Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: c.s2,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    left: 0,
+                    top: 10,
+                    width: x,
+                    child: Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: c.fill,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: x - 14,
+                    top: 0,
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: c.knob,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: c.pri, width: 2),
+                        boxShadow: [
+                          BoxShadow(color: c.lip, offset: const Offset(0, 2)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
@@ -394,7 +494,13 @@ class BoraSwitch extends StatelessWidget {
             decoration: BoxDecoration(
               color: c.knob,
               shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: c.floatShadow, offset: const Offset(0, 1), blurRadius: 2)],
+              boxShadow: [
+                BoxShadow(
+                  color: c.floatShadow,
+                  offset: const Offset(0, 1),
+                  blurRadius: 2,
+                ),
+              ],
             ),
           ),
         ),
@@ -433,19 +539,27 @@ class BrotoBubble extends StatelessWidget {
 IconData boraIcon(String name, {bool fill = false}) {
   switch (name) {
     case 'person-simple-walk':
-      return fill ? PhosphorIconsFill.personSimpleWalk : PhosphorIconsRegular.personSimpleWalk;
+      return fill
+          ? PhosphorIconsFill.personSimpleWalk
+          : PhosphorIconsRegular.personSimpleWalk;
     case 'drop':
       return fill ? PhosphorIconsFill.drop : PhosphorIconsRegular.drop;
     case 'broom':
       return fill ? PhosphorIconsFill.broom : PhosphorIconsRegular.broom;
     case 'calculator':
-      return fill ? PhosphorIconsFill.calculator : PhosphorIconsRegular.calculator;
+      return fill
+          ? PhosphorIconsFill.calculator
+          : PhosphorIconsRegular.calculator;
     case 'footprints':
-      return fill ? PhosphorIconsFill.footprints : PhosphorIconsRegular.footprints;
+      return fill
+          ? PhosphorIconsFill.footprints
+          : PhosphorIconsRegular.footprints;
     case 'timer':
       return fill ? PhosphorIconsFill.timer : PhosphorIconsRegular.timer;
     case 'check-circle':
-      return fill ? PhosphorIconsFill.checkCircle : PhosphorIconsRegular.checkCircle;
+      return fill
+          ? PhosphorIconsFill.checkCircle
+          : PhosphorIconsRegular.checkCircle;
     default:
       return fill ? PhosphorIconsFill.circle : PhosphorIconsRegular.circle;
   }

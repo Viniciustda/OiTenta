@@ -71,12 +71,14 @@ class ManualTaskController extends ChangeNotifier {
     error = null;
     notifyListeners();
     try {
-      return await _repo.createGoal(NewGoal(
-        title: title.trim(),
-        deadline: deadline == null ? null : BoraFormat.dateKey(deadline!),
-        kind: 'single',
-        steps: [NewStep(title: title.trim(), estimatedMinutes: minutes!)],
-      ));
+      return await _repo.createGoal(
+        NewGoal(
+          title: title.trim(),
+          deadline: deadline == null ? null : BoraFormat.dateKey(deadline!),
+          kind: 'single',
+          steps: [NewStep(title: title.trim(), estimatedMinutes: minutes!)],
+        ),
+      );
     } catch (_) {
       error = 'Não deu pra salvar a tarefa.';
       return null;

@@ -9,7 +9,12 @@ enum AppTab { today, goals, week, garden }
 
 /// Moldura das telas logadas: conteúdo + tab bar.
 class AppShell extends StatelessWidget {
-  const AppShell({super.key, required this.child, required this.current, required this.onTab});
+  const AppShell({
+    super.key,
+    required this.child,
+    required this.current,
+    required this.onTab,
+  });
 
   final Widget child;
   final AppTab current;
@@ -34,9 +39,24 @@ class BoraTabBar extends StatelessWidget {
 
   static const _tabs = [
     (AppTab.today, 'Hoje', PhosphorIconsRegular.sun, PhosphorIconsFill.sun),
-    (AppTab.goals, 'Objetivos', PhosphorIconsRegular.flagBanner, PhosphorIconsFill.flagBanner),
-    (AppTab.week, 'Semana', PhosphorIconsRegular.calendarBlank, PhosphorIconsFill.calendarBlank),
-    (AppTab.garden, 'Jardim', PhosphorIconsRegular.plant, PhosphorIconsFill.plant),
+    (
+      AppTab.goals,
+      'Objetivos',
+      PhosphorIconsRegular.flagBanner,
+      PhosphorIconsFill.flagBanner,
+    ),
+    (
+      AppTab.week,
+      'Semana',
+      PhosphorIconsRegular.calendarBlank,
+      PhosphorIconsFill.calendarBlank,
+    ),
+    (
+      AppTab.garden,
+      'Jardim',
+      PhosphorIconsRegular.plant,
+      PhosphorIconsFill.plant,
+    ),
   ];
 
   @override
@@ -44,7 +64,10 @@ class BoraTabBar extends StatelessWidget {
     final c = context.bora;
     final bottom = MediaQuery.paddingOf(context).bottom;
     return Container(
-      decoration: BoxDecoration(color: c.surface, border: Border(top: BorderSide(color: c.border))),
+      decoration: BoxDecoration(
+        color: c.surface,
+        border: Border(top: BorderSide(color: c.border)),
+      ),
       padding: EdgeInsets.fromLTRB(8, 8, 8, bottom > 0 ? bottom - 4 : 12),
       child: Row(
         children: [
@@ -65,18 +88,29 @@ class BoraTabBar extends StatelessWidget {
                         width: 56,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: tab == current ? c.priSoft : c.surface.withValues(alpha: 0),
+                          color: tab == current
+                              ? c.priSoft
+                              : c.surface.withValues(alpha: 0),
                           borderRadius: BorderRadius.circular(999),
                         ),
                         alignment: Alignment.center,
-                        child: Icon(tab == current ? iconFill : icon, size: 24, color: tab == current ? c.pri : c.tx2),
+                        child: Icon(
+                          tab == current ? iconFill : icon,
+                          size: 24,
+                          color: tab == current ? c.pri : c.tx2,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         label,
-                        style: BoraText.nunito(12, 16,
-                            weight: tab == current ? FontWeight.w800 : FontWeight.w600,
-                            color: tab == current ? c.tx : c.tx2),
+                        style: BoraText.nunito(
+                          12,
+                          16,
+                          weight: tab == current
+                              ? FontWeight.w800
+                              : FontWeight.w600,
+                          color: tab == current ? c.tx : c.tx2,
+                        ),
                       ),
                     ],
                   ),

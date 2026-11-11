@@ -39,17 +39,17 @@ class RecordSession {
   final int? partialPct;
 
   Map<String, dynamic> toJson() => {
-        'goalId': goalId,
-        'stepId': stepId,
-        'blockId': blockId,
-        'energy': energy.api,
-        'availableTime': availableTime?.api,
-        'startedAt': startedAt.toUtc().toIso8601String(),
-        'endedAt': endedAt.toUtc().toIso8601String(),
-        'focusedMinutes': focusedMinutes,
-        'outcome': outcome.api,
-        if (partialPct != null) 'partialPct': partialPct,
-      };
+    'goalId': goalId,
+    'stepId': stepId,
+    'blockId': blockId,
+    'energy': energy.api,
+    'availableTime': availableTime?.api,
+    'startedAt': startedAt.toUtc().toIso8601String(),
+    'endedAt': endedAt.toUtc().toIso8601String(),
+    'focusedMinutes': focusedMinutes,
+    'outcome': outcome.api,
+    if (partialPct != null) 'partialPct': partialPct,
+  };
 }
 
 /// Resposta 201: `{ session, step{progressPct,status}, goalProgressPct, plan }`.

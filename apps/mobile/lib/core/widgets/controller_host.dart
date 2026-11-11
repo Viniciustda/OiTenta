@@ -3,7 +3,13 @@ import 'package:flutter/widgets.dart';
 /// Cria o controlador da tela uma vez, chama [init] (ex.: `load()`), escuta as
 /// mudanças e o descarta ao sair. A tela recebe o controlador já pronto.
 class ControllerHost<T extends ChangeNotifier> extends StatefulWidget {
-  const ControllerHost({super.key, required this.create, required this.builder, this.init, this.onDispose});
+  const ControllerHost({
+    super.key,
+    required this.create,
+    required this.builder,
+    this.init,
+    this.onDispose,
+  });
 
   final T Function() create;
   final void Function(T controller)? init;
@@ -14,7 +20,8 @@ class ControllerHost<T extends ChangeNotifier> extends StatefulWidget {
   State<ControllerHost<T>> createState() => _ControllerHostState<T>();
 }
 
-class _ControllerHostState<T extends ChangeNotifier> extends State<ControllerHost<T>> {
+class _ControllerHostState<T extends ChangeNotifier>
+    extends State<ControllerHost<T>> {
   late final T controller = widget.create();
 
   @override
@@ -31,6 +38,8 @@ class _ControllerHostState<T extends ChangeNotifier> extends State<ControllerHos
   }
 
   @override
-  Widget build(BuildContext context) =>
-      ListenableBuilder(listenable: controller, builder: (context, _) => widget.builder(context, controller));
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: controller,
+    builder: (context, _) => widget.builder(context, controller),
+  );
 }

@@ -13,7 +13,8 @@ class MicroController extends ChangeNotifier with RampSwap {
 
   String get text => session.option(RampStepKind.micro).title;
 
-  String get context => '${session.target!.goalTitle} · ${session.target!.stepTitle}';
+  String get context =>
+      '${session.target!.goalTitle} · ${session.target!.stepTitle}';
 
   int get colorIndex => session.target!.colorIndex;
 

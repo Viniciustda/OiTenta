@@ -94,12 +94,17 @@ class NewGoalController extends ChangeNotifier {
     error = null;
     notifyListeners();
     try {
-      return await _repo.createGoal(NewGoal(
-        title: title.trim(),
-        deadline: deadline == null ? null : BoraFormat.dateKey(deadline!),
-        kind: 'goal',
-        steps: [for (final s in steps) NewStep(title: s.title, estimatedMinutes: s.minutes)],
-      ));
+      return await _repo.createGoal(
+        NewGoal(
+          title: title.trim(),
+          deadline: deadline == null ? null : BoraFormat.dateKey(deadline!),
+          kind: 'goal',
+          steps: [
+            for (final s in steps)
+              NewStep(title: s.title, estimatedMinutes: s.minutes),
+          ],
+        ),
+      );
     } catch (_) {
       error = 'Não deu pra criar o objetivo. Confere os dados?';
       return null;

@@ -13,14 +13,23 @@ Future<void> usePhoneSize(WidgetTester tester) async {
 }
 
 /// Sobe o app inteiro com os dados de exemplo, a partir de [location].
-Future<AppDependencies> pumpApp(WidgetTester tester, {String location = '/entrar', AppDependencies? deps}) async {
+Future<AppDependencies> pumpApp(
+  WidgetTester tester, {
+  String location = '/entrar',
+  AppDependencies? deps,
+}) async {
   await usePhoneSize(tester);
   final d = deps ?? AppDependencies.sample();
-  if (location != '/entrar' && d.session.session == null) d.session.save(await d.auth.loginDemo());
+  if (location != '/entrar' && d.session.session == null) {
+    d.session.save(await d.auth.loginDemo());
+  }
   await tester.pumpWidget(BoraApp(deps: d, initialLocation: location));
   await tester.pumpAndSettle();
   return d;
 }
 
 /// Envolve uma tela isolada no tema do app.
-Widget themed(Widget child) => MaterialApp(theme: AppTheme.light(), home: Scaffold(body: child));
+Widget themed(Widget child) => MaterialApp(
+  theme: AppTheme.light(),
+  home: Scaffold(body: child),
+);

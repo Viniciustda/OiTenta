@@ -28,7 +28,12 @@ class LadderStepView {
 
 /// Opção para o sheet "Trocar".
 class SwapOptionView {
-  const SwapOptionView({required this.index, required this.title, required this.description, required this.icon});
+  const SwapOptionView({
+    required this.index,
+    required this.title,
+    required this.description,
+    required this.icon,
+  });
 
   final int index;
   final String title;
@@ -36,9 +41,27 @@ class SwapOptionView {
   final String icon;
 }
 
-const rampStepNames = ['Aquecer', 'Desafio', 'Micro-passo', 'Foco', 'Registrar'];
-const rampStepFullNames = ['Aquecer', 'Desafio mental', 'Micro-passo', 'Foco', 'Registrar'];
-const rampStepIcons = ['person-simple-walk', 'calculator', 'footprints', 'timer', 'check-circle'];
+const rampStepNames = [
+  'Aquecer',
+  'Desafio',
+  'Micro-passo',
+  'Foco',
+  'Registrar',
+];
+const rampStepFullNames = [
+  'Aquecer',
+  'Desafio mental',
+  'Micro-passo',
+  'Foco',
+  'Registrar',
+];
+const rampStepIcons = [
+  'person-simple-walk',
+  'calculator',
+  'footprints',
+  'timer',
+  'check-circle',
+];
 
 /// Lógica comum do "Trocar" (escada e cabeçalho da rampa).
 mixin RampSwap on ChangeNotifier {
@@ -48,9 +71,11 @@ mixin RampSwap on ChangeNotifier {
 
   RampStepKind get swapKind => session.kindAt(swapIndex);
 
-  String get swapTitle => 'Trocar ${rampStepFullNames[swapIndex].toLowerCase()}';
+  String get swapTitle =>
+      'Trocar ${rampStepFullNames[swapIndex].toLowerCase()}';
 
-  String get swapSubtitle => 'Agora: ${session.option(swapKind).title}. Escolha outro jeito:';
+  String get swapSubtitle =>
+      'Agora: ${session.option(swapKind).title}. Escolha outro jeito:';
 
   List<SwapOptionView> get swapOptions {
     final cur = session.optionIndex(swapKind);
@@ -89,20 +114,21 @@ class LadderController extends ChangeNotifier with RampSwap {
       '${session.rampMinutes} min de rampa e ${session.focusMinutes} min de foco em “${session.target!.stepTitle}”';
 
   List<LadderStepView> get steps => [
-        for (var i = 0; i < 5; i++)
-          LadderStepView(
-            kind: session.kindAt(i),
-            name: rampStepNames[i],
-            duration: session.option(session.kindAt(i)).durationLabel,
-            icon: rampStepIcons[i],
-            current: i == index,
-            done: session.done[i],
-            skipped: i < index && !session.done[i],
-            suggested: session.ramp!.suggested == session.kindAt(i),
-          ),
-      ];
+    for (var i = 0; i < 5; i++)
+      LadderStepView(
+        kind: session.kindAt(i),
+        name: rampStepNames[i],
+        duration: session.option(session.kindAt(i)).durationLabel,
+        icon: rampStepIcons[i],
+        current: i == index,
+        done: session.done[i],
+        skipped: i < index && !session.done[i],
+        suggested: session.ramp!.suggested == session.kindAt(i),
+      ),
+  ];
 
-  String get caption => 'Degrau ${index + 1} de 5 · ${rampStepFullNames[index]}';
+  String get caption =>
+      'Degrau ${index + 1} de 5 · ${rampStepFullNames[index]}';
 
   RampOption get currentOption => session.option(session.kindAt(index));
 

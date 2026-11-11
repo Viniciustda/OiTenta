@@ -7,7 +7,11 @@ import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 
 class BoraApp extends StatefulWidget {
-  const BoraApp({super.key, required this.deps, this.initialLocation = AppRoutes.login});
+  const BoraApp({
+    super.key,
+    required this.deps,
+    this.initialLocation = AppRoutes.login,
+  });
 
   final AppDependencies deps;
   final String initialLocation;
@@ -17,7 +21,10 @@ class BoraApp extends StatefulWidget {
 }
 
 class _BoraAppState extends State<BoraApp> {
-  late final GoRouter _router = createRouter(widget.deps, initialLocation: widget.initialLocation);
+  late final GoRouter _router = createRouter(
+    widget.deps,
+    initialLocation: widget.initialLocation,
+  );
 
   @override
   void dispose() {
@@ -27,9 +34,9 @@ class _BoraAppState extends State<BoraApp> {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        title: 'Bora',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(),
-        routerConfig: _router,
-      );
+    title: 'Bora',
+    debugShowCheckedModeBanner: false,
+    theme: AppTheme.light(),
+    routerConfig: _router,
+  );
 }

@@ -31,7 +31,12 @@ class CheckinSheet extends StatelessWidget {
     (EnergyLevel.low, 'Baixa', 'Tô no modo economia', BrotoMood.sono),
     (EnergyLevel.medium, 'Média', 'Dá pra render um pouco', BrotoMood.ok),
     (EnergyLevel.high, 'Alta', 'Bora com tudo', BrotoMood.animado),
-    (EnergyLevel.electric, 'Elétrico', 'Quero ir direto pro foco', BrotoMood.eletrico),
+    (
+      EnergyLevel.electric,
+      'Elétrico',
+      'Quero ir direto pro foco',
+      BrotoMood.eletrico,
+    ),
   ];
 
   @override
@@ -42,8 +47,18 @@ class CheckinSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: c.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(top: BorderSide(color: c.border), left: BorderSide(color: c.border), right: BorderSide(color: c.border)),
-        boxShadow: [BoxShadow(color: c.sheetShadow, offset: const Offset(0, -8), blurRadius: 32)],
+        border: Border(
+          top: BorderSide(color: c.border),
+          left: BorderSide(color: c.border),
+          right: BorderSide(color: c.border),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: c.sheetShadow,
+            offset: const Offset(0, -8),
+            blurRadius: 32,
+          ),
+        ],
       ),
       padding: EdgeInsets.fromLTRB(20, 10, 20, bottom > 0 ? bottom : 34),
       child: Column(
@@ -54,7 +69,10 @@ class CheckinSheet extends StatelessWidget {
             child: Container(
               width: 40,
               height: 5,
-              decoration: BoxDecoration(color: c.border, borderRadius: BorderRadius.circular(999)),
+              decoration: BoxDecoration(
+                color: c.border,
+                borderRadius: BorderRadius.circular(999),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -72,25 +90,46 @@ class CheckinSheet extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 16),
-          Text('Quanto tempo você tem agora?', style: BoraText.nunito(13, 16, weight: FontWeight.w800, color: c.tx)),
+          Text(
+            'Quanto tempo você tem agora?',
+            style: BoraText.nunito(
+              13,
+              16,
+              weight: FontWeight.w800,
+              color: c.tx,
+            ),
+          ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
               for (final t in AvailableTime.values)
-                BoraChip(label: t.label, selected: state.time == t, onTap: () => onTime(t)),
+                BoraChip(
+                  label: t.label,
+                  selected: state.time == t,
+                  onTap: () => onTime(t),
+                ),
             ],
           ),
           const SizedBox(height: 20),
-          PrimaryButton(label: 'Montar minha rampa', height: 48, onPressed: state.canBuild ? onBuild : null),
+          PrimaryButton(
+            label: 'Montar minha rampa',
+            height: 48,
+            onPressed: state.canBuild ? onBuild : null,
+          ),
           if (state.error != null) ...[
             const SizedBox(height: 8),
             Text(state.error!, style: BoraText.small(c.danger)),
           ],
           if (state.showLightTasks) ...[
             const SizedBox(height: 12),
-            Center(child: TertiaryButton(label: 'Prefiro começar por tarefas leves', onPressed: onLightTasks)),
+            Center(
+              child: TertiaryButton(
+                label: 'Prefiro começar por tarefas leves',
+                onPressed: onLightTasks,
+              ),
+            ),
           ],
         ],
       ),

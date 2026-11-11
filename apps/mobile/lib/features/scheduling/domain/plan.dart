@@ -16,7 +16,8 @@ class GoalFeasibility {
   final int slackDays;
   final int unscheduledMinutes;
 
-  factory GoalFeasibility.fromJson(Map<String, dynamic> json) => GoalFeasibility(
+  factory GoalFeasibility.fromJson(Map<String, dynamic> json) =>
+      GoalFeasibility(
         goalId: json['goalId'] as String,
         feasible: json['feasible'] as bool,
         usedSlack: json['usedSlack'] as bool,
@@ -27,17 +28,23 @@ class GoalFeasibility {
 
 /// Resumo do plano recalculado: `{ totalMinutes, days, goals[] }`.
 class PlanSummary {
-  const PlanSummary({required this.totalMinutes, required this.days, required this.goals});
+  const PlanSummary({
+    required this.totalMinutes,
+    required this.days,
+    required this.goals,
+  });
 
   final int totalMinutes;
   final int days;
   final List<GoalFeasibility> goals;
 
   factory PlanSummary.fromJson(Map<String, dynamic> json) => PlanSummary(
-        totalMinutes: json['totalMinutes'] as int,
-        days: json['days'] as int,
-        goals: (json['goals'] as List).map((g) => GoalFeasibility.fromJson(g as Map<String, dynamic>)).toList(),
-      );
+    totalMinutes: json['totalMinutes'] as int,
+    days: json['days'] as int,
+    goals: (json['goals'] as List)
+        .map((g) => GoalFeasibility.fromJson(g as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 /// Bloco do plano: `{id, start, end, status, goalId, goalTitle, colorIndex, stepId, stepTitle}`.
@@ -70,21 +77,26 @@ class PlanBlock {
   int get minutes => end.difference(start).inMinutes;
 
   factory PlanBlock.fromJson(Map<String, dynamic> json) => PlanBlock(
-        id: json['id'] as String,
-        start: DateTime.parse(json['start'] as String),
-        end: DateTime.parse(json['end'] as String),
-        status: json['status'] as String,
-        goalId: json['goalId'] as String,
-        goalTitle: json['goalTitle'] as String,
-        colorIndex: json['colorIndex'] as int,
-        stepId: json['stepId'] as String,
-        stepTitle: json['stepTitle'] as String,
-      );
+    id: json['id'] as String,
+    start: DateTime.parse(json['start'] as String),
+    end: DateTime.parse(json['end'] as String),
+    status: json['status'] as String,
+    goalId: json['goalId'] as String,
+    goalTitle: json['goalTitle'] as String,
+    colorIndex: json['colorIndex'] as int,
+    stepId: json['stepId'] as String,
+    stepTitle: json['stepTitle'] as String,
+  );
 }
 
 /// `{ date, blocks[], usedMinutes, limitMinutes }`.
 class DayPlan {
-  const DayPlan({required this.date, required this.blocks, required this.usedMinutes, required this.limitMinutes});
+  const DayPlan({
+    required this.date,
+    required this.blocks,
+    required this.usedMinutes,
+    required this.limitMinutes,
+  });
 
   final String date;
   final List<PlanBlock> blocks;
@@ -92,11 +104,13 @@ class DayPlan {
   final int limitMinutes;
 
   factory DayPlan.fromJson(Map<String, dynamic> json) => DayPlan(
-        date: json['date'] as String,
-        blocks: (json['blocks'] as List).map((b) => PlanBlock.fromJson(b as Map<String, dynamic>)).toList(),
-        usedMinutes: json['usedMinutes'] as int,
-        limitMinutes: json['limitMinutes'] as int,
-      );
+    date: json['date'] as String,
+    blocks: (json['blocks'] as List)
+        .map((b) => PlanBlock.fromJson(b as Map<String, dynamic>))
+        .toList(),
+    usedMinutes: json['usedMinutes'] as int,
+    limitMinutes: json['limitMinutes'] as int,
+  );
 }
 
 /// `{ days[7] }`.
@@ -105,8 +119,11 @@ class WeekPlan {
 
   final List<DayPlan> days;
 
-  factory WeekPlan.fromJson(Map<String, dynamic> json) =>
-      WeekPlan(days: (json['days'] as List).map((d) => DayPlan.fromJson(d as Map<String, dynamic>)).toList());
+  factory WeekPlan.fromJson(Map<String, dynamic> json) => WeekPlan(
+    days: (json['days'] as List)
+        .map((d) => DayPlan.fromJson(d as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 /// Resposta de `PUT /scheduling/availability`.
@@ -116,9 +133,11 @@ class SetAvailabilityResult {
   final WeeklyAvailability availability;
   final PlanSummary plan;
 
-  factory SetAvailabilityResult.fromJson(Map<String, dynamic> json) => SetAvailabilityResult(
-        availability: WeeklyAvailability.fromJson(json['availability'] as Map<String, dynamic>),
+  factory SetAvailabilityResult.fromJson(Map<String, dynamic> json) =>
+      SetAvailabilityResult(
+        availability: WeeklyAvailability.fromJson(
+          json['availability'] as Map<String, dynamic>,
+        ),
         plan: PlanSummary.fromJson(json['plan'] as Map<String, dynamic>),
       );
 }
-

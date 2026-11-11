@@ -10,7 +10,13 @@ import '../domain/availability.dart';
 import 'onboarding_controller.dart';
 
 /// Respostas do T01 (protótipo `Bora Telas`, prancheta 1a).
-const stuckAnswers = ['Começar', 'Saber por onde ir', 'Manter o foco', 'Prazo em cima', 'Um pouco de tudo'];
+const stuckAnswers = [
+  'Começar',
+  'Saber por onde ir',
+  'Manter o foco',
+  'Prazo em cima',
+  'Um pouco de tudo',
+];
 
 /// Onboarding (T01–T03 + placeholders dos passos 1, 3 e 6, P27).
 class OnboardingScreen extends StatelessWidget {
@@ -46,12 +52,21 @@ class OnboardingScreen extends StatelessWidget {
         body = _Welcome(name: state.userName, onStuck: onStuck);
       case 4:
         body = _Grid(state: state, onToggle: onTogglePeriod);
-        footer = PrimaryButton(label: 'Continuar', onPressed: state.canContinueGrid ? onNext : null);
+        footer = PrimaryButton(
+          label: 'Continuar',
+          onPressed: state.canContinueGrid ? onNext : null,
+        );
       case 5:
         body = _Limit(state: state, onLimit: onLimit);
-        footer = PrimaryButton(label: 'Continuar', onPressed: state.saving ? null : onSave);
+        footer = PrimaryButton(
+          label: 'Continuar',
+          onPressed: state.saving ? null : onSave,
+        );
       case 6:
-        body = const _Placeholder(title: 'Tudo pronto', text: 'Passo 6 de 6: fechamento do onboarding.');
+        body = const _Placeholder(
+          title: 'Tudo pronto',
+          text: 'Passo 6 de 6: fechamento do onboarding.',
+        );
         footer = PrimaryButton(label: 'Ir para o Hoje', onPressed: onFinish);
       default:
         body = _Placeholder(
@@ -65,6 +80,7 @@ class OnboardingScreen extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _Header(step: state.step, progress: state.progress, onBack: onBack),
             Expanded(child: body),
@@ -73,7 +89,11 @@ class OnboardingScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(state.error!, style: BoraText.small(c.danger)),
               ),
-            if (footer != null) Padding(padding: EdgeInsets.fromLTRB(20, 12, 20, 8 + bottom), child: footer),
+            if (footer != null)
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 12, 20, 8 + bottom),
+                child: footer,
+              ),
           ],
         ),
       ),
@@ -82,7 +102,11 @@ class OnboardingScreen extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.step, required this.progress, required this.onBack});
+  const _Header({
+    required this.step,
+    required this.progress,
+    required this.onBack,
+  });
 
   final int step;
   final double progress;
@@ -105,17 +129,31 @@ class _Header extends StatelessWidget {
                 child: SizedBox(
                   width: 44,
                   height: 44,
-                  child: Icon(PhosphorIconsRegular.caretLeft, size: 24, color: c.tx2),
+                  child: Icon(
+                    PhosphorIconsRegular.caretLeft,
+                    size: 24,
+                    color: c.tx2,
+                  ),
                 ),
               ),
             ),
             const SizedBox(width: 8),
-            Expanded(child: ProgressBar(value: progress, color: c.fill, height: 4)),
+            Expanded(
+              child: ProgressBar(value: progress, color: c.fill, height: 4),
+            ),
             const SizedBox(width: 8),
             SizedBox(
               width: 40,
-              child: Text('$step de 6',
-                  textAlign: TextAlign.right, style: BoraText.nunito(13, 16, weight: FontWeight.w700, color: c.tx2)),
+              child: Text(
+                '$step de 6',
+                textAlign: TextAlign.right,
+                style: BoraText.nunito(
+                  13,
+                  16,
+                  weight: FontWeight.w700,
+                  color: c.tx2,
+                ),
+              ),
             ),
           ],
         ),
@@ -139,9 +177,15 @@ class _BrotoLine extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          SizedBox(width: 40, child: mood == null ? null : Broto(mood: mood!, size: 40)),
+          SizedBox(
+            width: 40,
+            child: mood == null ? null : Broto(mood: mood!, size: 40),
+          ),
           const SizedBox(width: 8),
-          ConstrainedBox(constraints: const BoxConstraints(maxWidth: 272), child: BrotoBubble(child: child)),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 302),
+            child: BrotoBubble(child: child),
+          ),
         ],
       ),
     );
@@ -160,8 +204,19 @@ class _UserPill extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-        decoration: BoxDecoration(color: c.pri, borderRadius: BorderRadius.circular(999)),
-        child: Text(text, style: BoraText.nunito(15, 20, weight: FontWeight.w800, color: c.priTx)),
+        decoration: BoxDecoration(
+          color: c.pri,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          text,
+          style: BoraText.nunito(
+            15,
+            20,
+            weight: FontWeight.w800,
+            color: c.priTx,
+          ),
+        ),
       ),
     );
   }
@@ -184,25 +239,41 @@ class _Welcome extends StatelessWidget {
         children: [
           _BrotoLine(
             mood: BrotoMood.animado,
-            child: Text.rich(TextSpan(children: [
-              const TextSpan(text: 'Oi! Eu sou o '),
-              TextSpan(text: 'Broto', style: BoraText.fredoka(15, 22, color: c.tx)),
-              const TextSpan(text: '. Vamos montar seu plano sem drama?'),
-            ])),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(text: 'Oi! Eu sou o '),
+                  TextSpan(
+                    text: 'Broto',
+                    style: BoraText.fredoka(15, 22, color: c.tx),
+                  ),
+                  const TextSpan(text: '. Vamos montar seu plano sem drama?'),
+                ],
+              ),
+            ),
           ),
           const SizedBox(height: 12),
           const _UserPill('Bora!'),
           const SizedBox(height: 12),
           _BrotoLine(
             topPad: 4,
-            child: Text('Fechado${name.isEmpty ? '' : ', $name'}. São 6 perguntas rápidas e dá pra mudar tudo depois.'),
+            child: Text(
+              'Fechado${name.isEmpty ? '' : ', $name'}. São 6 perguntas rápidas e dá pra mudar tudo depois.',
+            ),
           ),
           const SizedBox(height: 12),
-          const _BrotoLine(mood: BrotoMood.ok, child: Text('O que mais te trava na hora de estudar?')),
+          const _BrotoLine(
+            mood: BrotoMood.ok,
+            child: Text('O que mais te trava na hora de estudar?'),
+          ),
           const Spacer(),
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            child: Text('ESCOLHA UMA', textAlign: TextAlign.right, style: BoraText.label(c.tx2)),
+            child: Text(
+              'ESCOLHA UMA',
+              textAlign: TextAlign.right,
+              style: BoraText.label(c.tx2),
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -223,8 +294,18 @@ class _Welcome extends StatelessWidget {
                         borderRadius: BorderRadius.circular(999),
                         border: Border.all(color: c.border, width: 2),
                       ),
-                      alignment: Alignment.center,
-                      child: Text(a, style: BoraText.nunito(15, 15, weight: FontWeight.w800, color: c.blue)),
+                      child: Center(
+                        widthFactor: 1,
+                        child: Text(
+                          a,
+                          style: BoraText.nunito(
+                            15,
+                            15,
+                            weight: FontWeight.w800,
+                            color: c.blue,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -257,69 +338,119 @@ class _Grid extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (state.stuckAnswer != null) ...[_UserPill(state.stuckAnswer!), const SizedBox(height: 12)],
-          const _BrotoLine(topPad: 4, child: Text('Anotado. Eu quebro tudo em degraus pequenos pra você.')),
-          const SizedBox(height: 12),
-          const _BrotoLine(mood: BrotoMood.ok, child: Text('Quando costuma sobrar um tempo livre? Toca nos períodos.')),
-          const SizedBox(height: 24),
-          Row(children: [
-            for (var i = 0; i < 7; i++) ...[
-              if (i > 0) const SizedBox(width: 6),
-              Expanded(child: Text(_days[i], textAlign: TextAlign.center, style: BoraText.label(c.tx2))),
-            ],
-          ]),
-          for (final (period, label, range, icon) in _periods) ...[
-            Padding(
-              padding: EdgeInsets.only(top: period == FreePeriod.morning ? 12 : 14, bottom: 8),
-              child: Row(children: [
-                Icon(icon, size: 16, color: c.tx2),
-                const SizedBox(width: 6),
-                Text(label.toUpperCase(), style: BoraText.label(c.tx2)),
-                const SizedBox(width: 6),
-                Text(range, style: BoraText.caption(c.tx2)),
-              ]),
+          if (state.stuckAnswer != null) ...[
+            _UserPill(state.stuckAnswer!),
+            const SizedBox(height: 12),
+          ],
+          const _BrotoLine(
+            topPad: 4,
+            child: Text(
+              'Anotado. Eu quebro tudo em degraus pequenos pra você.',
             ),
-            Row(children: [
-              for (var col = 0; col < 7; col++) ...[
-                if (col > 0) const SizedBox(width: 6),
+          ),
+          const SizedBox(height: 12),
+          const _BrotoLine(
+            mood: BrotoMood.ok,
+            child: Text(
+              'Quando costuma sobrar um tempo livre? Toca nos períodos.',
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              for (var i = 0; i < 7; i++) ...[
+                if (i > 0) const SizedBox(width: 6),
                 Expanded(
-                  child: Semantics(
-                    button: true,
-                    selected: state.isSelected(col, period),
-                    label: '${_days[col]} $label',
-                    child: GestureDetector(
-                      onTap: () => onToggle(col, period),
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: state.isSelected(col, period) ? c.priSoft : c.surface,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: state.isSelected(col, period) ? c.pri : c.border, width: 2),
-                        ),
-                        alignment: Alignment.center,
-                        child: state.isSelected(col, period)
-                            ? Icon(PhosphorIconsBold.check, size: 18, color: c.pri)
-                            : null,
-                      ),
-                    ),
+                  child: Text(
+                    _days[i],
+                    textAlign: TextAlign.center,
+                    style: BoraText.label(c.tx2),
                   ),
                 ),
               ],
-            ]),
+            ],
+          ),
+          for (final (period, label, range, icon) in _periods) ...[
+            Padding(
+              padding: EdgeInsets.only(
+                top: period == FreePeriod.morning ? 12 : 14,
+                bottom: 8,
+              ),
+              child: Row(
+                children: [
+                  Icon(icon, size: 16, color: c.tx2),
+                  const SizedBox(width: 6),
+                  Text(label.toUpperCase(), style: BoraText.label(c.tx2)),
+                  const SizedBox(width: 6),
+                  Text(range, style: BoraText.caption(c.tx2)),
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                for (var col = 0; col < 7; col++) ...[
+                  if (col > 0) const SizedBox(width: 6),
+                  Expanded(
+                    child: Semantics(
+                      button: true,
+                      selected: state.isSelected(col, period),
+                      label: '${_days[col]} $label',
+                      child: GestureDetector(
+                        onTap: () => onToggle(col, period),
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: state.isSelected(col, period)
+                                ? c.priSoft
+                                : c.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: state.isSelected(col, period)
+                                  ? c.pri
+                                  : c.border,
+                              width: 2,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: state.isSelected(col, period)
+                              ? Icon(
+                                  PhosphorIconsBold.check,
+                                  size: 18,
+                                  color: c.pri,
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ],
           const SizedBox(height: 18),
           Center(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(color: c.blueSoft, borderRadius: BorderRadius.circular(999)),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(PhosphorIconsRegular.clock, size: 16, color: c.blue),
-                const SizedBox(width: 6),
-                Text(
-                  '${state.periodCount} ${state.periodCount == 1 ? 'período' : 'períodos'} · cerca de ${state.approxHours}h livres por semana',
-                  style: BoraText.nunito(13, 16, weight: FontWeight.w700, color: c.blue),
-                ),
-              ]),
+              decoration: BoxDecoration(
+                color: c.blueSoft,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(PhosphorIconsRegular.clock, size: 16, color: c.blue),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${state.periodCount} ${state.periodCount == 1 ? 'período' : 'períodos'} · cerca de ${state.approxHours}h livres por semana',
+                    style: BoraText.nunito(
+                      13,
+                      16,
+                      weight: FontWeight.w700,
+                      color: c.blue,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -342,13 +473,23 @@ class _Limit extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _UserPill('${state.periodCount} ${state.periodCount == 1 ? 'período livre' : 'períodos livres'}'),
+          _UserPill(
+            '${state.periodCount} ${state.periodCount == 1 ? 'período livre' : 'períodos livres'}',
+          ),
           const SizedBox(height: 12),
           _BrotoLine(
-              topPad: 4, child: Text('Boa, deu umas ${state.approxHours}h por semana. Não vou usar tudo.')),
+            topPad: 4,
+            child: Text(
+              'Boa, deu umas ${state.approxHours}h por semana. Não vou usar tudo.',
+            ),
+          ),
           const SizedBox(height: 12),
           const _BrotoLine(
-              mood: BrotoMood.ok, child: Text('Qual o máximo de estudo por dia que ainda fica leve pra você?')),
+            mood: BrotoMood.ok,
+            child: Text(
+              'Qual o máximo de estudo por dia que ainda fica leve pra você?',
+            ),
+          ),
           const SizedBox(height: 28),
           BoraCard(
             padding: const EdgeInsets.all(20),
@@ -361,7 +502,10 @@ class _Limit extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Text('${state.limitHours}h', style: BoraText.fredoka(44, 52, color: c.tx)),
+                    Text(
+                      '${state.limitHours}h',
+                      style: BoraText.fredoka(44, 52, color: c.tx),
+                    ),
                     const SizedBox(width: 8),
                     Text('por dia', style: BoraText.small(c.tx2)),
                   ],
@@ -380,10 +524,17 @@ class _Limit extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     for (var h = 1; h <= 8; h++)
-                      Text('${h}h',
-                          style: h == state.limitHours
-                              ? BoraText.nunito(12, 16, weight: FontWeight.w800, color: c.pri)
-                              : BoraText.caption(c.tx2)),
+                      Text(
+                        '${h}h',
+                        style: h == state.limitHours
+                            ? BoraText.nunito(
+                                12,
+                                16,
+                                weight: FontWeight.w800,
+                                color: c.pri,
+                              )
+                            : BoraText.caption(c.tx2),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -394,12 +545,18 @@ class _Limit extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 1),
-                      child: Icon(PhosphorIconsRegular.shieldCheck, size: 20, color: c.pri),
+                      child: Icon(
+                        PhosphorIconsRegular.shieldCheck,
+                        size: 20,
+                        color: c.pri,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text('Eu nunca passo desse limite. Se não couber, te aviso antes do prazo apertar.',
-                          style: BoraText.small(c.tx2)),
+                      child: Text(
+                        'Eu nunca passo desse limite. Se não couber, te aviso antes do prazo apertar.',
+                        style: BoraText.small(c.tx2),
+                      ),
                     ),
                   ],
                 ),
@@ -432,7 +589,10 @@ class _Placeholder extends StatelessWidget {
           const SizedBox(height: 4),
           Text(text, style: BoraText.small(c.tx2)),
           const SizedBox(height: 8),
-          Text('Tela provisória: ainda sem design.', style: BoraText.caption(c.tx2)),
+          Text(
+            'Tela provisória: ainda sem design.',
+            style: BoraText.caption(c.tx2),
+          ),
         ],
       ),
     );

@@ -9,23 +9,32 @@ class SampleGoalsRepository implements GoalsRepository {
   SampleGoalsRepository() {
     for (final g in BoraSample.goals) {
       final trail = BoraSample.trails[g['trail']]!;
-      _goals.add(_StoredGoal(
-        id: g['id'] as String,
-        title: g['title'] as String,
-        deadline: g['deadline'] as String?,
-        colorIndex: g['colorIndex'] as int,
-        slackDays: g['slackDays'] as int?,
-        steps: [
-          for (final s in trail)
-            _StoredStep(
-              title: s[0] as String,
-              minutes: ((s[4] as double) * 60).round(),
-              progressPct: (s[5] as bool) ? 100 : (BoraSample.partialProgress[s[0]] ?? 0),
-              start: DateTime(2025, s[1] as int, s[2] as int, (s[3] as double).floor(),
-                  (((s[3] as double) - (s[3] as double).floor()) * 60).round()),
-            ),
-        ],
-      ));
+      _goals.add(
+        _StoredGoal(
+          id: g['id'] as String,
+          title: g['title'] as String,
+          deadline: g['deadline'] as String?,
+          colorIndex: g['colorIndex'] as int,
+          slackDays: g['slackDays'] as int?,
+          steps: [
+            for (final s in trail)
+              _StoredStep(
+                title: s[0] as String,
+                minutes: ((s[4] as double) * 60).round(),
+                progressPct: (s[5] as bool)
+                    ? 100
+                    : (BoraSample.partialProgress[s[0]] ?? 0),
+                start: DateTime(
+                  2025,
+                  s[1] as int,
+                  s[2] as int,
+                  (s[3] as double).floor(),
+                  (((s[3] as double) - (s[3] as double).floor()) * 60).round(),
+                ),
+              ),
+          ],
+        ),
+      );
     }
   }
 
@@ -33,24 +42,24 @@ class SampleGoalsRepository implements GoalsRepository {
   int _created = 0;
 
   Map<String, dynamic> _goalJson(_StoredGoal g) => {
-        'id': g.id,
-        'title': g.title,
-        'deadline': g.deadline,
-        'colorIndex': g.colorIndex,
-        'progressPct': g.progressPct,
-      };
+    'id': g.id,
+    'title': g.title,
+    'deadline': g.deadline,
+    'colorIndex': g.colorIndex,
+    'progressPct': g.progressPct,
+  };
 
   @override
   Future<List<GoalSummary>> listGoals() async => [
-        for (final g in _goals)
-          GoalSummary.fromJson({
-            ..._goalJson(g),
-            'done': g.done,
-            'total': g.steps.length,
-            'status': 'active',
-            'slackDays': g.slackDays,
-          }),
-      ];
+    for (final g in _goals)
+      GoalSummary.fromJson({
+        ..._goalJson(g),
+        'done': g.done,
+        'total': g.steps.length,
+        'status': 'active',
+        'slackDays': g.slackDays,
+      }),
+  ];
 
   @override
   Future<GoalDetail> getGoal(String goalId) async {
@@ -70,12 +79,16 @@ class SampleGoalsRepository implements GoalsRepository {
               'estimatedMinutes': s.minutes,
               'progressPct': s.progressPct,
               'status': done ? 'done' : 'pending',
-              'remainingMinutes': (s.minutes * (100 - s.progressPct) / 100).round(),
+              'remainingMinutes': (s.minutes * (100 - s.progressPct) / 100)
+                  .round(),
               'nextBlock': done || s.start == null
                   ? null
                   : {
                       'start': s.start!.toUtc().toIso8601String(),
-                      'end': s.start!.add(Duration(minutes: s.minutes)).toUtc().toIso8601String(),
+                      'end': s.start!
+                          .add(Duration(minutes: s.minutes))
+                          .toUtc()
+                          .toIso8601String(),
                     },
             };
           }(),
@@ -91,8 +104,12 @@ class SampleGoalsRepository implements GoalsRepository {
     if (goal.title.trim().isEmpty || goal.title.trim().length > 120) {
       throw ValidationFailure('O título precisa ter de 1 a 120 caracteres.');
     }
-    if (goal.steps.isEmpty) throw ValidationFailure('Adicione pelo menos uma etapa.');
-    if (goal.kind == 'single' && goal.steps.length != 1) throw ValidationFailure('Tarefa única tem 1 etapa.');
+    if (goal.steps.isEmpty) {
+      throw ValidationFailure('Adicione pelo menos uma etapa.');
+    }
+    if (goal.kind == 'single' && goal.steps.length != 1) {
+      throw ValidationFailure('Tarefa única tem 1 etapa.');
+    }
     for (final s in goal.steps) {
       if (s.estimatedMinutes < 15 || s.estimatedMinutes % 15 != 0) {
         throw ValidationFailure('Tempo da etapa inválido.');
@@ -105,7 +122,14 @@ class SampleGoalsRepository implements GoalsRepository {
       deadline: goal.deadline,
       colorIndex: _goals.length % 4 + 1,
       slackDays: null,
-      steps: [for (final s in goal.steps) _StoredStep(title: s.title, minutes: s.estimatedMinutes, progressPct: 0)],
+      steps: [
+        for (final s in goal.steps)
+          _StoredStep(
+            title: s.title,
+            minutes: s.estimatedMinutes,
+            progressPct: 0,
+          ),
+      ],
     );
     _goals.add(stored);
     return CreateGoalResult.fromJson({
@@ -114,7 +138,13 @@ class SampleGoalsRepository implements GoalsRepository {
         'totalMinutes': stored.steps.fold<int>(0, (t, s) => t + s.minutes),
         'days': 0,
         'goals': [
-          {'goalId': stored.id, 'feasible': true, 'usedSlack': false, 'slackDays': 0, 'unscheduledMinutes': 0},
+          {
+            'goalId': stored.id,
+            'feasible': true,
+            'usedSlack': false,
+            'slackDays': 0,
+            'unscheduledMinutes': 0,
+          },
         ],
       },
     });
@@ -141,11 +171,17 @@ class _StoredGoal {
   int get done => steps.where((s) => s.progressPct == 100).length;
 
   /// Como o protótipo (`pctTr`): etapas feitas / total.
-  int get progressPct => steps.isEmpty ? 0 : (done * 100 / steps.length).floor();
+  int get progressPct =>
+      steps.isEmpty ? 0 : (done * 100 / steps.length).floor();
 }
 
 class _StoredStep {
-  _StoredStep({required this.title, required this.minutes, required this.progressPct, this.start});
+  _StoredStep({
+    required this.title,
+    required this.minutes,
+    required this.progressPct,
+    this.start,
+  });
 
   final String title;
   final int minutes;

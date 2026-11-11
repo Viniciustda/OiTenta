@@ -19,7 +19,8 @@ class ChallengeController extends ChangeNotifier with RampSwap {
   ChallengeFeedback feedback = ChallengeFeedback.none;
   bool finished = false;
 
-  List<ChallengeProblem> get _problems => session.option(RampStepKind.challenge).problems;
+  List<ChallengeProblem> get _problems =>
+      session.option(RampStepKind.challenge).problems;
 
   ChallengeProblem get problem => _problems[_i];
 
@@ -31,7 +32,9 @@ class ChallengeController extends ChangeNotifier with RampSwap {
   String get problemLabel => '${problem.a} ${problem.op} ${problem.b} =';
 
   /// Aguardando a próxima conta (a tela chama [next] depois de uma pausa).
-  bool get waitingNext => feedback == ChallengeFeedback.correct || feedback == ChallengeFeedback.reveal;
+  bool get waitingNext =>
+      feedback == ChallengeFeedback.correct ||
+      feedback == ChallengeFeedback.reveal;
 
   void press(String key) {
     if (waitingNext || finished) return;

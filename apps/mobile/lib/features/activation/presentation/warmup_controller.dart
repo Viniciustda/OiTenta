@@ -40,7 +40,10 @@ class WarmupController extends ChangeNotifier with RampSwap {
 
   void tick(Duration d) {
     if (finished) return;
-    remaining = (remaining - d.inMilliseconds / 1000).clamp(0, totalSeconds.toDouble());
+    remaining = (remaining - d.inMilliseconds / 1000).clamp(
+      0,
+      totalSeconds.toDouble(),
+    );
     notifyListeners();
   }
 

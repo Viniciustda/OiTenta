@@ -17,9 +17,30 @@ class BoraSample {
   /// Objetivos ativos (DATA `OBJ`, `ENTREGA`, `TRILHAS` 1–3). Os títulos
   /// curtos são os do protótipo nas listas (M01, M02, M03).
   static const goals = [
-    {'id': 'goal-eng', 'title': 'Eng. de Software', 'deadline': '2025-11-20', 'colorIndex': 1, 'slackDays': 2, 'trail': 1},
-    {'id': 'goal-calc', 'title': 'Cálculo II', 'deadline': '2025-11-27', 'colorIndex': 2, 'slackDays': 3, 'trail': 2},
-    {'id': 'goal-port', 'title': 'Portfólio no GitHub', 'deadline': null, 'colorIndex': 3, 'slackDays': null, 'trail': 3},
+    {
+      'id': 'goal-eng',
+      'title': 'Eng. de Software',
+      'deadline': '2025-11-20',
+      'colorIndex': 1,
+      'slackDays': 2,
+      'trail': 1,
+    },
+    {
+      'id': 'goal-calc',
+      'title': 'Cálculo II',
+      'deadline': '2025-11-27',
+      'colorIndex': 2,
+      'slackDays': 3,
+      'trail': 2,
+    },
+    {
+      'id': 'goal-port',
+      'title': 'Portfólio no GitHub',
+      'deadline': null,
+      'colorIndex': 3,
+      'slackDays': null,
+      'trail': 3,
+    },
   ];
 
   /// DATA `TRILHAS`: [título, mês (1–12), dia, hora decimal, duração em horas, feita].
@@ -105,8 +126,18 @@ class BoraSample {
 
   /// Tarefas leves da timeline do Hoje (DATA `LEVES` "grupo" e "material").
   static const lightTasks = [
-    {'id': 'grupo', 'title': 'Responder o grupo do trabalho', 'subtitle': '10 min · ideal p/ energia baixa', 'time': '11:30'},
-    {'id': 'material', 'title': 'Separar o material da prova', 'subtitle': '15 min · bom entre etapas', 'time': '16:00'},
+    {
+      'id': 'grupo',
+      'title': 'Responder o grupo do trabalho',
+      'subtitle': '10 min · ideal p/ energia baixa',
+      'time': '11:30',
+    },
+    {
+      'id': 'material',
+      'title': 'Separar o material da prova',
+      'subtitle': '15 min · bom entre etapas',
+      'time': '16:00',
+    },
   ];
 
   /// Limite diário do usuário demo (o "Máximo por dia" do protótipo, 4h).
@@ -114,36 +145,156 @@ class BoraSample {
 
   /// DATA `ALTS.aquecer`.
   static const warmups = [
-    {'title': 'Alongamento de 3 min', 'label': '3 min', 'seconds': 180, 'desc': 'Ombros, pescoço e braços. Sem sair da cadeira.', 'icon': 'person-simple-walk', 'steps': ['Gire os ombros pra trás, devagar', 'Incline a cabeça pra cada lado', 'Estique os braços pro alto e solte o ar']},
-    {'title': 'Água e 5 respirações', 'label': '2 min', 'seconds': 120, 'desc': 'Um copo d’água e respiração lenta.', 'icon': 'drop', 'steps': ['Pegue um copo d’água', 'Beba sem pressa', 'Faça 5 respirações contando até 4']},
-    {'title': 'Arrumar a mesa', 'label': '3 min', 'seconds': 180, 'desc': 'Deixa só o que você vai usar agora.', 'icon': 'broom', 'steps': ['Tire da mesa o que não é do trabalho', 'Deixe o notebook e um caderno', 'Vire o celular pra baixo']},
-    {'title': 'Volta pela casa', 'label': '2 min', 'seconds': 120, 'desc': 'Levanta, anda um pouco e volta.', 'icon': 'person-simple-walk', 'steps': ['Levante da cadeira', 'Ande até a janela ou a cozinha', 'Volte e sente com os pés no chão']},
-    {'title': 'Tarefa leve de 5 min', 'label': '5 min', 'seconds': 300, 'desc': 'Renomear os PDFs de Cálculo. Só isso.', 'icon': 'broom', 'steps': ['Abra a pasta de Cálculo', 'Renomeie os PDFs com o número da lista', 'Feche a pasta e respire fundo']},
+    {
+      'title': 'Alongamento de 3 min',
+      'label': '3 min',
+      'seconds': 180,
+      'desc': 'Ombros, pescoço e braços. Sem sair da cadeira.',
+      'icon': 'person-simple-walk',
+      'steps': [
+        'Gire os ombros pra trás, devagar',
+        'Incline a cabeça pra cada lado',
+        'Estique os braços pro alto e solte o ar',
+      ],
+    },
+    {
+      'title': 'Água e 5 respirações',
+      'label': '2 min',
+      'seconds': 120,
+      'desc': 'Um copo d’água e respiração lenta.',
+      'icon': 'drop',
+      'steps': [
+        'Pegue um copo d’água',
+        'Beba sem pressa',
+        'Faça 5 respirações contando até 4',
+      ],
+    },
+    {
+      'title': 'Arrumar a mesa',
+      'label': '3 min',
+      'seconds': 180,
+      'desc': 'Deixa só o que você vai usar agora.',
+      'icon': 'broom',
+      'steps': [
+        'Tire da mesa o que não é do trabalho',
+        'Deixe o notebook e um caderno',
+        'Vire o celular pra baixo',
+      ],
+    },
+    {
+      'title': 'Volta pela casa',
+      'label': '2 min',
+      'seconds': 120,
+      'desc': 'Levanta, anda um pouco e volta.',
+      'icon': 'person-simple-walk',
+      'steps': [
+        'Levante da cadeira',
+        'Ande até a janela ou a cozinha',
+        'Volte e sente com os pés no chão',
+      ],
+    },
+    {
+      'title': 'Tarefa leve de 5 min',
+      'label': '5 min',
+      'seconds': 300,
+      'desc': 'Renomear os PDFs de Cálculo. Só isso.',
+      'icon': 'broom',
+      'steps': [
+        'Abra a pasta de Cálculo',
+        'Renomeie os PDFs com o número da lista',
+        'Feche a pasta e respire fundo',
+      ],
+    },
   ];
 
   /// DATA `ALTS.desafio` + `PROBS`.
   static const challenges = [
-    {'title': '5 contas de soma', 'desc': 'Tipo 17 + 26', 'problems': [[17, 26, '+'], [38, 15, '+'], [54, 29, '+'], [23, 48, '+'], [66, 17, '+']]},
-    {'title': '5 contas de subtração', 'desc': 'Tipo 52 − 17', 'problems': [[52, 17, '−'], [81, 36, '−'], [64, 28, '−'], [93, 45, '−'], [70, 23, '−']]},
-    {'title': '5 contas de tabuada', 'desc': 'Tipo 7 × 8', 'problems': [[7, 8, '×'], [6, 9, '×'], [8, 4, '×'], [9, 7, '×'], [12, 6, '×']]},
-    {'title': '5 contas misturadas', 'desc': 'Soma, subtração e tabuada', 'problems': [[17, 26, '+'], [64, 28, '−'], [7, 8, '×'], [38, 15, '+'], [81, 36, '−']]},
+    {
+      'title': '5 contas de soma',
+      'desc': 'Tipo 17 + 26',
+      'problems': [
+        [17, 26, '+'],
+        [38, 15, '+'],
+        [54, 29, '+'],
+        [23, 48, '+'],
+        [66, 17, '+'],
+      ],
+    },
+    {
+      'title': '5 contas de subtração',
+      'desc': 'Tipo 52 − 17',
+      'problems': [
+        [52, 17, '−'],
+        [81, 36, '−'],
+        [64, 28, '−'],
+        [93, 45, '−'],
+        [70, 23, '−'],
+      ],
+    },
+    {
+      'title': '5 contas de tabuada',
+      'desc': 'Tipo 7 × 8',
+      'problems': [
+        [7, 8, '×'],
+        [6, 9, '×'],
+        [8, 4, '×'],
+        [9, 7, '×'],
+        [12, 6, '×'],
+      ],
+    },
+    {
+      'title': '5 contas misturadas',
+      'desc': 'Soma, subtração e tabuada',
+      'problems': [
+        [17, 26, '+'],
+        [64, 28, '−'],
+        [7, 8, '×'],
+        [38, 15, '+'],
+        [81, 36, '−'],
+      ],
+    },
   ];
 
   /// DATA `ALTS.foco`.
   static const focus = [
     {'title': 'Foco de 25 min', 'min': 25, 'desc': 'O padrão da rampa'},
-    {'title': 'Foco de 15 min', 'min': 15, 'desc': 'Pra quando o tempo tá curto'},
+    {
+      'title': 'Foco de 15 min',
+      'min': 15,
+      'desc': 'Pra quando o tempo tá curto',
+    },
     {'title': 'Foco de 10 min', 'min': 10, 'desc': 'Só pra destravar'},
     {'title': 'Foco de 45 min', 'min': 45, 'desc': 'Se a energia tá alta'},
   ];
 
   /// Micro-passo genérico quando a etapa não tem micro-passos (P6, provisório).
-  static const genericMicroStep = 'Abra o material desta etapa e faça só a primeira linha: o título ou a primeira frase.';
+  static const genericMicroStep =
+      'Abra o material desta etapa e faça só a primeira linha: o título ou a primeira frase.';
 
   /// Barra gamificada (estado inicial do protótipo; P18).
-  static const gamification = {'streak': 6, 'drops': 340, 'level': 7, 'xp': 410, 'levelXp': 480};
+  static const gamification = {
+    'streak': 6,
+    'drops': 340,
+    'level': 7,
+    'xp': 410,
+    'levelXp': 480,
+  };
 
   /// Celebração (M12; `jump('celebra')` do protótipo; P18).
-  static const celebrationDone = {'drops': 20, 'level': 7, 'xpBefore': 410, 'xpAfter': 435, 'levelXp': 480, 'focusXp': 25};
-  static const celebrationPartial = {'drops': 10, 'level': 7, 'xpBefore': 410, 'xpAfter': 435, 'levelXp': 480, 'focusXp': 25};
+  static const celebrationDone = {
+    'drops': 20,
+    'level': 7,
+    'xpBefore': 410,
+    'xpAfter': 435,
+    'levelXp': 480,
+    'focusXp': 25,
+  };
+  static const celebrationPartial = {
+    'drops': 10,
+    'level': 7,
+    'xpBefore': 410,
+    'xpAfter': 435,
+    'levelXp': 480,
+    'focusXp': 25,
+  };
 }

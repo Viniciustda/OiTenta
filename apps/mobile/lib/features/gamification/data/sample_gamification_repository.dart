@@ -18,7 +18,9 @@ class SampleGamificationRepository implements GamificationRepository {
 
   @override
   Future<CelebrationReward> getCelebration({required bool partial}) async {
-    final c = partial ? BoraSample.celebrationPartial : BoraSample.celebrationDone;
+    final c = partial
+        ? BoraSample.celebrationPartial
+        : BoraSample.celebrationDone;
     return CelebrationReward(
       drops: c['drops']!,
       level: c['level']!,

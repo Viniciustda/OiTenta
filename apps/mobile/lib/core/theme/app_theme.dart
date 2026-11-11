@@ -20,8 +20,15 @@ class AppTheme {
         onSurface: c.tx,
         error: c.danger,
       ),
-      textTheme: base.textTheme.apply(bodyColor: c.tx, displayColor: c.tx).copyWith(
-            bodyMedium: BoraText.nunito(16, 24, weight: FontWeight.w400, color: c.tx),
+      textTheme: base.textTheme
+          .apply(bodyColor: c.tx, displayColor: c.tx)
+          .copyWith(
+            bodyMedium: BoraText.nunito(
+              16,
+              24,
+              weight: FontWeight.w400,
+              color: c.tx,
+            ),
           ),
       splashFactory: NoSplash.splashFactory,
       highlightColor: Colors.transparent,

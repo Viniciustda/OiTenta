@@ -33,7 +33,9 @@ class TodayScreen extends StatelessWidget {
     return BoraPage(
       topBar: BoraTopBar(
         leading: const Broto(mood: BrotoMood.ok, size: 40),
-        center: state.gamification == null ? null : GamifiedBar(data: state.gamification!),
+        center: state.gamification == null
+            ? null
+            : GamifiedBar(data: state.gamification!),
         trailing: Semantics(
           button: true,
           label: 'Perfil',
@@ -42,18 +44,30 @@ class TodayScreen extends StatelessWidget {
             child: Container(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: c.surface, border: Border.all(color: c.border)),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: c.surface,
+                border: Border.all(color: c.border),
+              ),
               alignment: Alignment.center,
               child: Text(
                 state.userName.isEmpty ? '' : state.userName[0],
-                style: BoraText.fredoka(16, 16, weight: FontWeight.w700, color: c.pri),
+                style: BoraText.fredoka(
+                  16,
+                  16,
+                  weight: FontWeight.w700,
+                  color: c.pri,
+                ),
               ),
             ),
           ),
         ),
       ),
       children: [
-        Text('Bom dia, ${state.userName}', style: BoraText.h1(c.tx)),
+        Text(
+          state.userName.isEmpty ? 'Bom dia' : 'Bom dia, ${state.userName}',
+          style: BoraText.h1(c.tx),
+        ),
         const SizedBox(height: 2),
         Text(state.subtitle, style: BoraText.small(c.tx2)),
         const SizedBox(height: 16),
@@ -62,14 +76,23 @@ class TodayScreen extends StatelessWidget {
         SectionHeader(label: 'Seu dia', trailing: state.summary),
         const SizedBox(height: 12),
         if (state.loading) const SizedBox(height: 40),
-        if (state.error != null) Text(state.error!, style: BoraText.small(c.danger)),
+        if (state.error != null)
+          Text(state.error!, style: BoraText.small(c.danger)),
         for (var i = 0; i < items.length; i++)
-          _TimelineRow(item: items[i], first: i == 0, last: i == items.length - 1, onToggleLight: onToggleLight),
+          _TimelineRow(
+            item: items[i],
+            first: i == 0,
+            last: i == items.length - 1,
+            onToggleLight: onToggleLight,
+          ),
         if (state.slackLabel != null) ...[
           const SizedBox(height: 24),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(color: c.s2, borderRadius: BorderRadius.circular(999)),
+            decoration: BoxDecoration(
+              color: c.s2,
+              borderRadius: BorderRadius.circular(999),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -77,11 +100,24 @@ class TodayScreen extends StatelessWidget {
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text.rich(
-                    TextSpan(children: [
-                      TextSpan(text: state.slackLabel!, style: BoraText.nunito(14, 20, weight: FontWeight.w800, color: c.tx)),
-                      if (state.deadlineLabel != null)
-                        TextSpan(text: '  ${state.deadlineLabel!}', style: BoraText.small(c.tx2)),
-                    ]),
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: state.slackLabel!,
+                          style: BoraText.nunito(
+                            14,
+                            20,
+                            weight: FontWeight.w800,
+                            color: c.tx,
+                          ),
+                        ),
+                        if (state.deadlineLabel != null)
+                          TextSpan(
+                            text: '  ${state.deadlineLabel!}',
+                            style: BoraText.small(c.tx2),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -118,7 +154,10 @@ class _Hero extends StatelessWidget {
               Container(
                 width: 48,
                 height: 48,
-                decoration: BoxDecoration(color: c.priTx.withValues(alpha: .18), shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: c.priTx.withValues(alpha: .18),
+                  shape: BoxShape.circle,
+                ),
                 alignment: Alignment.center,
                 child: Icon(PhosphorIconsFill.play, size: 22, color: c.priTx),
               ),
@@ -127,8 +166,19 @@ class _Hero extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Vamos começar?', style: BoraText.nunito(20, 26, weight: FontWeight.w800, color: c.priTx)),
-                    Text('Rampa de 25 min até o foco', style: BoraText.small(c.priTx.withValues(alpha: .9))),
+                    Text(
+                      'Vamos começar?',
+                      style: BoraText.nunito(
+                        20,
+                        26,
+                        weight: FontWeight.w800,
+                        color: c.priTx,
+                      ),
+                    ),
+                    Text(
+                      'Rampa de 25 min até o foco',
+                      style: BoraText.small(c.priTx.withValues(alpha: .9)),
+                    ),
                   ],
                 ),
               ),
@@ -143,7 +193,12 @@ class _Hero extends StatelessWidget {
 }
 
 class _TimelineRow extends StatelessWidget {
-  const _TimelineRow({required this.item, required this.first, required this.last, required this.onToggleLight});
+  const _TimelineRow({
+    required this.item,
+    required this.first,
+    required this.last,
+    required this.onToggleLight,
+  });
 
   final TodayItem item;
   final bool first;
@@ -164,8 +219,15 @@ class _TimelineRow extends StatelessWidget {
               padding: EdgeInsets.only(top: b != null ? 16 : 14),
               child: Column(
                 children: [
-                  Text(item.time,
-                      style: BoraText.nunito(13, 16, weight: FontWeight.w700, color: first ? c.tx : c.tx2)),
+                  Text(
+                    item.time,
+                    style: BoraText.nunito(
+                      13,
+                      16,
+                      weight: FontWeight.w700,
+                      color: first ? c.tx : c.tx2,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   Container(
                     width: 10,
@@ -173,12 +235,18 @@ class _TimelineRow extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: b != null ? c.objective(b.colorIndex) : c.surface,
-                      border: b != null ? null : Border.all(color: c.border, width: 2),
+                      border: b != null
+                          ? null
+                          : Border.all(color: c.border, width: 2),
                     ),
                   ),
                   if (!last)
                     Expanded(
-                      child: Container(width: 2, margin: const EdgeInsets.only(top: 4), color: c.border),
+                      child: Container(
+                        width: 2,
+                        margin: const EdgeInsets.only(top: 4),
+                        color: c.border,
+                      ),
                     ),
                 ],
               ),
@@ -188,7 +256,12 @@ class _TimelineRow extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(bottom: last ? 0 : 12),
-              child: b != null ? _BlockCard(b: b) : _LightCard(l: item.light!, onTap: () => onToggleLight(item.light!.id)),
+              child: b != null
+                  ? _BlockCard(b: b)
+                  : _LightCard(
+                      l: item.light!,
+                      onTap: () => onToggleLight(item.light!.id),
+                    ),
             ),
           ),
         ],
@@ -214,9 +287,16 @@ class _BlockCard extends StatelessWidget {
               Dot(color: c.objective(b.colorIndex)),
               const SizedBox(width: 6),
               Expanded(
-                child: Text(b.goalTitle,
-                    overflow: TextOverflow.ellipsis,
-                    style: BoraText.nunito(13, 16, weight: FontWeight.w700, color: c.tx2)),
+                child: Text(
+                  b.goalTitle,
+                  overflow: TextOverflow.ellipsis,
+                  style: BoraText.nunito(
+                    13,
+                    16,
+                    weight: FontWeight.w700,
+                    color: c.tx2,
+                  ),
+                ),
               ),
               StatusPill(
                 label: b.pill,
@@ -239,11 +319,27 @@ class _BlockCard extends StatelessWidget {
             children: [
               Icon(PhosphorIconsRegular.clock, size: 16, color: c.tx2),
               const SizedBox(width: 4),
-              Text(b.durationLabel, style: BoraText.nunito(13, 16, weight: FontWeight.w700, color: c.tx2)),
+              Text(
+                b.durationLabel,
+                style: BoraText.nunito(
+                  13,
+                  16,
+                  weight: FontWeight.w700,
+                  color: c.tx2,
+                ),
+              ),
               const SizedBox(width: 14),
               Icon(PhosphorIconsFill.drop, size: 15, color: c.blueFill),
               const SizedBox(width: 4),
-              Text('+20', style: BoraText.nunito(13, 16, weight: FontWeight.w700, color: c.tx2)),
+              Text(
+                '+20',
+                style: BoraText.nunito(
+                  13,
+                  16,
+                  weight: FontWeight.w700,
+                  color: c.tx2,
+                ),
+              ),
             ],
           ),
         ],
@@ -276,10 +372,15 @@ class _LightCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: l.checked ? c.pri : c.surface,
-                  border: Border.all(color: l.checked ? c.pri : c.border, width: 2),
+                  border: Border.all(
+                    color: l.checked ? c.pri : c.border,
+                    width: 2,
+                  ),
                 ),
                 alignment: Alignment.center,
-                child: l.checked ? Icon(PhosphorIconsBold.check, size: 14, color: c.priTx) : null,
+                child: l.checked
+                    ? Icon(PhosphorIconsBold.check, size: 14, color: c.priTx)
+                    : null,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -288,9 +389,17 @@ class _LightCard extends StatelessWidget {
                   children: [
                     Text(
                       l.title,
-                      style: BoraText.nunito(15, 20, weight: FontWeight.w700, color: l.checked ? c.tx2 : c.tx).copyWith(
-                        decoration: l.checked ? TextDecoration.lineThrough : null,
-                      ),
+                      style:
+                          BoraText.nunito(
+                            15,
+                            20,
+                            weight: FontWeight.w700,
+                            color: l.checked ? c.tx2 : c.tx,
+                          ).copyWith(
+                            decoration: l.checked
+                                ? TextDecoration.lineThrough
+                                : null,
+                          ),
                     ),
                     Text(l.subtitle, style: BoraText.caption(c.tx2)),
                   ],

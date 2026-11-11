@@ -18,7 +18,9 @@ void main() {
     expect(find.text('Bom dia, Arthur'), findsOneWidget);
   });
 
-  testWidgets('Entrar: demo sem disponibilidade vai para o onboarding', (tester) async {
+  testWidgets('Entrar: demo sem disponibilidade vai para o onboarding', (
+    tester,
+  ) async {
     final deps = AppDependencies(
       auth: SampleAuthRepository(),
       scheduling: SampleSchedulingRepository(hasAvailability: false),
@@ -33,7 +35,9 @@ void main() {
     expect(find.text('1 de 6'), findsOneWidget);
   });
 
-  testWidgets('Cadastro (placeholder) avança para o onboarding', (tester) async {
+  testWidgets('Cadastro (placeholder) avança para o onboarding', (
+    tester,
+  ) async {
     await pumpApp(tester);
     await tester.tap(find.text('Criar conta'));
     await tester.pumpAndSettle();

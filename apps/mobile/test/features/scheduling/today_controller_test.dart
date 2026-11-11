@@ -11,8 +11,17 @@ void main() {
   late TodayController c;
   setUp(() async {
     final s = SessionStore()
-      ..save(const AuthSession(
-          token: 't', user: AuthUser(id: '1', name: 'Arthur', email: 'a@a', timezone: 'America/Sao_Paulo')));
+      ..save(
+        const AuthSession(
+          token: 't',
+          user: AuthUser(
+            id: '1',
+            name: 'Arthur',
+            email: 'a@a',
+            timezone: 'America/Sao_Paulo',
+          ),
+        ),
+      );
     c = TodayController(
       SampleSchedulingRepository(),
       SampleGoalsRepository(),
@@ -31,19 +40,28 @@ void main() {
   });
 
   test('a timeline intercala etapas e tarefas leves por horário', () {
-    expect(c.items.map((i) => i.time), ['10:00', '11:30', '14:00', '16:00', '19:00']);
+    expect(c.items.map((i) => i.time), [
+      '10:00',
+      '11:30',
+      '14:00',
+      '16:00',
+      '19:00',
+    ]);
     expect(c.items.map((i) => i.isBlock), [true, false, true, false, true]);
   });
 
-  test('a primeira etapa pendente é a "Próxima" e mostra o progresso parcial', () {
-    final first = c.items.first.block!;
-    expect(first.isNext, isTrue);
-    expect(first.progressPct, 40);
-    expect(first.progressLabel, '40% · continua de ontem');
-    expect(first.durationLabel, '1h30');
-    expect(c.items[2].block!.isNext, isFalse);
-    expect(c.items[2].block!.pill, 'Hoje 14:00');
-  });
+  test(
+    'a primeira etapa pendente é a "Próxima" e mostra o progresso parcial',
+    () {
+      final first = c.items.first.block!;
+      expect(first.isNext, isTrue);
+      expect(first.progressPct, 40);
+      expect(first.progressLabel, '40% · continua de ontem');
+      expect(first.durationLabel, '1h30');
+      expect(c.items[2].block!.isNext, isFalse);
+      expect(c.items[2].block!.pill, 'Hoje 14:00');
+    },
+  );
 
   test('folga do objetivo da próxima etapa', () {
     expect(c.slackLabel, 'Folga até o prazo: 2 dias');

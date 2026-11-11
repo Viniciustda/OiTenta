@@ -48,25 +48,44 @@ class LadderScreen extends StatelessWidget {
               children: [
                 for (var i = 0; i < steps.length; i++) ...[
                   if (i > 0) const SizedBox(width: 6),
-                  Expanded(child: _Step(view: steps[i], height: 108.0 + i * 19, first: i == 0, onTap: () => onSelect(i))),
+                  Expanded(
+                    child: _Step(
+                      view: steps[i],
+                      height: 108.0 + i * 19,
+                      first: i == 0,
+                      onTap: () => onSelect(i),
+                    ),
+                  ),
                 ],
               ],
             ),
           ),
         ),
         const SizedBox(height: 16),
-        Text(state.caption, style: BoraText.nunito(14, 20, weight: FontWeight.w700, color: c.tx)),
+        Text(
+          state.caption,
+          style: BoraText.nunito(14, 20, weight: FontWeight.w700, color: c.tx),
+        ),
         const SizedBox(height: 4),
         Transform.translate(
           offset: const Offset(-10, 0),
           child: Row(
             children: [
               if (state.canSwap)
-                TertiaryButton(label: 'Trocar', icon: PhosphorIconsBold.arrowsClockwise, compact: true, onPressed: onSwap),
+                TertiaryButton(
+                  label: 'Trocar',
+                  icon: PhosphorIconsBold.arrowsClockwise,
+                  compact: true,
+                  onPressed: onSwap,
+                ),
               const SizedBox(width: 4),
               if (state.canSkip)
                 TertiaryButton(
-                    label: 'Pular pra tarefa', icon: PhosphorIconsBold.skipForward, compact: true, onPressed: onSkip),
+                  label: 'Pular pra tarefa',
+                  icon: PhosphorIconsBold.skipForward,
+                  compact: true,
+                  onPressed: onSkip,
+                ),
             ],
           ),
         ),
@@ -77,7 +96,10 @@ class LadderScreen extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: BoxDecoration(color: c.s2, borderRadius: BorderRadius.circular(12)),
+                decoration: BoxDecoration(
+                  color: c.s2,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 alignment: Alignment.center,
                 child: Icon(boraIcon(opt.icon), size: 24, color: c.pri),
               ),
@@ -103,7 +125,12 @@ class LadderScreen extends StatelessWidget {
 }
 
 class _Step extends StatelessWidget {
-  const _Step({required this.view, required this.height, required this.first, required this.onTap});
+  const _Step({
+    required this.view,
+    required this.height,
+    required this.first,
+    required this.onTap,
+  });
 
   final LadderStepView view;
   final double height;
@@ -147,7 +174,10 @@ class _Step extends StatelessWidget {
               opacity: opacity,
               child: Container(
                 height: height,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: border == null ? 8 : 7,
+                  vertical: border == null ? 10 : 9,
+                ),
                 decoration: BoxDecoration(
                   color: bg,
                   border: border,
@@ -164,14 +194,34 @@ class _Step extends StatelessWidget {
                   children: [
                     Icon(icon, size: 22, color: fg),
                     const SizedBox(height: 6),
-                    Text(view.name == 'Micro-passo' ? 'Micro-\npasso' : (view.name == 'Registrar' ? 'Regis-\ntrar' : view.name),
-                        style: BoraText.nunito(12, 16, weight: FontWeight.w800, color: fg)),
-                    Text(view.duration, style: BoraText.caption(fg.withValues(alpha: .85))),
-                    Row(children: [
-                      Icon(PhosphorIconsFill.drop, size: 12, color: fg),
-                      const SizedBox(width: 2),
-                      Text('+5', style: BoraText.fredoka(12, 16, color: fg)),
-                    ]),
+                    Text(
+                      view.name == 'Micro-passo'
+                          ? 'Micro-\npasso'
+                          : (view.name == 'Registrar'
+                                ? 'Regis-\ntrar'
+                                : view.name),
+                      softWrap: false,
+                      overflow: TextOverflow.visible,
+                      style: BoraText.nunito(
+                        12,
+                        16,
+                        weight: FontWeight.w800,
+                        color: fg,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      view.duration,
+                      style: BoraText.caption(fg.withValues(alpha: .85)),
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Icon(PhosphorIconsFill.drop, size: 12, color: fg),
+                        const SizedBox(width: 2),
+                        Text('+5', style: BoraText.fredoka(12, 16, color: fg)),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -182,10 +232,24 @@ class _Step extends StatelessWidget {
                 left: first ? 0 : null,
                 right: first ? null : 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                  decoration: BoxDecoration(color: c.priSoft, borderRadius: BorderRadius.circular(999)),
-                  child: Text('Sugerido pra você',
-                      softWrap: false, style: BoraText.nunito(12, 16, weight: FontWeight.w800, color: c.pri)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: c.priSoft,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    'Sugerido pra você',
+                    softWrap: false,
+                    style: BoraText.nunito(
+                      12,
+                      16,
+                      weight: FontWeight.w800,
+                      color: c.pri,
+                    ),
+                  ),
                 ),
               ),
           ],

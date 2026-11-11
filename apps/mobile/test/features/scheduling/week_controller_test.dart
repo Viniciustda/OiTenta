@@ -6,14 +6,25 @@ import 'package:oitenta/features/scheduling/presentation/week_controller.dart';
 void main() {
   late WeekController c;
   setUp(() async {
-    c = WeekController(SampleSchedulingRepository(), FixedClock(DateTime(2025, 11, 6, 9, 41)));
+    c = WeekController(
+      SampleSchedulingRepository(),
+      FixedClock(DateTime(2025, 11, 6, 9, 41)),
+    );
     await c.load();
   });
 
   test('semana de 3 a 9 de novembro, com hoje selecionado', () {
     expect(c.rangeLabel, '3 a 9 de novembro');
     expect(c.days.map((d) => d.number), [3, 4, 5, 6, 7, 8, 9]);
-    expect(c.days.map((d) => d.weekday), ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']);
+    expect(c.days.map((d) => d.weekday), [
+      'Seg',
+      'Ter',
+      'Qua',
+      'Qui',
+      'Sex',
+      'Sáb',
+      'Dom',
+    ]);
     expect(c.days[3].isToday, isTrue);
     expect(c.selectedIndex, 3);
     expect(c.dayLabel, 'Hoje, quinta, 6 de novembro');
@@ -25,7 +36,11 @@ void main() {
   });
 
   test('legenda com os objetivos da semana', () {
-    expect(c.legend.map((l) => l.title), ['Eng. de Software', 'Cálculo II', 'Portfólio no GitHub']);
+    expect(c.legend.map((l) => l.title), [
+      'Eng. de Software',
+      'Cálculo II',
+      'Portfólio no GitHub',
+    ]);
   });
 
   test('lista do dia e troca de dia', () {

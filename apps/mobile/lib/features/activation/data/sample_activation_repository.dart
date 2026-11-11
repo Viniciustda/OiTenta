@@ -19,7 +19,9 @@ class SampleActivationRepository implements ActivationRepository {
   List<String> _microOf(String goalId, String stepId) {
     final trail = BoraSample.trails[_trails[goalId]];
     final order = int.tryParse(stepId.split('-').last);
-    if (trail == null || order == null || order < 1 || order > trail.length) return const [];
+    if (trail == null || order == null || order < 1 || order > trail.length) {
+      return const [];
+    }
     return BoraSample.microSteps[trail[order - 1][0]] ?? const [];
   }
 
@@ -31,7 +33,9 @@ class SampleActivationRepository implements ActivationRepository {
     AvailableTime? availableTime,
   }) async {
     final micro = _microOf(goalId, stepId);
-    final microTexts = micro.isEmpty ? const [BoraSample.genericMicroStep] : micro;
+    final microTexts = micro.isEmpty
+        ? const [BoraSample.genericMicroStep]
+        : micro;
     var i = 0;
     return Ramp.fromJson({
       'suggested': _suggested[energy],
@@ -63,7 +67,8 @@ class SampleActivationRepository implements ActivationRepository {
                 'description': c['desc'],
                 'icon': 'calculator',
                 'problems': [
-                  for (final p in c['problems'] as List) {'a': p[0], 'b': p[1], 'op': p[2]},
+                  for (final p in c['problems'] as List)
+                    {'a': p[0], 'b': p[1], 'op': p[2]},
                 ],
               },
           ],
@@ -116,7 +121,8 @@ class SampleActivationRepository implements ActivationRepository {
   @override
   Future<RecordSessionResult> recordSession(RecordSession session) async {
     final pct = session.partialPct;
-    if (session.outcome == SessionOutcome.partial && (pct == null || pct < 1 || pct > 99)) {
+    if (session.outcome == SessionOutcome.partial &&
+        (pct == null || pct < 1 || pct > 99)) {
       throw ValidationFailure('Diga quanto ficou pronto.');
     }
     if (session.outcome != SessionOutcome.partial && pct != null) {
@@ -129,7 +135,10 @@ class SampleActivationRepository implements ActivationRepository {
     };
     return RecordSessionResult.fromJson({
       'session': session.toJson(),
-      'step': {'progressPct': progress, 'status': progress == 100 ? 'done' : 'pending'},
+      'step': {
+        'progressPct': progress,
+        'status': progress == 100 ? 'done' : 'pending',
+      },
       'goalProgressPct': 62,
       'plan': {'totalMinutes': 0, 'days': 0, 'goals': []},
     });

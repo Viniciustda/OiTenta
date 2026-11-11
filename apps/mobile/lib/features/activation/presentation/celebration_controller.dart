@@ -15,7 +15,9 @@ class CelebrationController extends ChangeNotifier {
   CelebrationReward? reward;
 
   Future<void> load() async {
-    reward = await _repo.getCelebration(partial: session.outcome == SessionOutcome.partial);
+    reward = await _repo.getCelebration(
+      partial: session.outcome == SessionOutcome.partial,
+    );
     notifyListeners();
   }
 
@@ -23,14 +25,17 @@ class CelebrationController extends ChangeNotifier {
 
   String get subtitle {
     final title = session.target!.stepTitle;
-    return session.outcome == SessionOutcome.partial ? '${session.partialPct}% de $title' : 'Etapa concluída: $title';
+    return session.outcome == SessionOutcome.partial
+        ? '${session.partialPct}% de $title'
+        : 'Etapa concluída: $title';
   }
 
   String get levelLabel => 'Nível ${reward?.level ?? 0}';
 
   String get xpLabel => '${reward?.xpAfter ?? 0} / ${reward?.levelXp ?? 0} XP';
 
-  double get xpProgress => reward == null ? 0 : reward!.xpAfter / reward!.levelXp;
+  double get xpProgress =>
+      reward == null ? 0 : reward!.xpAfter / reward!.levelXp;
 
   String get meta => reward == null
       ? ''

@@ -11,8 +11,17 @@ void main() {
   setUp(() {
     repo = SampleSchedulingRepository(hasAvailability: false);
     final s = SessionStore()
-      ..save(const AuthSession(
-          token: 't', user: AuthUser(id: '1', name: 'Arthur', email: 'a@a', timezone: 'America/Sao_Paulo')));
+      ..save(
+        const AuthSession(
+          token: 't',
+          user: AuthUser(
+            id: '1',
+            name: 'Arthur',
+            email: 'a@a',
+            timezone: 'America/Sao_Paulo',
+          ),
+        ),
+      );
     c = OnboardingController(repo, s);
   });
 
@@ -34,16 +43,19 @@ void main() {
     expect(c.step, 3);
   });
 
-  test('a grade marca e desmarca períodos e conta as horas (2h por período)', () {
-    expect(c.canContinueGrid, isFalse);
-    c.togglePeriod(0, FreePeriod.night);
-    c.togglePeriod(1, FreePeriod.night);
-    c.togglePeriod(1, FreePeriod.night);
-    expect(c.isSelected(0, FreePeriod.night), isTrue);
-    expect(c.periodCount, 1);
-    expect(c.approxHours, 2);
-    expect(c.canContinueGrid, isTrue);
-  });
+  test(
+    'a grade marca e desmarca períodos e conta as horas (2h por período)',
+    () {
+      expect(c.canContinueGrid, isFalse);
+      c.togglePeriod(0, FreePeriod.night);
+      c.togglePeriod(1, FreePeriod.night);
+      c.togglePeriod(1, FreePeriod.night);
+      expect(c.isSelected(0, FreePeriod.night), isTrue);
+      expect(c.periodCount, 1);
+      expect(c.approxHours, 2);
+      expect(c.canContinueGrid, isTrue);
+    },
+  );
 
   test('o limite vai de 1h a 8h, começa em 4h', () {
     expect(c.limitHours, 4);
@@ -53,21 +65,27 @@ void main() {
     expect(c.limitHours, 1);
   });
 
-  test('salvar envia janelas por período (seg=1 … dom=0) e o limite em minutos', () async {
-    c.togglePeriod(0, FreePeriod.night); // segunda
-    c.togglePeriod(6, FreePeriod.morning); // domingo
-    c.setLimit(3);
-    c.goTo(5);
-    final ok = await c.save();
-    expect(ok, isTrue);
-    final a = (await repo.getAvailability())!;
-    expect(a.dailyLimitMinutes, 180);
-    expect(a.windows, containsAll(const [
-      AvailabilityWindow(weekday: 1, startMinute: 1080, endMinute: 1380),
-      AvailabilityWindow(weekday: 0, startMinute: 360, endMinute: 720),
-    ]));
-    expect(c.step, 6);
-  });
+  test(
+    'salvar envia janelas por período (seg=1 … dom=0) e o limite em minutos',
+    () async {
+      c.togglePeriod(0, FreePeriod.night); // segunda
+      c.togglePeriod(6, FreePeriod.morning); // domingo
+      c.setLimit(3);
+      c.goTo(5);
+      final ok = await c.save();
+      expect(ok, isTrue);
+      final a = (await repo.getAvailability())!;
+      expect(a.dailyLimitMinutes, 180);
+      expect(
+        a.windows,
+        containsAll(const [
+          AvailabilityWindow(weekday: 1, startMinute: 1080, endMinute: 1380),
+          AvailabilityWindow(weekday: 0, startMinute: 360, endMinute: 720),
+        ]),
+      );
+      expect(c.step, 6);
+    },
+  );
 
   test('nome do usuário vem da sessão', () => expect(c.userName, 'Arthur'));
 }

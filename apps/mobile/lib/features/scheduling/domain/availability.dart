@@ -1,14 +1,23 @@
 /// `{ weekday: 0–6, startMinute, endMinute }` (contrato §2; modelagem 3.1).
 class AvailabilityWindow {
-  const AvailabilityWindow({required this.weekday, required this.startMinute, required this.endMinute});
+  const AvailabilityWindow({
+    required this.weekday,
+    required this.startMinute,
+    required this.endMinute,
+  });
 
   final int weekday;
   final int startMinute;
   final int endMinute;
 
-  Map<String, dynamic> toJson() => {'weekday': weekday, 'startMinute': startMinute, 'endMinute': endMinute};
+  Map<String, dynamic> toJson() => {
+    'weekday': weekday,
+    'startMinute': startMinute,
+    'endMinute': endMinute,
+  };
 
-  factory AvailabilityWindow.fromJson(Map<String, dynamic> json) => AvailabilityWindow(
+  factory AvailabilityWindow.fromJson(Map<String, dynamic> json) =>
+      AvailabilityWindow(
         weekday: json['weekday'] as int,
         startMinute: json['startMinute'] as int,
         endMinute: json['endMinute'] as int,
@@ -27,16 +36,24 @@ class AvailabilityWindow {
 
 /// `{ windows, dailyLimitMinutes }`.
 class WeeklyAvailability {
-  const WeeklyAvailability({required this.windows, required this.dailyLimitMinutes});
+  const WeeklyAvailability({
+    required this.windows,
+    required this.dailyLimitMinutes,
+  });
 
   final List<AvailabilityWindow> windows;
   final int dailyLimitMinutes;
 
-  Map<String, dynamic> toJson() =>
-      {'windows': windows.map((w) => w.toJson()).toList(), 'dailyLimitMinutes': dailyLimitMinutes};
+  Map<String, dynamic> toJson() => {
+    'windows': windows.map((w) => w.toJson()).toList(),
+    'dailyLimitMinutes': dailyLimitMinutes,
+  };
 
-  factory WeeklyAvailability.fromJson(Map<String, dynamic> json) => WeeklyAvailability(
-        windows: (json['windows'] as List).map((w) => AvailabilityWindow.fromJson(w as Map<String, dynamic>)).toList(),
+  factory WeeklyAvailability.fromJson(Map<String, dynamic> json) =>
+      WeeklyAvailability(
+        windows: (json['windows'] as List)
+            .map((w) => AvailabilityWindow.fromJson(w as Map<String, dynamic>))
+            .toList(),
         dailyLimitMinutes: json['dailyLimitMinutes'] as int,
       );
 }

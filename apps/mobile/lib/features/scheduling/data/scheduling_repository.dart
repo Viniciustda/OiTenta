@@ -8,7 +8,9 @@ abstract class SchedulingRepository {
   Future<WeeklyAvailability?> getAvailability();
 
   /// `PUT /scheduling/availability`.
-  Future<SetAvailabilityResult> setAvailability(WeeklyAvailability availability);
+  Future<SetAvailabilityResult> setAvailability(
+    WeeklyAvailability availability,
+  );
 
   /// `GET /scheduling/plan/day?date=YYYY-MM-DD`.
   Future<DayPlan> getDayPlan(String date);

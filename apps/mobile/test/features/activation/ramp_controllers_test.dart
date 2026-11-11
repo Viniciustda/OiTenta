@@ -29,7 +29,12 @@ void main() {
 
   Future<void> checkin(EnergyLevel e) async {
     session = RampSession();
-    final c = CheckinController(SampleActivationRepository(), session, clock, target);
+    final c = CheckinController(
+      SampleActivationRepository(),
+      session,
+      clock,
+      target,
+    );
     c.chooseEnergy(e);
     c.chooseTime(AvailableTime.m30);
     expect(c.canBuild, isTrue);
@@ -38,7 +43,12 @@ void main() {
 
   group('check-in (M05)', () {
     test('só monta a rampa com energia e tempo', () async {
-      final c = CheckinController(SampleActivationRepository(), RampSession(), clock, target);
+      final c = CheckinController(
+        SampleActivationRepository(),
+        RampSession(),
+        clock,
+        target,
+      );
       expect(c.canBuild, isFalse);
       c.chooseEnergy(EnergyLevel.low);
       expect(c.canBuild, isFalse);
@@ -59,9 +69,24 @@ void main() {
     test('subtítulo, degraus e seleção', () async {
       await checkin(EnergyLevel.low);
       final c = LadderController(session);
-      expect(c.subtitle, '6 min de rampa e 25 min de foco em “Diagrama de casos de uso”');
-      expect(c.steps.map((s) => s.name), ['Aquecer', 'Desafio', 'Micro-passo', 'Foco', 'Registrar']);
-      expect(c.steps.map((s) => s.duration), ['3 min', '2 min', '1 min', '25 min', '1 min']);
+      expect(
+        c.subtitle,
+        '6 min de rampa e 25 min de foco em “Diagrama de casos de uso”',
+      );
+      expect(c.steps.map((s) => s.name), [
+        'Aquecer',
+        'Desafio',
+        'Micro-passo',
+        'Foco',
+        'Registrar',
+      ]);
+      expect(c.steps.map((s) => s.duration), [
+        '3 min',
+        '2 min',
+        '1 min',
+        '25 min',
+        '1 min',
+      ]);
       expect(c.steps.first.suggested, isTrue);
       expect(c.caption, 'Degrau 1 de 5 · Aquecer');
       expect(c.currentOption.title, 'Alongamento de 3 min');
@@ -183,23 +208,26 @@ void main() {
   });
 
   group('registro (M11) e celebração (M12)', () {
-    test('título, só registra com uma opção, parcial com 70% por padrão', () async {
-      await checkin(EnergyLevel.medium);
-      session.focusedMinutes = 25;
-      final c = LogController(SampleActivationRepository(), session, clock);
-      expect(c.title, 'Quanto você avançou em ‘Diagrama de casos de uso’?');
-      expect(c.subtitle, 'Você focou 25 min. Qualquer avanço conta.');
-      expect(c.canSubmit, isFalse);
-      c.choose(SessionOutcome.partial);
-      expect(c.partialPct, 70);
-      c.setPartial(100);
-      expect(c.partialPct, 95);
-      c.setPartial(0);
-      expect(c.partialPct, 5);
-      expect(await c.submit(), isTrue);
-      expect(session.outcome, SessionOutcome.partial);
-      expect(session.partialPct, 5);
-    });
+    test(
+      'título, só registra com uma opção, parcial com 70% por padrão',
+      () async {
+        await checkin(EnergyLevel.medium);
+        session.focusedMinutes = 25;
+        final c = LogController(SampleActivationRepository(), session, clock);
+        expect(c.title, 'Quanto você avançou em ‘Diagrama de casos de uso’?');
+        expect(c.subtitle, 'Você focou 25 min. Qualquer avanço conta.');
+        expect(c.canSubmit, isFalse);
+        c.choose(SessionOutcome.partial);
+        expect(c.partialPct, 70);
+        c.setPartial(100);
+        expect(c.partialPct, 95);
+        c.setPartial(0);
+        expect(c.partialPct, 5);
+        expect(await c.submit(), isTrue);
+        expect(session.outcome, SessionOutcome.partial);
+        expect(session.partialPct, 5);
+      },
+    );
 
     test('celebração de etapa concluída com os valores fixos (P18)', () async {
       await checkin(EnergyLevel.medium);

@@ -35,7 +35,8 @@ enum RampStepKind {
 
   final String api;
 
-  static RampStepKind fromApi(String v) => RampStepKind.values.firstWhere((k) => k.api == v);
+  static RampStepKind fromApi(String v) =>
+      RampStepKind.values.firstWhere((k) => k.api == v);
 }
 
 /// Conta do desafio mental: `{ a, b, op }` com `op` em `+ − ×`.
@@ -46,10 +47,18 @@ class ChallengeProblem {
   final int b;
   final String op;
 
-  int get answer => op == '+' ? a + b : op == '−' ? a - b : a * b;
+  int get answer => op == '+'
+      ? a + b
+      : op == '−'
+      ? a - b
+      : a * b;
 
   factory ChallengeProblem.fromJson(Map<String, dynamic> json) =>
-      ChallengeProblem(a: json['a'] as int, b: json['b'] as int, op: json['op'] as String);
+      ChallengeProblem(
+        a: json['a'] as int,
+        b: json['b'] as int,
+        op: json['op'] as String,
+      );
 }
 
 /// Opção de um degrau: `{id, title, durationLabel, durationSeconds, description, icon, steps?, problems?}`.
@@ -75,17 +84,17 @@ class RampOption {
   final List<ChallengeProblem> problems;
 
   factory RampOption.fromJson(Map<String, dynamic> json) => RampOption(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        durationLabel: json['durationLabel'] as String,
-        durationSeconds: json['durationSeconds'] as int?,
-        description: json['description'] as String,
-        icon: json['icon'] as String,
-        steps: ((json['steps'] as List?) ?? const []).cast<String>(),
-        problems: ((json['problems'] as List?) ?? const [])
-            .map((p) => ChallengeProblem.fromJson(p as Map<String, dynamic>))
-            .toList(),
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    durationLabel: json['durationLabel'] as String,
+    durationSeconds: json['durationSeconds'] as int?,
+    description: json['description'] as String,
+    icon: json['icon'] as String,
+    steps: ((json['steps'] as List?) ?? const []).cast<String>(),
+    problems: ((json['problems'] as List?) ?? const [])
+        .map((p) => ChallengeProblem.fromJson(p as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 /// Um degrau com as suas opções.
@@ -96,9 +105,11 @@ class RampStep {
   final List<RampOption> options;
 
   factory RampStep.fromJson(Map<String, dynamic> json) => RampStep(
-        kind: RampStepKind.fromApi(json['kind'] as String),
-        options: (json['options'] as List).map((o) => RampOption.fromJson(o as Map<String, dynamic>)).toList(),
-      );
+    kind: RampStepKind.fromApi(json['kind'] as String),
+    options: (json['options'] as List)
+        .map((o) => RampOption.fromJson(o as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 /// `GET /activation/ramp`: `{ steps[5], suggested }`.
@@ -111,7 +122,9 @@ class Ramp {
   RampStep step(RampStepKind kind) => steps.firstWhere((s) => s.kind == kind);
 
   factory Ramp.fromJson(Map<String, dynamic> json) => Ramp(
-        steps: (json['steps'] as List).map((s) => RampStep.fromJson(s as Map<String, dynamic>)).toList(),
-        suggested: RampStepKind.fromApi(json['suggested'] as String),
-      );
+    steps: (json['steps'] as List)
+        .map((s) => RampStep.fromJson(s as Map<String, dynamic>))
+        .toList(),
+    suggested: RampStepKind.fromApi(json['suggested'] as String),
+  );
 }

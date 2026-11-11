@@ -25,18 +25,18 @@ class AppDependencies {
     required this.clock,
     SessionStore? session,
     RampSession? rampSession,
-  })  : session = session ?? SessionStore(),
-        rampSession = rampSession ?? RampSession();
+  }) : session = session ?? SessionStore(),
+       rampSession = rampSession ?? RampSession();
 
   /// Dados de exemplo do protótipo, com o "hoje" em 6/11/2025.
   factory AppDependencies.sample() => AppDependencies(
-        auth: SampleAuthRepository(),
-        scheduling: SampleSchedulingRepository(),
-        goals: SampleGoalsRepository(),
-        activation: SampleActivationRepository(),
-        gamification: SampleGamificationRepository(),
-        clock: FixedClock(BoraSample.today),
-      );
+    auth: SampleAuthRepository(),
+    scheduling: SampleSchedulingRepository(),
+    goals: SampleGoalsRepository(),
+    activation: SampleActivationRepository(),
+    gamification: SampleGamificationRepository(),
+    clock: FixedClock(BoraSample.today),
+  );
 
   final AuthRepository auth;
   final SchedulingRepository scheduling;

@@ -7,7 +7,11 @@ import 'package:oitenta/features/scheduling/data/sample_scheduling_repository.da
 void main() {
   test('demo com disponibilidade salva a sessão e vai para o Hoje', () async {
     final session = SessionStore();
-    final c = LoginController(SampleAuthRepository(), SampleSchedulingRepository(), session);
+    final c = LoginController(
+      SampleAuthRepository(),
+      SampleSchedulingRepository(),
+      session,
+    );
     final next = await c.enterDemo();
     expect(next, AfterLogin.today);
     expect(session.user!.name, 'Arthur');
@@ -16,7 +20,10 @@ void main() {
 
   test('demo sem disponibilidade vai para o onboarding (P12)', () async {
     final c = LoginController(
-        SampleAuthRepository(), SampleSchedulingRepository(hasAvailability: false), SessionStore());
+      SampleAuthRepository(),
+      SampleSchedulingRepository(hasAvailability: false),
+      SessionStore(),
+    );
     expect(await c.enterDemo(), AfterLogin.onboarding);
   });
 }

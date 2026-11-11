@@ -34,7 +34,13 @@ void showBoraToast(
               decoration: BoxDecoration(
                 color: c.tx,
                 borderRadius: BorderRadius.circular(999),
-                boxShadow: [BoxShadow(color: c.floatShadow, offset: const Offset(0, 8), blurRadius: 24)],
+                boxShadow: [
+                  BoxShadow(
+                    color: c.floatShadow,
+                    offset: const Offset(0, 8),
+                    blurRadius: 24,
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -42,7 +48,10 @@ void showBoraToast(
                   Container(
                     width: 36,
                     height: 36,
-                    decoration: BoxDecoration(color: c.toastIcon.withValues(alpha: .16), shape: BoxShape.circle),
+                    decoration: BoxDecoration(
+                      color: c.toastIcon.withValues(alpha: .16),
+                      shape: BoxShape.circle,
+                    ),
                     alignment: Alignment.center,
                     child: Icon(icon, size: 20, color: c.toastIcon),
                   ),
@@ -52,8 +61,19 @@ void showBoraToast(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(title, style: BoraText.fredoka(18, 22, weight: FontWeight.w700, color: c.bg)),
-                        Text(subtitle, style: BoraText.caption(c.bg.withValues(alpha: .8))),
+                        Text(
+                          title,
+                          style: BoraText.fredoka(
+                            18,
+                            22,
+                            weight: FontWeight.w700,
+                            color: c.bg,
+                          ),
+                        ),
+                        Text(
+                          subtitle,
+                          style: BoraText.caption(c.bg.withValues(alpha: .8)),
+                        ),
                       ],
                     ),
                   ),

@@ -29,7 +29,9 @@ class BoraInput extends StatefulWidget {
 }
 
 class _BoraInputState extends State<BoraInput> {
-  late final TextEditingController _text = TextEditingController(text: widget.value);
+  late final TextEditingController _text = TextEditingController(
+    text: widget.value,
+  );
 
   @override
   void didUpdateWidget(covariant BoraInput old) {
@@ -46,8 +48,10 @@ class _BoraInputState extends State<BoraInput> {
   @override
   Widget build(BuildContext context) {
     final c = context.bora;
-    OutlineInputBorder border(Color color) =>
-        OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: color, width: 2));
+    OutlineInputBorder border(Color color) => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: color, width: 2),
+    );
     return SizedBox(
       height: widget.height,
       child: TextField(
@@ -59,10 +63,14 @@ class _BoraInputState extends State<BoraInput> {
           hintText: widget.hint,
           labelText: null,
           semanticCounterText: widget.semanticLabel,
-          hintStyle: (widget.style ?? BoraText.nunito(15, 20, color: c.tx2)).copyWith(color: c.tx2),
+          hintStyle: (widget.style ?? BoraText.nunito(15, 20, color: c.tx2))
+              .copyWith(color: c.tx2),
           filled: true,
           fillColor: c.surface,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 14,
+          ),
           enabledBorder: border(c.border),
           focusedBorder: border(c.blue),
           border: border(c.border),

@@ -15,19 +15,21 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ControllerHost<LoginController>(
-        create: () => LoginController(deps.auth, deps.scheduling, deps.session),
-        builder: (context, c) => LoginScreen(
-          busy: c.busy,
-          error: c.error,
-          onContinue: () => context.go(AppRoutes.onboarding),
-          onRegister: () => context.push(AppRoutes.register),
-          onDemo: () async {
-            final next = await c.enterDemo();
-            if (!context.mounted || next == null) return;
-            context.go(next == AfterLogin.today ? AppRoutes.today : AppRoutes.onboarding);
-          },
-        ),
-      );
+    create: () => LoginController(deps.auth, deps.scheduling, deps.session),
+    builder: (context, c) => LoginScreen(
+      busy: c.busy,
+      error: c.error,
+      onContinue: () => context.go(AppRoutes.onboarding),
+      onRegister: () => context.push(AppRoutes.register),
+      onDemo: () async {
+        final next = await c.enterDemo();
+        if (!context.mounted || next == null) return;
+        context.go(
+          next == AfterLogin.today ? AppRoutes.today : AppRoutes.onboarding,
+        );
+      },
+    ),
+  );
 }
 
 class RegisterPage extends StatelessWidget {
@@ -35,7 +37,8 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => RegisterScreen(
-        onBack: () => context.canPop() ? context.pop() : context.go(AppRoutes.login),
-        onContinue: () => context.go(AppRoutes.onboarding),
-      );
+    onBack: () =>
+        context.canPop() ? context.pop() : context.go(AppRoutes.login),
+    onContinue: () => context.go(AppRoutes.onboarding),
+  );
 }

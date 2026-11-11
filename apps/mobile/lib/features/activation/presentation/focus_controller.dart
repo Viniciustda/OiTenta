@@ -31,7 +31,10 @@ class FocusController extends ChangeNotifier {
 
   void tick(Duration d) {
     if (ended) return;
-    remaining = (remaining - d.inMilliseconds / 1000).clamp(0, total.toDouble());
+    remaining = (remaining - d.inMilliseconds / 1000).clamp(
+      0,
+      total.toDouble(),
+    );
     if (remaining <= 0) {
       end();
     } else {

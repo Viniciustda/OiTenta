@@ -28,9 +28,24 @@ class LogScreen extends StatelessWidget {
   final VoidCallback onSubmit;
 
   static const _options = [
-    (SessionOutcome.done, 'Concluí', 'Pode riscar do plano', PhosphorIconsBold.checkCircle),
-    (SessionOutcome.partial, 'Parcial', 'Avancei uma parte', PhosphorIconsBold.circleHalf),
-    (SessionOutcome.notDone, 'Não rolou', 'Sem problema, eu recalculo', PhosphorIconsBold.calendarBlank),
+    (
+      SessionOutcome.done,
+      'Concluí',
+      'Pode riscar do plano',
+      PhosphorIconsBold.checkCircle,
+    ),
+    (
+      SessionOutcome.partial,
+      'Parcial',
+      'Avancei uma parte',
+      PhosphorIconsBold.circleHalf,
+    ),
+    (
+      SessionOutcome.notDone,
+      'Não rolou',
+      'Sem problema, eu recalculo',
+      PhosphorIconsBold.calendarBlank,
+    ),
   ];
 
   @override
@@ -38,7 +53,12 @@ class LogScreen extends StatelessWidget {
     final c = context.bora;
     return BoraPage(
       topBar: BoraTopBar(leading: CloseNavButton(onPressed: onClose)),
-      header: RampHeader(index: 4, done: state.session.done, onSwap: null, onSkip: null),
+      header: RampHeader(
+        index: 4,
+        done: state.session.done,
+        onSwap: null,
+        onSkip: null,
+      ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       children: [
         Text(state.title, style: BoraText.h1(c.tx)),
@@ -47,7 +67,13 @@ class LogScreen extends StatelessWidget {
         const SizedBox(height: 20),
         for (final (o, name, desc, icon) in _options) ...[
           if (o != SessionOutcome.done) const SizedBox(height: 10),
-          OptionCard(name: name, description: desc, icon: icon, selected: state.outcome == o, onTap: () => onChoose(o)),
+          OptionCard(
+            name: name,
+            description: desc,
+            icon: icon,
+            selected: state.outcome == o,
+            onTap: () => onChoose(o),
+          ),
         ],
         if (state.outcome == SessionOutcome.partial) ...[
           const SizedBox(height: 12),
@@ -55,13 +81,25 @@ class LogScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(children: [
-                  Expanded(
-                    child: Text('Quanto ficou pronto?',
-                        style: BoraText.nunito(13, 16, weight: FontWeight.w800, color: c.tx)),
-                  ),
-                  Text('${state.partialPct}%', style: BoraText.fredoka(18, 22, color: c.pri)),
-                ]),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Quanto ficou pronto?',
+                        style: BoraText.nunito(
+                          13,
+                          16,
+                          weight: FontWeight.w800,
+                          color: c.tx,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${state.partialPct}%',
+                      style: BoraText.fredoka(18, 22, color: c.pri),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 10),
                 BoraSlider(
                   value: state.partialPct.toDouble(),
@@ -80,7 +118,10 @@ class LogScreen extends StatelessWidget {
           Text(state.error!, style: BoraText.small(c.danger)),
         ],
         const SizedBox(height: 24),
-        PrimaryButton(label: 'Registrar', onPressed: state.canSubmit ? onSubmit : null),
+        PrimaryButton(
+          label: 'Registrar',
+          onPressed: state.canSubmit ? onSubmit : null,
+        ),
       ],
     );
   }

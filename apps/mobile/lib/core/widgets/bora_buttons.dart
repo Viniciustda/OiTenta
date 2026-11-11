@@ -48,7 +48,9 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           decoration: BoxDecoration(
             color: bg,
             borderRadius: BorderRadius.circular(999),
-            boxShadow: _down ? const [] : [BoxShadow(color: lip, offset: const Offset(0, 3))],
+            boxShadow: _down
+                ? const []
+                : [BoxShadow(color: lip, offset: const Offset(0, 3))],
           ),
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -56,8 +58,17 @@ class _PrimaryButtonState extends State<PrimaryButton> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.icon != null) ...[Icon(widget.icon, size: 16, color: fg), const SizedBox(width: 8)],
-              Flexible(child: Text(widget.label, style: BoraText.button(fg), overflow: TextOverflow.ellipsis)),
+              if (widget.icon != null) ...[
+                Icon(widget.icon, size: 16, color: fg),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Text(
+                  widget.label,
+                  style: BoraText.button(fg),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -68,12 +79,20 @@ class _PrimaryButtonState extends State<PrimaryButton> {
 
 /// Botão secundário: fundo `--surface`, borda 2px e lábio `--border`, texto `--blue`.
 class SecondaryButton extends StatelessWidget {
-  const SecondaryButton({super.key, required this.label, required this.onPressed, this.icon, this.height = 52});
+  const SecondaryButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.icon,
+    this.height = 52,
+    this.fontSize = 16,
+  });
 
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
   final double height;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -94,8 +113,22 @@ class SecondaryButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (icon != null) ...[Icon(icon, size: 18, color: c.blue), const SizedBox(width: 8)],
-              Flexible(child: Text(label, style: BoraText.button(c.blue), overflow: TextOverflow.ellipsis)),
+              if (icon != null) ...[
+                Icon(icon, size: 18, color: c.blue),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Text(
+                  label,
+                  style: BoraText.nunito(
+                    fontSize,
+                    fontSize,
+                    weight: FontWeight.w800,
+                    color: c.blue,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -136,15 +169,25 @@ class TertiaryButton extends StatelessWidget {
         child: Container(
           height: compact ? 36 : 44,
           padding: EdgeInsets.symmetric(horizontal: compact ? 10 : 14),
-          alignment: Alignment.center,
           child: Row(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (icon != null) ...[Icon(icon, size: compact ? 16 : 18, color: fg), const SizedBox(width: 6)],
+              if (icon != null) ...[
+                Icon(icon, size: compact ? 16 : 18, color: fg),
+                const SizedBox(width: 6),
+              ],
               Flexible(
-                child: Text(label,
-                    overflow: TextOverflow.ellipsis,
-                    style: BoraText.nunito(size, size, weight: FontWeight.w800, color: fg)),
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: BoraText.nunito(
+                    size,
+                    size,
+                    weight: FontWeight.w800,
+                    color: fg,
+                  ),
+                ),
               ),
             ],
           ),
@@ -156,7 +199,12 @@ class TertiaryButton extends StatelessWidget {
 
 /// Botão redondo 44×44 do topo (voltar / fechar / perfil).
 class CircleNavButton extends StatelessWidget {
-  const CircleNavButton({super.key, required this.icon, required this.onPressed, required this.semanticLabel});
+  const CircleNavButton({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+    required this.semanticLabel,
+  });
 
   final IconData icon;
   final VoidCallback? onPressed;

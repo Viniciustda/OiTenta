@@ -53,13 +53,30 @@ class RampHeader extends StatelessWidget {
             height: 36,
             child: Row(
               children: [
-                Text('Degrau ${index + 1} de 5', style: BoraText.nunito(14, 20, weight: FontWeight.w700, color: c.tx)),
+                Text(
+                  'Degrau ${index + 1} de 5',
+                  style: BoraText.nunito(
+                    14,
+                    20,
+                    weight: FontWeight.w700,
+                    color: c.tx,
+                  ),
+                ),
                 const Spacer(),
                 if (onSwap != null)
-                  TertiaryButton(label: 'Trocar', icon: PhosphorIconsBold.arrowsClockwise, compact: true, onPressed: onSwap),
+                  TertiaryButton(
+                    label: 'Trocar',
+                    icon: PhosphorIconsBold.arrowsClockwise,
+                    compact: true,
+                    onPressed: onSwap,
+                  ),
                 if (onSkip != null)
                   TertiaryButton(
-                      label: 'Pular pra tarefa', icon: PhosphorIconsBold.skipForward, compact: true, onPressed: onSkip),
+                    label: 'Pular pra tarefa',
+                    icon: PhosphorIconsBold.skipForward,
+                    compact: true,
+                    onPressed: onSkip,
+                  ),
               ],
             ),
           ),
@@ -91,7 +108,13 @@ Future<void> showSwapSheet(BuildContext context, RampSwap swap) {
 }
 
 class SwapSheet extends StatefulWidget {
-  const SwapSheet({super.key, required this.title, required this.subtitle, required this.options, required this.onSwap});
+  const SwapSheet({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.options,
+    required this.onSwap,
+  });
 
   final String title;
   final String subtitle;
@@ -114,7 +137,13 @@ class _SwapSheetState extends State<SwapSheet> {
         color: c.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(top: BorderSide(color: c.border)),
-        boxShadow: [BoxShadow(color: c.sheetShadow, offset: const Offset(0, -8), blurRadius: 32)],
+        boxShadow: [
+          BoxShadow(
+            color: c.sheetShadow,
+            offset: const Offset(0, -8),
+            blurRadius: 32,
+          ),
+        ],
       ),
       padding: EdgeInsets.fromLTRB(20, 10, 20, bottom > 0 ? bottom : 34),
       child: Column(
@@ -123,7 +152,13 @@ class _SwapSheetState extends State<SwapSheet> {
         children: [
           Center(
             child: Container(
-                width: 40, height: 5, decoration: BoxDecoration(color: c.border, borderRadius: BorderRadius.circular(999))),
+              width: 40,
+              height: 5,
+              decoration: BoxDecoration(
+                color: c.border,
+                borderRadius: BorderRadius.circular(999),
+              ),
+            ),
           ),
           const SizedBox(height: 12),
           Text(widget.title, style: BoraText.h3(c.tx)),
@@ -153,7 +188,9 @@ class _SwapSheetState extends State<SwapSheet> {
           PrimaryButton(
             label: 'Trocar degrau',
             height: 48,
-            onPressed: _selected == null ? null : () => widget.onSwap(_selected!),
+            onPressed: _selected == null
+                ? null
+                : () => widget.onSwap(_selected!),
           ),
         ],
       ),

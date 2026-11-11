@@ -24,7 +24,20 @@ class ChallengeScreen extends StatelessWidget {
   final VoidCallback onSkip;
   final ValueChanged<String> onKey;
 
-  static const _keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'ok'];
+  static const _keys = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'del',
+    '0',
+    'ok',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -42,21 +55,46 @@ class ChallengeScreen extends StatelessWidget {
       _ => c.surface,
     };
     final (fbText, fbColor, fbIcon) = switch (fb) {
-      ChallengeFeedback.correct => ('Isso!', c.pri, PhosphorIconsBold.checkCircle),
-      ChallengeFeedback.wrong => ('Quase. Tenta de novo.', c.danger, PhosphorIconsBold.arrowCounterClockwise),
-      ChallengeFeedback.reveal => ('Era ${state.problem.answer}. Bora pra próxima.', c.blue, PhosphorIconsBold.arrowRight),
+      ChallengeFeedback.correct => (
+        'Isso!',
+        c.pri,
+        PhosphorIconsBold.checkCircle,
+      ),
+      ChallengeFeedback.wrong => (
+        'Quase. Tenta de novo.',
+        c.danger,
+        PhosphorIconsBold.arrowCounterClockwise,
+      ),
+      ChallengeFeedback.reveal => (
+        'Era ${state.problem.answer}. Bora pra próxima.',
+        c.blue,
+        PhosphorIconsBold.arrowRight,
+      ),
       ChallengeFeedback.none => ('Digite no teclado abaixo', c.tx2, null),
     };
     return BoraPage(
       topBar: BoraTopBar(leading: CloseNavButton(onPressed: onClose)),
-      header: RampHeader(index: 1, done: state.session.done, onSwap: onSwap, onSkip: onSkip),
+      header: RampHeader(
+        index: 1,
+        done: state.session.done,
+        onSwap: onSwap,
+        onSkip: onSkip,
+      ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       children: [
         Row(
           children: [
             Text('Desafio mental', style: BoraText.h2(c.tx)),
             const Spacer(),
-            Text('Conta ${state.number} de 5', style: BoraText.nunito(13, 16, weight: FontWeight.w700, color: c.tx2)),
+            Text(
+              'Conta ${state.number} de 5',
+              style: BoraText.nunito(
+                13,
+                16,
+                weight: FontWeight.w700,
+                color: c.tx2,
+              ),
+            ),
             const SizedBox(width: 8),
             for (var i = 0; i < 5; i++) ...[
               if (i > 0) const SizedBox(width: 4),
@@ -65,7 +103,9 @@ class ChallengeScreen extends StatelessWidget {
                 height: 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: i < state.problemIndex ? c.fill : (i == state.problemIndex ? c.pri : c.s2),
+                  color: i < state.problemIndex
+                      ? c.fill
+                      : (i == state.problemIndex ? c.pri : c.s2),
                 ),
               ),
             ],
@@ -75,7 +115,10 @@ class ChallengeScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(state.problemLabel, style: BoraText.fredoka(44, 52, color: c.tx)),
+            Text(
+              state.problemLabel,
+              style: BoraText.fredoka(44, 52, color: c.tx),
+            ),
             const SizedBox(width: 12),
             Container(
               constraints: const BoxConstraints(minWidth: 104),
@@ -87,8 +130,14 @@ class ChallengeScreen extends StatelessWidget {
                 border: Border.all(color: boxBorder, width: 2),
               ),
               alignment: Alignment.center,
-              child: Text(state.input.isEmpty ? '?' : state.input,
-                  style: BoraText.fredoka(36, 36, color: state.input.isEmpty ? c.tx2 : c.tx)),
+              child: Text(
+                state.input.isEmpty ? '?' : state.input,
+                style: BoraText.fredoka(
+                  36,
+                  36,
+                  color: state.input.isEmpty ? c.tx2 : c.tx,
+                ),
+              ),
             ),
           ],
         ),
@@ -98,8 +147,19 @@ class ChallengeScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (fbIcon != null) ...[Icon(fbIcon, size: 16, color: fbColor), const SizedBox(width: 6)],
-              Text(fbText, style: BoraText.nunito(14, 20, weight: FontWeight.w800, color: fbColor)),
+              if (fbIcon != null) ...[
+                Icon(fbIcon, size: 16, color: fbColor),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                fbText,
+                style: BoraText.nunito(
+                  14,
+                  20,
+                  weight: FontWeight.w800,
+                  color: fbColor,
+                ),
+              ),
             ],
           ),
         ),
@@ -140,14 +200,19 @@ class _Key extends StatelessWidget {
             color: ok ? c.pri : c.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: ok ? c.pri : c.border, width: 2),
-            boxShadow: [BoxShadow(color: ok ? c.lip : c.border, offset: const Offset(0, 3))],
+            boxShadow: [
+              BoxShadow(
+                color: ok ? c.lip : c.border,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           alignment: Alignment.center,
           child: ok
               ? Icon(PhosphorIconsBold.check, size: 26, color: c.priTx)
               : del
-                  ? Icon(PhosphorIconsBold.backspace, size: 26, color: c.tx2)
-                  : Text(k, style: BoraText.fredoka(28, 28, color: c.tx)),
+              ? Icon(PhosphorIconsBold.backspace, size: 26, color: c.tx2)
+              : Text(k, style: BoraText.fredoka(28, 28, color: c.tx)),
         ),
       ),
     );

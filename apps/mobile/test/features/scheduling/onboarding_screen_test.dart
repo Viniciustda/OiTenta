@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/test_app.dart';
 
 void main() {
-  testWidgets('onboarding: 6 passos, T01 → grade → limite → salvar → Hoje', (tester) async {
+  testWidgets('onboarding: 6 passos, T01 → grade → limite → salvar → Hoje', (
+    tester,
+  ) async {
     final deps = await pumpApp(tester, location: '/onboarding');
 
     expect(find.text('1 de 6'), findsOneWidget);
@@ -30,7 +32,10 @@ void main() {
     await tester.tap(find.bySemanticsLabel('SEG Noite'));
     await tester.tap(find.bySemanticsLabel('SÁB Manhã'));
     await tester.pumpAndSettle();
-    expect(find.text('2 períodos · cerca de 4h livres por semana'), findsOneWidget);
+    expect(
+      find.text('2 períodos · cerca de 4h livres por semana'),
+      findsOneWidget,
+    );
     await tester.tap(find.text('Continuar'));
     await tester.pumpAndSettle();
 

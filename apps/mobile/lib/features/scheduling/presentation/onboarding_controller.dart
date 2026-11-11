@@ -66,10 +66,18 @@ class OnboardingController extends ChangeNotifier {
 
   List<AvailabilityWindow> get windows {
     final list = _selected.toList()
-      ..sort((a, b) => a.$1 != b.$1 ? a.$1.compareTo(b.$1) : a.$2.index.compareTo(b.$2.index));
+      ..sort(
+        (a, b) => a.$1 != b.$1
+            ? a.$1.compareTo(b.$1)
+            : a.$2.index.compareTo(b.$2.index),
+      );
     return [
       for (final (col, p) in list)
-        AvailabilityWindow(weekday: columnWeekday[col], startMinute: p.startMinute, endMinute: p.endMinute),
+        AvailabilityWindow(
+          weekday: columnWeekday[col],
+          startMinute: p.startMinute,
+          endMinute: p.endMinute,
+        ),
     ];
   }
 
@@ -79,7 +87,12 @@ class OnboardingController extends ChangeNotifier {
     error = null;
     notifyListeners();
     try {
-      await _repo.setAvailability(WeeklyAvailability(windows: windows, dailyLimitMinutes: limitHours * 60));
+      await _repo.setAvailability(
+        WeeklyAvailability(
+          windows: windows,
+          dailyLimitMinutes: limitHours * 60,
+        ),
+      );
       step = 6;
       return true;
     } catch (_) {

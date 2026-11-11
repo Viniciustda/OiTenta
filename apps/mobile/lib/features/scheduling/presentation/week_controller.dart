@@ -112,24 +112,25 @@ class WeekController extends ChangeNotifier {
     return [for (final k in keys) LegendItem(colorIndex: k, title: map[k]!)];
   }
 
-  String get dayLabel => BoraFormat.dayLabel(days[selectedIndex].date, _clock.now());
+  String get dayLabel =>
+      BoraFormat.dayLabel(days[selectedIndex].date, _clock.now());
 
   List<WeekBlockView> get dayBlocks => [
-        for (final b in _week?.days[selectedIndex].blocks ?? const <PlanBlock>[])
-          WeekBlockView(
-            time: BoraFormat.clock(b.start),
-            goalTitle: b.goalTitle,
-            colorIndex: b.colorIndex,
-            title: b.stepTitle,
-            duration: BoraFormat.duration(b.minutes),
-            done: b.status == 'done',
-            pill: b.status == 'done'
-                ? 'Concluída'
-                : b.status == 'missed'
-                    ? 'Reagendada'
-                    : null,
-          ),
-      ];
+    for (final b in _week?.days[selectedIndex].blocks ?? const <PlanBlock>[])
+      WeekBlockView(
+        time: BoraFormat.clock(b.start),
+        goalTitle: b.goalTitle,
+        colorIndex: b.colorIndex,
+        title: b.stepTitle,
+        duration: BoraFormat.duration(b.minutes),
+        done: b.status == 'done',
+        pill: b.status == 'done'
+            ? 'Concluída'
+            : b.status == 'missed'
+            ? 'Reagendada'
+            : null,
+      ),
+  ];
 
   void selectDay(int i) {
     selectedIndex = i;

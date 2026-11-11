@@ -60,7 +60,8 @@ class RampSession {
 
   int optionIndex(RampStepKind kind) => _option[kind] ?? 0;
 
-  RampOption option(RampStepKind kind) => ramp!.step(kind).options[optionIndex(kind)];
+  RampOption option(RampStepKind kind) =>
+      ramp!.step(kind).options[optionIndex(kind)];
 
   List<RampOption> options(RampStepKind kind) => ramp!.step(kind).options;
 
@@ -73,9 +74,11 @@ class RampSession {
     currentIndex = i + 1 > 4 ? 4 : i + 1;
   }
 
-  int get warmupMinutes => (option(RampStepKind.warmup).durationSeconds ?? 0) ~/ 60;
+  int get warmupMinutes =>
+      (option(RampStepKind.warmup).durationSeconds ?? 0) ~/ 60;
 
-  int get focusMinutes => (option(RampStepKind.focus).durationSeconds ?? 0) ~/ 60;
+  int get focusMinutes =>
+      (option(RampStepKind.focus).durationSeconds ?? 0) ~/ 60;
 
   /// Minutos de rampa antes do foco (protótipo: aquecimento + 3).
   int get rampMinutes => warmupMinutes + 3;
