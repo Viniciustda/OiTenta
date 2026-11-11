@@ -55,7 +55,7 @@ export default function CalendarDeadlineGrid({ columns, today, selectedId, empty
                 }}
               >
                 <span className="flex items-center gap-1.5 text-[12px]/[16px] font-extrabold"><i className="ph-fill ph-flag-checkered text-[14px]" />{DEADLINE_KIND}</span>
-                <b className="font-fredoka text-[16px]/[20px] font-semibold text-balance [overflow-wrap:anywhere]">{g.title}</b>
+                <b className="font-fredoka text-[16px]/[20px] font-semibold text-balance break-words hyphens-auto">{g.title}</b>
                 <span className="flex items-center gap-2">
                   <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--tx)_15%,transparent)]">
                     <span className="block h-full rounded-full bg-tx" style={{ width: `${g.progressPct}%` }} />
