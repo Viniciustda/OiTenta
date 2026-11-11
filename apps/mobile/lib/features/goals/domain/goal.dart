@@ -43,14 +43,16 @@ class GoalSummary {
   );
 }
 
-/// Próximo bloco agendado de uma etapa: `{ start, end }` (instantes UTC).
+/// Próximo bloco agendado de uma etapa: `{ id, start, end }` (instantes UTC).
 class NextBlock {
-  const NextBlock({required this.start, required this.end});
+  const NextBlock({required this.id, required this.start, required this.end});
 
+  final String id;
   final DateTime start;
   final DateTime end;
 
   factory NextBlock.fromJson(Map<String, dynamic> json) => NextBlock(
+    id: json['id'] as String,
     start: DateTime.parse(json['start'] as String),
     end: DateTime.parse(json['end'] as String),
   );

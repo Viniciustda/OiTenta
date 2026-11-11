@@ -84,6 +84,7 @@ class SampleGoalsRepository implements GoalsRepository {
               'nextBlock': done || s.start == null
                   ? null
                   : {
+                      'id': 'block-${g.id}-${i + 1}',
                       'start': s.start!.toUtc().toIso8601String(),
                       'end': s.start!
                           .add(Duration(minutes: s.minutes))

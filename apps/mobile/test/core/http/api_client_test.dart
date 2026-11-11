@@ -128,11 +128,34 @@ void main() {
       );
     });
 
-    test('422 → ValidationFailure', () async {
+    test('422 → ValidationFailure com os details do corpo', () async {
       final api = clientReturning(
-        jsonResponse(errorBody(422, 'Dados inválidos.'), 422),
+        jsonResponse({
+          ...errorBody(422, 'Dados inválidos.'),
+          'details': ['TITLE_EMPTY', 'STEPS_EMPTY'],
+        }, 422),
       );
-      await expectLater(api.post('/x'), throwsA(isA<ValidationFailure>()));
+      await expectLater(
+        api.post('/x'),
+        throwsA(
+          isA<ValidationFailure>()
+              .having((e) => e.message, 'message', 'Dados inválidos.')
+              .having((e) => e.details, 'details', [
+                'TITLE_EMPTY',
+                'STEPS_EMPTY',
+              ]),
+        ),
+      );
+    });
+
+    test('400 sem details → ValidationFailure com details vazio', () async {
+      final api = clientReturning(jsonResponse(errorBody(400, 'x'), 400));
+      await expectLater(
+        api.get('/x'),
+        throwsA(
+          isA<ValidationFailure>().having((e) => e.details, 'details', isEmpty),
+        ),
+      );
     });
 
     test('404 → NotFoundFailure com a mensagem', () async {
@@ -231,6 +254,23 @@ void main() {
       baseUrl: 'http://api.test',
       client: MockClient((_) async => throw http.ClientException('sem rede')),
       token: () => null,
+    );
+    await expectLater(api.get('/x'), throwsA(isA<NetworkFailure>()));
+  });
+
+  test('o tempo limite padrão é 15 s', () {
+    expect(ApiClient.defaultTimeout, const Duration(seconds: 15));
+  });
+
+  test('resposta que passa do tempo limite → NetworkFailure', () async {
+    final api = ApiClient(
+      baseUrl: 'http://api.test',
+      client: MockClient((_) async {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+        return jsonResponse({}, 200);
+      }),
+      token: () => null,
+      timeout: const Duration(milliseconds: 20),
     );
     await expectLater(api.get('/x'), throwsA(isA<NetworkFailure>()));
   });

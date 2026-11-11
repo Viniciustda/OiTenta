@@ -13,7 +13,9 @@ class GoalFeasibility {
   final String goalId;
   final bool feasible;
   final bool usedSlack;
-  final int slackDays;
+
+  /// Folga em dias; `null` para objetivo sem prazo.
+  final int? slackDays;
   final int unscheduledMinutes;
 
   factory GoalFeasibility.fromJson(Map<String, dynamic> json) =>
@@ -21,7 +23,7 @@ class GoalFeasibility {
         goalId: json['goalId'] as String,
         feasible: json['feasible'] as bool,
         usedSlack: json['usedSlack'] as bool,
-        slackDays: json['slackDays'] as int,
+        slackDays: json['slackDays'] as int?,
         unscheduledMinutes: json['unscheduledMinutes'] as int,
       );
 }

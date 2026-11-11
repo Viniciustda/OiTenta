@@ -3,18 +3,13 @@ import '../../../core/http/api_client.dart';
 import '../domain/availability.dart';
 import '../domain/light_task.dart';
 import '../domain/plan.dart';
-import 'sample_scheduling_repository.dart';
 import 'scheduling_repository.dart';
 
 /// Disponibilidade e plano no backend real (contrato §2 e §4).
 class HttpSchedulingRepository implements SchedulingRepository {
-  HttpSchedulingRepository(this._api, {SchedulingRepository? lightTasks})
-    : _lightTasks = lightTasks ?? SampleSchedulingRepository();
+  HttpSchedulingRepository(this._api);
 
   final ApiClient _api;
-
-  /// Tarefas leves (UC13) estão fora do contrato desta fase: continuam de exemplo.
-  final SchedulingRepository _lightTasks;
 
   @override
   Future<WeeklyAvailability?> getAvailability() async {
@@ -49,7 +44,8 @@ class HttpSchedulingRepository implements SchedulingRepository {
         as Map<String, dynamic>,
   );
 
+  /// Tarefas leves (UC13) estão fora do contrato desta fase: o modo real não
+  /// mostra dados de exemplo, então a lista vem vazia.
   @override
-  Future<List<LightTask>> getLightTasks(String date) =>
-      _lightTasks.getLightTasks(date);
+  Future<List<LightTask>> getLightTasks(String date) async => const [];
 }

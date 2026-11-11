@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -17,13 +18,19 @@ class ApiClient {
     required http.Client client,
     required TokenReader token,
     void Function()? onUnauthorized,
-  }) : _baseUrl = baseUrl.endsWith('/')
+    Duration timeout = defaultTimeout,
+  }) : _timeout = timeout,
+       _baseUrl = baseUrl.endsWith('/')
            ? baseUrl.substring(0, baseUrl.length - 1)
            : baseUrl,
        _client = client,
        _token = token,
        _onUnauthorized = onUnauthorized;
 
+  /// Tempo máximo de espera por uma resposta.
+  static const defaultTimeout = Duration(seconds: 15);
+
+  final Duration _timeout;
   final String _baseUrl;
   final http.Client _client;
   final TokenReader _token;
@@ -63,9 +70,15 @@ class ApiClient {
 
     final http.Response response;
     try {
-      response = await http.Response.fromStream(await _client.send(request));
+      // O tempo limite vale para a requisição inteira (envio + corpo).
+      response = await _client
+          .send(request)
+          .then(http.Response.fromStream)
+          .timeout(_timeout);
     } on http.ClientException catch (e) {
       throw NetworkFailure(e.message);
+    } on TimeoutException {
+      throw NetworkFailure('Sem resposta em ${_timeout.inSeconds} s.');
     }
 
     final status = response.statusCode;
@@ -77,7 +90,10 @@ class ApiClient {
         : 'Erro $status.';
     switch (status) {
       case 400 || 422:
-        throw ValidationFailure(message);
+        final details = decoded is Map && decoded['details'] is List
+            ? [for (final d in decoded['details'] as List) d.toString()]
+            : const <String>[];
+        throw ValidationFailure(message, details: details);
       case 404:
         throw NotFoundFailure(message);
       case 401:

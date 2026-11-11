@@ -3,7 +3,10 @@
 /// 401 → [UnauthorizedFailure]; 409 → [ConflictFailure];
 /// outros status → [ApiFailure]; sem resposta → [NetworkFailure].
 class ValidationFailure extends ArgumentError {
-  ValidationFailure(String super.message);
+  ValidationFailure(String super.message, {this.details = const []});
+
+  /// Códigos da regra violada (`details` do corpo do 400/422), quando vierem.
+  final List<String> details;
 }
 
 class NotFoundFailure extends StateError {

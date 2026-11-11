@@ -108,6 +108,7 @@ void main() {
       expect(d.goal.title, 'Trabalho de Algoritmos');
       expect(d.steps.first.isDone, isTrue);
       expect(d.steps.first.nextBlock, isNull);
+      expect(d.steps.last.nextBlock!.id, 'b9');
       expect(d.steps.last.nextBlock!.start, DateTime.utc(2026, 11, 11, 22));
       expect(d.steps.last.nextBlock!.end, DateTime.utc(2026, 11, 11, 23));
       expect(d.done, 1);
@@ -205,6 +206,37 @@ void main() {
       await expectLater(repo.createGoal(g), throwsA(isA<ValidationFailure>()));
       api.fail(404, 'Sem disponibilidade.');
       await expectLater(repo.createGoal(g), throwsA(isA<NotFoundFailure>()));
+    },
+  );
+
+  test(
+    'createGoal: plano com objetivo sem prazo (slackDays null) não quebra o parse',
+    () async {
+      api.respond({
+        'goal': {..._goal, 'deadline': null},
+        'plan': {
+          'totalMinutes': 15,
+          'days': 1,
+          'goals': [
+            {
+              'goalId': 'g1',
+              'feasible': true,
+              'usedSlack': false,
+              'slackDays': null,
+              'unscheduledMinutes': 0,
+            },
+          ],
+        },
+      }, 201);
+      final r = await repo.createGoal(
+        const NewGoal(
+          title: 'Lavar a louça',
+          deadline: null,
+          kind: 'single',
+          steps: [NewStep(title: 'Lavar a louça', estimatedMinutes: 15)],
+        ),
+      );
+      expect(r.plan.goals.single.slackDays, isNull);
     },
   );
 }

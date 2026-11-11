@@ -163,4 +163,25 @@ void main() {
       );
     },
   );
+
+  test('recordSession: plano com slackDays null não quebra o parse', () async {
+    api.respond({
+      ..._sessionResult,
+      'plan': {
+        'totalMinutes': 100,
+        'days': 2,
+        'goals': [
+          {
+            'goalId': 'g1',
+            'feasible': true,
+            'usedSlack': false,
+            'slackDays': null,
+            'unscheduledMinutes': 0,
+          },
+        ],
+      },
+    }, 201);
+    final r = await repo.recordSession(_session(blockId: 'b1'));
+    expect(r.plan.goals.single.slackDays, isNull);
+  });
 }

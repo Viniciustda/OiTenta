@@ -168,9 +168,43 @@ void main() {
     );
   });
 
-  test('getLightTasks continua só de exemplo (sem rede)', () async {
-    final tasks = await repo.getLightTasks('2026-11-10');
-    expect(tasks, isNotEmpty);
-    expect(api.requests, isEmpty);
-  });
+  test(
+    'getLightTasks devolve vazio no modo real (UC13 fora do contrato), sem rede',
+    () async {
+      final tasks = await repo.getLightTasks('2026-11-10');
+      expect(tasks, isEmpty);
+      expect(api.requests, isEmpty);
+    },
+  );
+
+  test(
+    'setAvailability: plano com slackDays null (objetivo sem prazo) não quebra',
+    () async {
+      api.respond({
+        'availability': _availability,
+        'plan': {
+          'totalMinutes': 30,
+          'days': 1,
+          'goals': [
+            {
+              'goalId': 'g2',
+              'feasible': true,
+              'usedSlack': false,
+              'slackDays': null,
+              'unscheduledMinutes': 0,
+            },
+          ],
+        },
+      });
+      final r = await repo.setAvailability(
+        const WeeklyAvailability(
+          windows: [
+            AvailabilityWindow(weekday: 0, startMinute: 1140, endMinute: 1380),
+          ],
+          dailyLimitMinutes: 180,
+        ),
+      );
+      expect(r.plan.goals.single.slackDays, isNull);
+    },
+  );
 }
