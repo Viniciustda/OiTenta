@@ -4,8 +4,8 @@ Este diário permite que qualquer sessão continue o trabalho de onde a anterior
 
 ## Painel
 
-- **Próxima ação:** nenhuma pendente do plano. As Etapas A a E estão concluídas. Aguardando suas respostas às perguntas (fim deste arquivo) e o "pode mandar para a main".
-- **Estado da developer:** verde; último commit integrado: o desta atualização do diário (`docs/como-testar-e`).
+- **Próxima ação:** nenhuma tarefa pendente da rodada de ajustes visuais (11/11). Aguardando as decisões do `afazeres.md` (raiz), que agora concentra todas as perguntas, problemas e pendências, e o "pode mandar para a main".
+- **Estado da developer:** verde; último commit integrado: o desta atualização do diário (`docs/afazeres-rodada-visual`).
 - **Main intocada:** sim (`7b8a85e`, landing em produção).
 
 ## RELATÓRIO FINAL (10/11/2026, ~22h30)
@@ -168,3 +168,27 @@ O `PUT /scheduling/availability` devolve o plano recalculado, e o dia e a semana
 19. **Entrada para a rampa pela trilha no mobile (M18):** criar? Ela deixaria o fluxo independente do horário, como no web. É uma função nova.
 20. **Nome do usuário demo:** trocar o seed para "Arthur" (como o botão e o protótipo) ou trocar o texto do botão?
 21. **`db:reset-demo` no ponta a ponta:** o Playwright apaga os dados do demo do banco local a cada execução. Tudo bem, ou prefere um usuário só para os testes?
+
+## Sessão 2 — 11/11/2026: rodada de ajustes visuais
+
+A partir desta sessão, perguntas, problemas e pendências ficam no `afazeres.md` (raiz), conforme a seção 10 da regra do processo. As perguntas 1 a 21 e os problemas 1 a 16 acima foram convertidos para lá.
+
+Verificação completa (antes de cada merge): build, lint, testes de todos os workspaces, integração do backend, cobertura 100% do domínio, `flutter analyze` e `flutter test`, grep de framework, **Playwright** e **`integration_test` no simulador iOS** (iPhone 17). Script em `/private/tmp/claude-501/-Users-arthursetragni-Hackaton-OiTenta/38e788da-ae14-494a-b00a-834fc4ccb0f8/scratchpad/verificacao-completa.sh` (temporário; recriar a partir da regra §4, acrescentando os dois ponta a ponta).
+
+| Id | Branch | Status | Commit na developer | TDD | Verificação | Revisor |
+|---|---|---|---|---|---|---|
+| T0 | `docs/afazeres` | integrada | `4986aed` | n/a (docs) | verde | n/a (orquestrador) |
+| fix-e2e | `fix/e2e-web-seletor-trilha` | integrada | `62d7555` | vermelho 2× seguidas na developer às ~10h (`strict mode violation`: o seletor achava 2 elementos) → `1 passed` | verde | n/a (orquestrador); vira [DECIDIR] no afazeres, porque mexeu num teste existente |
+| M2 | `feat/mobile-calendario` | integrada | `8090025` | controlador (não compilava: `No named parameter 'goals'`, `CalendarMode` inexistente) → +17; widget (-6 → +6); revisão: `selectDate` sem o ano (`Expected 2025-11-06, Actual 2024-11-20`) → +21 | verde (mobile 190) | APROVADO COM RESSALVAS; ajustes feitos (bordas do mês e ano) |
+| W1 | `feat/web-navegacao-objetivos` | integrada | `4f20b04` | bug: 2 falhando (`Unable to find role="dialog" "Novo objetivo"`) → 3/3; menu: 4 falhando → 4/4; telas: imports inexistentes → verde; revisão: 2 falhando (edição desfeita pela recarga) → 9/9 | verde (frontend 243) | APROVADO COM RESSALVAS; ajuste feito; o revisor confirmou que o teste do bug falha sem a correção |
+| W2 | `feat/web-calendario` | integrada | `d6024ea` | 33 falhando (`mondayOf is not a function`, `aria-pressed` ausente, sem Prazos) → 35/35; revisão: 4 falhando (navegação voltando com o relógio, partes da etapa, teclado no mês, horizonte no cabeçalho) → verde | verde (frontend 282) | 1º ciclo REPROVADO (navegação voltava sozinha a cada minuto com o relógio real); 2º olhar APROVADO |
+| M1 | `feat/mobile-chat-objetivo` | integrada (parcial) | `fe71502` | tag: -5 (`a tag está coberta`) → +5; chat: não compilava → -17 → +22; revisão: "Enviar" do teclado na análise abria a M15 vazia (`Found 0 widgets with text "ETAPAS SUGERIDAS"`) → +7 | verde (mobile 219) | APROVADO COM RESSALVAS; correção do bloqueio feita. O botão "Novo objetivo" **não** foi ligado ao chat: exige alterar 2 testes existentes ([DECIDIR] no afazeres, com patch pronto) |
+
+Achados da sessão (todos no `afazeres.md`):
+- O ponta a ponta do web estava vermelho de manhã na developer, por um seletor ambíguo do próprio teste. Corrigido antes das tarefas, sem mudar a asserção.
+- Bug do "Novo objetivo" no web: era do web (estado do modal fechado nunca esquecido com o `cacheComponents`), não do backend.
+- O script de verificação desta sessão gravava o selo verde antes dos ponta a ponta. Corrigido antes da primeira integração; o selo antecipado foi apagado e nenhuma integração usou ele.
+- Um usuário de teste (`w1.bug.…@teste.local`) ficou no Postgres local, criado na investigação do bug.
+- Comparações da rodada em `docs/frontend/comparacoes/` e `docs/mobile/comparacoes/` (só a última rodada, JPEG), com as diferenças no README de cada pasta.
+
+Worktrees `/Users/arthursetragni/Hackaton/wt-w1`, `wt-w2`, `wt-m1`, `wt-m2`: branches já integradas; podem ser removidas (`git worktree remove`).
