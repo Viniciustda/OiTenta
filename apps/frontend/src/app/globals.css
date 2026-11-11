@@ -29,6 +29,15 @@
   --toastIcon: #38bdf8;
   --link-hover: #065f46;
 
+  /* Web app (design/web/source/Bora App.dc.html, modo claro) */
+  --danger: #dc2626;
+  --obj4: #a78bfa;
+  --focusBg: #e0f2fe;
+  --ringTrack: #ffffff;
+  --scrim: rgba(14, 31, 26, 0.4);
+  --free: rgba(16, 185, 129, 0.13);
+  --hatch: #d5e6df;
+
   /* Sombras e sobreposições */
   --shadow-card: 0 1px 2px rgba(14, 31, 26, 0.04);
   --shadow-float: 0 8px 24px rgba(14, 31, 26, 0.18);
@@ -89,6 +98,13 @@
   --color-obj1: var(--obj1);
   --color-obj2: var(--obj2);
   --color-obj3: var(--obj3);
+  --color-obj4: var(--obj4);
+  --color-danger: var(--danger);
+  --color-focus-bg: var(--focusBg);
+  --color-ring-track: var(--ringTrack);
+  --color-scrim: var(--scrim);
+  --color-free: var(--free);
+  --color-hatch: var(--hatch);
   --color-toast-icon: var(--toastIcon);
   --color-toast-icon-bg: var(--toast-icon-bg);
   --color-on-pri-overlay: var(--on-pri-overlay);
@@ -146,6 +162,14 @@
     transform: rotate(-3deg);
   }
 }
+
+/* Animações do web app (copiadas de design/web/source). */
+@keyframes popIn{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes toastIn{0%{opacity:0;transform:translate(-50%,-8px) scale(.85)}25%{opacity:1;transform:translate(-50%,0) scale(1)}85%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-6px) scale(.96)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes confetti{0%{opacity:1;transform:translateY(-20px) rotate(0)}100%{opacity:0;transform:translateY(360px) rotate(540deg)}}
+@keyframes dropFall{0%{opacity:0;transform:translateY(-30px)}40%{opacity:1}100%{opacity:0;transform:translateY(20px)}}
 
 @media (prefers-reduced-motion: reduce) {
   .broto-wave {
