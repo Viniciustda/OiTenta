@@ -1,4 +1,5 @@
 {
   "ENV_NAME": "developer",
-  "API_URL": "https://DEFINIR-NA-SEXTA-developer.example.com"
+  "API_URL": "https://DEFINIR-NA-SEXTA-developer.example.com",
+  "DATA_SOURCE": "http"
 }

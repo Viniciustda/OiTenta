@@ -1,6 +1,6 @@
 import '../domain/auth_user.dart';
 
-/// `POST /auth/login`, `/auth/register` e `/auth/demo` (contrato §1).
+/// `POST /auth/login`, `/auth/register`, `/auth/demo` e `GET /auth/me` (contrato §1).
 abstract class AuthRepository {
   Future<AuthSession> loginDemo();
 
@@ -12,4 +12,7 @@ abstract class AuthRepository {
     required String password,
     String? timezone,
   });
+
+  /// `GET /auth/me`: o usuário do token atual.
+  Future<AuthUser> me();
 }

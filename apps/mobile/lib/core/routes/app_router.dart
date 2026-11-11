@@ -35,6 +35,12 @@ GoRouter createRouter(
 
   return GoRouter(
     initialLocation: initialLocation,
+    // 401 em rota autenticada: o cliente HTTP expira a sessão e o app volta ao login.
+    refreshListenable: deps.session,
+    redirect: (_, s) =>
+        s.matchedLocation != AppRoutes.login && deps.session.consumeExpired()
+        ? AppRoutes.login
+        : null,
     routes: [
       GoRoute(
         path: AppRoutes.login,

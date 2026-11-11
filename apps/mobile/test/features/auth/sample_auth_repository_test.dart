@@ -28,4 +28,9 @@ void main() {
     final s = await repo.login(email: 'bia@x.com', password: 'Senha@123');
     expect(s.user.email, 'bia@x.com');
   });
+
+  test('me devolve o usuário demo', () async {
+    final u = await repo.me();
+    expect(u.name, 'Arthur');
+  });
 }

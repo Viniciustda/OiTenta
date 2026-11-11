@@ -33,4 +33,7 @@ class SampleAuthRepository implements AuthRepository {
     'email': email,
     'timezone': timezone ?? _defaultTimezone,
   });
+
+  @override
+  Future<AuthUser> me() async => AuthUser.fromJson(BoraSample.demoUser);
 }

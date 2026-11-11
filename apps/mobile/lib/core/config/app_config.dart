@@ -14,4 +14,11 @@ class AppConfig {
     'API_URL',
     defaultValue: 'http://localhost:4000',
   );
+
+  /// De onde vêm os dados: `http` (backend real, padrão) ou `sample`
+  /// (dados de exemplo do protótipo, sem rede).
+  static const String dataSource = String.fromEnvironment(
+    'DATA_SOURCE',
+    defaultValue: 'http',
+  );
 }
