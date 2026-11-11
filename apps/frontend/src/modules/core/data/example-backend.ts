@@ -11,6 +11,7 @@ import { localDate } from "../format/time.format";
 import {
   DEMO_AVAILABILITY,
   DEMO_BLOCKS,
+  DEMO_GOALS_CREATED_AT,
   DEMO_GOALS,
   DEMO_USER,
   RAMP_TEXTS,
@@ -30,6 +31,7 @@ export interface ExampleGoal extends Goal {
   short: string;
   slackDays: number | null;
   challenge: string | null;
+  createdAt: string;
   steps: GoalStep[];
 }
 
@@ -87,6 +89,7 @@ export class ExampleBackend {
       status: "active",
       slackDays: g.slackDays,
       challenge: g.challenge,
+      createdAt: DEMO_GOALS_CREATED_AT,
       steps: g.steps.map(([id, title, minutes, done], i) => ({
         id: `step-${id}`,
         order: i + 1,
@@ -199,6 +202,7 @@ export class ExampleBackend {
       status: "active",
       slackDays: null,
       challenge: null,
+      createdAt: new Date().toISOString(),
       steps: input.steps.map((s, i) => ({
         id: this.nextId("step"),
         order: i + 1,

@@ -1,8 +1,8 @@
-import { ExampleGoalsRepository } from "./example-goals.repository";
+import { repositories } from "@/modules/core/data/composition";
 import type { GoalsRepository } from "./goals.repository";
 
 export type { GoalsRepository } from "./goals.repository";
 export * from "./goals.types";
 
-// Etapa D: trocar pela implementação HTTP, sem mudar as telas.
-export const goalsRepository: GoalsRepository = new ExampleGoalsRepository();
+// Exemplo ou HTTP, escolhido no ponto único de composição (core/data/composition.ts).
+export const goalsRepository: GoalsRepository = repositories.goals;

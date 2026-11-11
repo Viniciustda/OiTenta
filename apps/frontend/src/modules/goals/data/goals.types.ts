@@ -34,7 +34,10 @@ export interface GoalListItem {
   done: number;
   total: number;
   status: GoalStatus;
+  /** null quando o objetivo está done. */
   slackDays: number | null;
+  /** Instante ISO da criação. */
+  createdAt: string;
 }
 
 export interface ListGoalsResponse {

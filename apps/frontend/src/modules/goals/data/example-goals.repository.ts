@@ -16,7 +16,7 @@ export class ExampleGoalsRepository implements GoalsRepository {
     return {
       goals: this.backend.goals.map((g) => ({
         id: g.id, title: g.title, deadline: g.deadline, colorIndex: g.colorIndex, progressPct: g.progressPct,
-        ...summary(g), status: g.status, slackDays: g.slackDays,
+        ...summary(g), status: g.status, slackDays: g.status === "done" ? null : g.slackDays, createdAt: g.createdAt,
       })),
     };
   }

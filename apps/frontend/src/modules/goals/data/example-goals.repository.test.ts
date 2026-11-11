@@ -14,6 +14,14 @@ describe("ExampleGoalsRepository — GET /goals", () => {
     ]);
     expect(goals[0].status).toBe("active");
   });
+
+  it("cada objetivo traz createdAt em ISO; um objetivo recém-criado também", async () => {
+    const repo = demo();
+    await repo.create({ title: "Novo", deadline: null, kind: "single", steps: [{ title: "Fazer", estimatedMinutes: 30, microSteps: [] }] });
+    const { goals } = await repo.list();
+    expect(goals).toHaveLength(4);
+    goals.forEach((g) => expect(new Date(g.createdAt).toISOString()).toBe(g.createdAt));
+  });
 });
 
 describe("ExampleGoalsRepository — GET /goals/:goalId", () => {
