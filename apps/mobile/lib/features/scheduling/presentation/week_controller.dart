@@ -249,7 +249,8 @@ class WeekController extends ChangeNotifier {
           for (var i = 0; i < 7; i++)
             () {
               final d = DateTime(m.year, m.month, m.day + i);
-              final inMonth = d.month == _selected.month;
+              final inMonth =
+                  d.year == _selected.year && d.month == _selected.month;
               return MonthDayView(
                 date: d,
                 weekday: BoraFormat.weekdayShort(d),
@@ -337,7 +338,8 @@ class WeekController extends ChangeNotifier {
 
   /// Dia da grade do mês; dia de fora do mês é ignorado.
   void selectDate(DateTime d) {
-    if (expanded && d.month != _selected.month) return;
+    final outOfMonth = d.year != _selected.year || d.month != _selected.month;
+    if (expanded && outOfMonth) return;
     _selected = DateTime(d.year, d.month, d.day);
     notifyListeners();
   }

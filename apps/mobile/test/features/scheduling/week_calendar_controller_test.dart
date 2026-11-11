@@ -260,4 +260,153 @@ void main() {
       expect(semGoals.legend, isEmpty);
     });
   });
+
+  group('bordas do mês', () {
+    Future<WeekController> at(DateTime now, {GoalsRepository? goals}) async {
+      final w = WeekController(
+        SampleSchedulingRepository(),
+        FixedClock(now),
+        goals: goals,
+      );
+      await w.load();
+      return w;
+    }
+
+    test('mês que começa no domingo (junho/2025) tem 6 linhas', () async {
+      final w = await at(DateTime(2025, 6, 10, 9));
+      await w.expand();
+      final weeks = w.monthWeeks;
+      expect(w.title, 'Junho');
+      expect(weeks, hasLength(6));
+      expect(weeks.first.map((d) => d.number), [26, 27, 28, 29, 30, 31, 1]);
+      expect(weeks.first.last.inMonth, isTrue);
+      expect(weeks.last.map((d) => d.number), [30, 1, 2, 3, 4, 5, 6]);
+      expect(weeks.last.first.inMonth, isTrue);
+      expect(weeks.last[1].inMonth, isFalse);
+    });
+
+    test('mês que começa na segunda (setembro/2025) tem 5 linhas', () async {
+      final w = await at(DateTime(2025, 9, 10, 9));
+      await w.expand();
+      final weeks = w.monthWeeks;
+      expect(weeks, hasLength(5));
+      expect(weeks.first.map((d) => d.number), [1, 2, 3, 4, 5, 6, 7]);
+      expect(weeks.first.every((d) => d.inMonth), isTrue);
+      expect(weeks.last.map((d) => d.number), [29, 30, 1, 2, 3, 4, 5]);
+      expect(weeks.last.skip(2).every((d) => !d.inMonth), isTrue);
+    });
+
+    test('virada de ano: semana de 29/12 a 4/1', () async {
+      final w = await at(DateTime(2026, 1, 2, 9));
+      expect(w.rangeLabel, '29 de dezembro a 4 de janeiro');
+      expect(w.days.map((d) => d.number), [29, 30, 31, 1, 2, 3, 4]);
+      expect(w.days[4].isToday, isTrue);
+      expect(w.selectedIndex, 4);
+
+      await w.expand();
+      expect(w.title, 'Janeiro');
+      final weeks = w.monthWeeks;
+      expect(weeks, hasLength(5));
+      expect(weeks.first.map((d) => d.number), [29, 30, 31, 1, 2, 3, 4]);
+      expect(weeks.first.take(3).every((d) => !d.inMonth), isTrue);
+      expect(weeks.first[4].isToday, isTrue);
+
+      // Dezembro é de fora do mês: não seleciona.
+      w.selectDate(DateTime(2025, 12, 31));
+      expect(w.selectedDate, DateTime(2026, 1, 2));
+      await w.collapse();
+      expect(w.rangeLabel, '29 de dezembro a 4 de janeiro');
+    });
+
+    test('no mês, mesmo mês de outro ano não é selecionável', () async {
+      final w = await at(DateTime(2025, 11, 6, 9));
+      await w.expand();
+      w.selectDate(DateTime(2024, 11, 20));
+      expect(w.selectedDate, DateTime(2025, 11, 6));
+      expect(w.title, 'Novembro');
+    });
+
+    test('erro ao carregar o mês: error preenchido e o mês continua', () async {
+      final w = WeekController(
+        _FailingWeeks(okStart: '2025-11-03'),
+        FixedClock(DateTime(2025, 11, 6, 9)),
+      );
+      await w.load();
+      expect(w.error, isNull);
+      await w.expand();
+      expect(w.error, isNotNull);
+      expect(w.expanded, isTrue);
+      expect(w.monthWeeks, hasLength(5));
+      // A semana já carregada continua com os pontos; as outras vazias.
+      final cells = w.monthWeeks.expand((r) => r).toList();
+      expect(cells.firstWhere((d) => d.number == 6).colorIndexes, [1, 2, 3]);
+      expect(cells.firstWhere((d) => d.number == 11).colorIndexes, isEmpty);
+      await w.collapse();
+      expect(w.expanded, isFalse);
+      expect(w.error, isNull);
+      expect(w.dayBlocks, hasLength(3));
+    });
+
+    test(
+      'erro em Prazos: error preenchido, modo trocado e nova tentativa',
+      () async {
+        final failing = _FailingGoals();
+        final w = await at(DateTime(2025, 11, 6, 9), goals: failing);
+        await w.setMode(CalendarMode.deadlines);
+        expect(w.error, isNotNull);
+        expect(w.mode, CalendarMode.deadlines);
+        expect(w.dayDeadlines, isEmpty);
+        expect(w.legend, isEmpty);
+
+        await w.setMode(CalendarMode.execution);
+        expect(w.mode, CalendarMode.execution);
+        expect(w.dayBlocks, hasLength(3));
+
+        failing.fail = false;
+        await w.setMode(CalendarMode.deadlines);
+        expect(failing.calls, 2);
+        expect(w.error, isNull);
+        expect(w.legend.map((l) => l.title), [
+          'Eng. de Software',
+          'Cálculo II',
+        ]);
+      },
+    );
+  });
+}
+
+/// Só a semana [okStart] responde; as outras falham.
+class _FailingWeeks extends SampleSchedulingRepository {
+  _FailingWeeks({required this.okStart});
+
+  final String okStart;
+
+  @override
+  Future<WeekPlan> getWeekPlan(String start) {
+    if (start != okStart) throw Exception('falha de rede');
+    return super.getWeekPlan(start);
+  }
+}
+
+/// `GET /goals` que falha até [fail] virar false.
+class _FailingGoals implements GoalsRepository {
+  bool fail = true;
+  int calls = 0;
+
+  @override
+  Future<List<GoalSummary>> listGoals() async {
+    calls++;
+    if (fail) throw Exception('falha de rede');
+    return [
+      _goal('g-eng', 'Eng. de Software', '2025-11-20', 1, 62),
+      _goal('g-calc', 'Cálculo II', '2025-11-27', 2, 30),
+    ];
+  }
+
+  @override
+  Future<GoalDetail> getGoal(String goalId) => throw UnimplementedError();
+
+  @override
+  Future<CreateGoalResult> createGoal(NewGoal goal) =>
+      throw UnimplementedError();
 }
