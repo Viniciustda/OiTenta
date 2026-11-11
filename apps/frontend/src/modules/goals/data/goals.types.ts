@@ -3,6 +3,7 @@ import type { PlanSummary } from "@/modules/core/data/plan-summary.types";
 // Tipos de docs/4-contrato-api.md §3.
 export type GoalKind = "goal" | "single";
 export type GoalStatus = "active" | "done";
+export type GoalSource = "manual" | "ai";
 export type StepStatus = "pending" | "done" | "superseded";
 
 export interface GoalStep {
@@ -34,7 +35,10 @@ export interface GoalListItem {
   done: number;
   total: number;
   status: GoalStatus;
+  /** null quando o objetivo está done. */
   slackDays: number | null;
+  /** Instante ISO da criação. */
+  createdAt: string;
 }
 
 export interface ListGoalsResponse {
@@ -58,8 +62,19 @@ export interface GoalStepDetail {
   nextBlock?: StepNextBlock;
 }
 
+/** Cabeçalho do objetivo em GET /goals/:goalId (GoalHeaderResponse do backend): sem progressPct, que vem na raiz. */
+export interface GoalHeader {
+  id: string;
+  title: string;
+  deadline: string | null;
+  kind: GoalKind;
+  colorIndex: number;
+  source: GoalSource;
+  status: GoalStatus;
+}
+
 export interface GetGoalResponse {
-  goal: Goal;
+  goal: GoalHeader;
   steps: GoalStepDetail[];
   progressPct: number;
   done: number;

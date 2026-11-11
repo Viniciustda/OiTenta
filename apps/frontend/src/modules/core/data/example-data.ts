@@ -12,6 +12,9 @@ export const DEMO_USER = {
 
 export const DEMO_TODAY = "2026-11-16";
 
+/** Criação dos objetivos de exemplo: uma semana antes do "hoje" do protótipo (o protótipo não define). */
+export const DEMO_GOALS_CREATED_AT = "2026-11-09T12:00:00.000Z";
+
 /** Data local do dia d do protótipo (dia 0 = 16/11/2026). */
 export const protoDate = (day: number) => new Date(Date.UTC(2026, 10, 16 + day)).toISOString().slice(0, 10);
 

@@ -10,6 +10,7 @@ import { SchedulingModule } from './modules/scheduling/scheduling.module';
 import { ActivationModule } from './modules/activation/activation.module';
 import { GamificationModule } from './modules/gamification/gamification.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { OrchestratorsModule } from './orchestrators/orchestrators.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     ActivationModule,
     GamificationModule,
     NotificationsModule,
+    OrchestratorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

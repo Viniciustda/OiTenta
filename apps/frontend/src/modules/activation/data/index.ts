@@ -1,8 +1,8 @@
+import { repositories } from "@/modules/core/data/composition";
 import type { ActivationRepository } from "./activation.repository";
-import { ExampleActivationRepository } from "./example-activation.repository";
 
 export type { ActivationRepository } from "./activation.repository";
 export * from "./activation.types";
 
-// Etapa D: trocar pela implementação HTTP, sem mudar as telas.
-export const activationRepository: ActivationRepository = new ExampleActivationRepository();
+// Exemplo ou HTTP, escolhido no ponto único de composição (core/data/composition.ts).
+export const activationRepository: ActivationRepository = repositories.activation;

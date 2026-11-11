@@ -1,0 +1,310 @@
+@baseUrl = http://localhost:4000
+@scenarioVersion = {{$timestamp}}
+@password = Senha@123
+# Rotas dos orquestradores (C4). Rode na ordem: os ids vêm das respostas anteriores.
+@goalId = {{createGoal.response.body.$.goal.id}}
+@stepId = {{createGoal.response.body.$.goal.steps[0].id}}
+
+### Cadastro do dono → 201
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ana Souza",
+  "email": "orq.dono.{{scenarioVersion}}@bora.app",
+  "password": "{{password}}"
+}
+
+### Login do dono → 200 com token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{register.request.body.$.email}}",
+  "password": "{{password}}"
+}
+
+### Cadastro de outro usuário → 201
+# @name registerOther
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Bruno Lima",
+  "email": "orq.outro.{{scenarioVersion}}@bora.app",
+  "password": "{{password}}"
+}
+
+### Login do outro usuário → 200 com token
+# @name loginOther
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{registerOther.request.body.$.email}}",
+  "password": "{{password}}"
+}
+
+### Dia antes do onboarding → 404 (P12)
+GET {{baseUrl}}/scheduling/plan/day?date=2026-11-16
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Objetivo antes do onboarding → 404 (P12), nada é gravado
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "title": "Trabalho de Algoritmos",
+  "deadline": "2026-11-24",
+  "kind": "goal",
+  "steps": [{ "title": "Ler o enunciado", "estimatedMinutes": 30 }]
+}
+
+### Lista antes do onboarding → 200 { goals: [] }
+GET {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Onboarding do dono → 200 { availability, plan }
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "windows": [
+    { "weekday": 0, "startMinute": 1140, "endMinute": 1380 },
+    { "weekday": 1, "startMinute": 1140, "endMinute": 1380 },
+    { "weekday": 2, "startMinute": 1140, "endMinute": 1380 },
+    { "weekday": 3, "startMinute": 1140, "endMinute": 1380 },
+    { "weekday": 4, "startMinute": 1140, "endMinute": 1380 },
+    { "weekday": 5, "startMinute": 1140, "endMinute": 1380 },
+    { "weekday": 6, "startMinute": 1140, "endMinute": 1380 }
+  ],
+  "dailyLimitMinutes": 180
+}
+
+### Onboarding com userId no corpo → 400
+PUT {{baseUrl}}/scheduling/availability
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "windows": [{ "weekday": 0, "startMinute": 1140, "endMinute": 1380 }],
+  "dailyLimitMinutes": 180,
+  "userId": "{{loginOther.response.body.$.user.id}}"
+}
+
+### Novo objetivo → 201 { goal, plan }
+# @name createGoal
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "title": "Trabalho de Algoritmos",
+  "deadline": "2026-11-24",
+  "kind": "goal",
+  "steps": [
+    { "title": "Ler o enunciado e listar requisitos", "estimatedMinutes": 30, "microSteps": ["Abrir o PDF"] },
+    { "title": "Montar o esqueleto", "estimatedMinutes": 60 }
+  ]
+}
+
+### Objetivo sem etapas → 422
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "title": "Vazio", "kind": "goal", "steps": [] }
+
+### Objetivo com userId no corpo → 400
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "title": "Intruso",
+  "kind": "single",
+  "steps": [{ "title": "Etapa", "estimatedMinutes": 30 }],
+  "userId": "{{loginOther.response.body.$.user.id}}"
+}
+
+### Objetivo sem token → 401
+POST {{baseUrl}}/goals
+Content-Type: application/json
+
+{ "title": "Sem token", "kind": "single", "steps": [{ "title": "Etapa", "estimatedMinutes": 30 }] }
+
+### Lista do dono → 200 { goals[…slackDays, createdAt] }
+GET {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Lista do outro usuário → 200 sem os objetivos do dono
+GET {{baseUrl}}/goals
+Authorization: Bearer {{loginOther.response.body.$.token}}
+
+### Lista sem token → 401
+GET {{baseUrl}}/goals
+
+### Detalhe do dono → 200 { goal, steps[…remainingMinutes, nextBlock?], progressPct, done, total }
+GET {{baseUrl}}/goals/{{goalId}}
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Detalhe pedido por outro usuário → 404
+GET {{baseUrl}}/goals/{{goalId}}
+Authorization: Bearer {{loginOther.response.body.$.token}}
+
+### Detalhe inexistente → 404
+GET {{baseUrl}}/goals/11111111-1111-4111-8111-111111111111
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Detalhe com id malformado → 400
+GET {{baseUrl}}/goals/nao-e-uuid
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Detalhe sem token → 401
+GET {{baseUrl}}/goals/{{goalId}}
+
+### Plano do dia → 200 { date, blocks[…goalTitle, colorIndex, stepTitle], usedMinutes, limitMinutes }
+GET {{baseUrl}}/scheduling/plan/day?date=2026-11-16
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Data malformada → 400
+GET {{baseUrl}}/scheduling/plan/day?date=xyz
+Authorization: Bearer {{login.response.body.$.token}}
+
+### userId na query → 400
+GET {{baseUrl}}/scheduling/plan/day?date=2026-11-16&userId={{loginOther.response.body.$.user.id}}
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Dia sem token → 401
+GET {{baseUrl}}/scheduling/plan/day?date=2026-11-16
+
+### Semana (segunda) → 200 { days[7] }
+GET {{baseUrl}}/scheduling/plan/week?start=2026-11-16
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Semana começando numa quarta → 422
+GET {{baseUrl}}/scheduling/plan/week?start=2026-11-18
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Semana com data malformada → 400
+GET {{baseUrl}}/scheduling/plan/week?start=xyz
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Semana do outro usuário sem onboarding → 404
+GET {{baseUrl}}/scheduling/plan/week?start=2026-11-16
+Authorization: Bearer {{loginOther.response.body.$.token}}
+
+### Semana sem token → 401
+GET {{baseUrl}}/scheduling/plan/week?start=2026-11-16
+
+### Rampa → 200 { steps[5], suggested: 'micro' }
+GET {{baseUrl}}/activation/ramp?goalId={{goalId}}&stepId={{stepId}}&energy=high&availableTime=30m
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Rampa elétrica sem availableTime (web) → 200 { suggested: 'focus' }
+GET {{baseUrl}}/activation/ramp?goalId={{goalId}}&stepId={{stepId}}&energy=electric
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Rampa com objetivo de outro usuário → 404
+GET {{baseUrl}}/activation/ramp?goalId={{goalId}}&stepId={{stepId}}&energy=high
+Authorization: Bearer {{loginOther.response.body.$.token}}
+
+### Etapa que não é do objetivo → 404
+GET {{baseUrl}}/activation/ramp?goalId={{goalId}}&stepId=11111111-1111-4111-8111-111111111111&energy=high
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Energia inválida → 400
+GET {{baseUrl}}/activation/ramp?goalId={{goalId}}&stepId={{stepId}}&energy=xyz
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Rampa sem token → 401
+GET {{baseUrl}}/activation/ramp?goalId={{goalId}}&stepId={{stepId}}&energy=high
+
+### Registrar parcial sem bloco → 201 { session, step, goalProgressPct, plan }
+POST {{baseUrl}}/activation/sessions
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "goalId": "{{goalId}}",
+  "stepId": "{{stepId}}",
+  "energy": "medium",
+  "availableTime": "30m",
+  "startedAt": "2026-11-10T22:00:00.000Z",
+  "endedAt": "2026-11-10T22:25:00.000Z",
+  "focusedMinutes": 25,
+  "outcome": "partial",
+  "partialPct": 70
+}
+
+### Registrar parcial sem % → 422
+POST {{baseUrl}}/activation/sessions
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "goalId": "{{goalId}}",
+  "stepId": "{{stepId}}",
+  "energy": "medium",
+  "startedAt": "2026-11-10T22:00:00.000Z",
+  "endedAt": "2026-11-10T22:25:00.000Z",
+  "focusedMinutes": 25,
+  "outcome": "partial"
+}
+
+### Outro usuário registra com a etapa do dono → 404, nada é gravado
+POST {{baseUrl}}/activation/sessions
+Authorization: Bearer {{loginOther.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "goalId": "{{goalId}}",
+  "stepId": "{{stepId}}",
+  "energy": "medium",
+  "startedAt": "2026-11-10T22:00:00.000Z",
+  "endedAt": "2026-11-10T22:25:00.000Z",
+  "focusedMinutes": 25,
+  "outcome": "done"
+}
+
+### Bloco inexistente → 404 "Bloco não encontrado.", nada é gravado
+POST {{baseUrl}}/activation/sessions
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "goalId": "{{goalId}}",
+  "stepId": "{{stepId}}",
+  "blockId": "11111111-1111-4111-8111-111111111111",
+  "energy": "medium",
+  "startedAt": "2026-11-10T22:00:00.000Z",
+  "endedAt": "2026-11-10T22:25:00.000Z",
+  "focusedMinutes": 25,
+  "outcome": "done"
+}
+
+### Registrar com userId no corpo → 400
+POST {{baseUrl}}/activation/sessions
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "goalId": "{{goalId}}",
+  "stepId": "{{stepId}}",
+  "energy": "medium",
+  "startedAt": "2026-11-10T22:00:00.000Z",
+  "endedAt": "2026-11-10T22:25:00.000Z",
+  "focusedMinutes": 25,
+  "outcome": "done",
+  "userId": "{{loginOther.response.body.$.user.id}}"
+}
+
+### Registrar sem token → 401
+POST {{baseUrl}}/activation/sessions
+Content-Type: application/json
+
+{}

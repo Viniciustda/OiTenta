@@ -49,7 +49,8 @@ export interface GetRampInput {
 export interface RecordSessionInput {
   goalId: string;
   stepId: string;
-  blockId: string | null;
+  /** Opcional no corpo: sem bloco (rampa aberta fora da timeline), o campo não é enviado. */
+  blockId?: string | null;
   energy: EnergyLevel;
   availableTime: AvailableTime | null;
   startedAt: string;

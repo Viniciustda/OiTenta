@@ -14,6 +14,14 @@ describe("ExampleGoalsRepository — GET /goals", () => {
     ]);
     expect(goals[0].status).toBe("active");
   });
+
+  it("cada objetivo traz createdAt em ISO; um objetivo recém-criado também", async () => {
+    const repo = demo();
+    await repo.create({ title: "Novo", deadline: null, kind: "single", steps: [{ title: "Fazer", estimatedMinutes: 30, microSteps: [] }] });
+    const { goals } = await repo.list();
+    expect(goals).toHaveLength(4);
+    goals.forEach((g) => expect(new Date(g.createdAt).toISOString()).toBe(g.createdAt));
+  });
 });
 
 describe("ExampleGoalsRepository — GET /goals/:goalId", () => {
@@ -22,6 +30,8 @@ describe("ExampleGoalsRepository — GET /goals/:goalId", () => {
     const { goals } = await repo.list();
     const res = await repo.get(goals[0].id);
     expect(res.goal.title).toBe("Trabalho de Eng. Software");
+    // GoalHeader (GoalHeaderResponse do backend): com source, sem progressPct (o % vem na raiz).
+    expect(res.goal).toEqual({ id: goals[0].id, title: "Trabalho de Eng. Software", deadline: "2026-11-20", kind: "goal", colorIndex: 1, source: "manual", status: "active" });
     expect(res.progressPct).toBe(62);
     expect(res.done).toBe(4);
     expect(res.total).toBe(7);

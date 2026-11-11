@@ -13,7 +13,7 @@ import { configureApp } from '../src/app.setup';
 import { PrismaFocusSessionRepository } from '../src/modules/activation/focus-session.prisma';
 
 // Integração do activation contra o banco local (docs/3-modelagem-dominio.md §4). Exige o Postgres no ar.
-// GET /activation/ramp e POST /activation/sessions ficam para a C4 (orquestradores).
+// As rotas GET /activation/ramp e POST /activation/sessions estão em ramp.e2e-spec.ts e sessions.e2e-spec.ts (C4).
 interface LoginBody {
   token: string;
   user: { id: string };

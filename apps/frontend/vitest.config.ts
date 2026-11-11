@@ -9,5 +9,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     include: ["src/**/*.test.{ts,tsx}"],
+    // Os testes de tela usam os dados de exemplo; os repositórios HTTP são testados com fetch simulado.
+    env: { NEXT_PUBLIC_DATA_SOURCE: "example" },
   },
 });

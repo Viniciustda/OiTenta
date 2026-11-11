@@ -164,7 +164,7 @@ Resposta 201:
 ### `GET /scheduling/plan/day?date=YYYY-MM-DD`
 
 - **Resposta:** 200 `{ date, blocks[{id, start, end, status, goalId, goalTitle, colorIndex, stepId, stepTitle}], usedMinutes, limitMinutes }`.
-- **Erros:** 400 (data malformada), 401, 404 (sem disponibilidade cadastrada, P12).
+- **Erros:** 400 (data malformada), 401, 404 (sem disponibilidade cadastrada, P12). Data no formato certo mas inexistente no calendário (ex.: `2026-02-30`) → 422.
 - **Caso de uso:** `GetDayPlan` + `ListGoals` (orquestrador `day-view`).
 - **Telas:** web W12 (timeline do Hoje); mobile M01 (timeline do Hoje).
 
@@ -198,7 +198,7 @@ As visões Prazos, Mês e Dia (W17–W20, M20–M21) e as ações do detalhe do 
 
 ### `GET /activation/ramp?goalId=…&stepId=…&energy=…&availableTime=…`
 
-- **Resposta:** 200 `{ steps[5]{kind, options[{id, stepKind, title, durationLabel, durationSeconds?, description, icon, steps?, operation?, problems?[{a, b, op}]}]}, suggested }`. Data no formato certo mas inexistente no calendário → 422.
+- **Resposta:** 200 `{ steps[5]{kind, options[{id, stepKind, title, durationLabel, durationSeconds?, description, icon, steps?, operation?, problems?[{a, b, op}]}]}, suggested }`.
 - **Erros:** 400 (`energy` inválida), 401, 404 (objetivo ou etapa inexistente ou de outro usuário).
 - **Caso de uso:** `GetGoal` → `BuildRamp` (orquestrador `ramp`).
 - **Telas:**
