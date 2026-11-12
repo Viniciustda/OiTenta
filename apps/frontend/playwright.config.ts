@@ -23,6 +23,8 @@ export default defineConfig({
       name: "backend",
       cwd: "../backend",
       command: "npx turbo run build --filter=@oitenta/backend && node dist/main",
+      // Ponta a ponta sempre com o motor de regras, sem rede (IA6), mesmo que o .env aponte para um LLM.
+      env: { AI_PROVIDER: "rules", AI_FALLBACK: "rules" },
       url: "http://localhost:4000/docs",
       reuseExistingServer: false,
       timeout: 180_000,

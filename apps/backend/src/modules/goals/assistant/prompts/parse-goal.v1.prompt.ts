@@ -16,4 +16,4 @@ Extraia do texto:
 - "requirements": lista com até 6 requisitos curtos (até 60 caracteres cada) citados no texto. Lista vazia se não houver.
 
 Responda somente com um objeto JSON, sem texto antes ou depois, exatamente neste formato:
-{"title": "Trabalho de Algoritmos", "deadline": "2026-11-24", "category": "assignment", "requirements": ["3 algoritmos de ordenação", "comparação"]}`;
+{"title": "<título curto>" ou null, "deadline": "YYYY-MM-DD" ou null, "category": "assignment" | "exam" | "project" | "generic", "requirements": ["<requisito curto>", ...]}`;
