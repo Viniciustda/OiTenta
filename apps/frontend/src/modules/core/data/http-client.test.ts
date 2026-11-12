@@ -94,6 +94,13 @@ describe("HttpClient", () => {
     stubFetch({ status: 204 });
     expect(await setup().client.post("/r", {})).toBeUndefined();
   });
+
+  it("repassa ao fetch o signal de cancelamento, quando informado", async () => {
+    const fetch = stubFetch({ status: 200, body: {} });
+    const controller = new AbortController();
+    await setup().client.post("/r", {}, { signal: controller.signal });
+    expect(fetch.mock.calls[0][1]?.signal).toBe(controller.signal);
+  });
 });
 
 describe("LocalStorageTokenStore", () => {

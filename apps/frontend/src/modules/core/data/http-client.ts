@@ -58,6 +58,8 @@ export interface RequestOptions {
   body?: unknown;
   /** false nas rotas públicas (register, login, demo): sem Bearer e sem redirecionar no 401. */
   auth?: boolean;
+  /** Cancela a chamada (ex.: timeout do rascunho da IA). */
+  signal?: AbortSignal;
 }
 
 export interface HttpClientOptions {
@@ -96,7 +98,7 @@ export class HttpClient {
     return this.request<T>("PUT", path, { ...options, body });
   }
 
-  async request<T>(method: string, path: string, { query, body, auth = true }: RequestOptions = {}): Promise<T> {
+  async request<T>(method: string, path: string, { query, body, auth = true, signal }: RequestOptions = {}): Promise<T> {
     const url = new URL(`${this.baseUrl}${path}`);
     Object.entries(query ?? {}).forEach(([k, v]) => {
       if (v != null) url.searchParams.set(k, v);
@@ -106,7 +108,7 @@ export class HttpClient {
     const token = auth ? this.tokens.get() : null;
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const res = await fetch(url.toString(), { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+    const res = await fetch(url.toString(), { method, headers, body: body === undefined ? undefined : JSON.stringify(body), ...(signal ? { signal } : {}) });
     const text = await res.text();
     const data = parse(text);
 

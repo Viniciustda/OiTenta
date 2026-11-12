@@ -84,6 +84,8 @@ export interface GetGoalResponse {
 export interface CreateGoalStepInput {
   title: string;
   estimatedMinutes: number;
+  /** Estimativa original da IA (IA1); null na etapa acrescentada pelo usuário. Ausente no objetivo manual. */
+  aiEstimatedMinutes?: number | null;
   microSteps: string[];
 }
 
@@ -91,7 +93,38 @@ export interface CreateGoalInput {
   title: string;
   deadline: string | null;
   kind: GoalKind;
+  /** "ai" quando veio do rascunho da IA (IA1); ausente = "manual" no backend. */
+  source?: GoalSource;
   steps: CreateGoalStepInput[];
+}
+
+// POST /goals/assistant/draft (IA1, docs/4-contrato-api.md §3).
+export type GoalCategory = "assignment" | "exam" | "project" | "generic";
+export type GoalDraftField = "title" | "deadline";
+export type AssistantEngine = "llm" | "rules";
+
+export interface GoalDraftStep {
+  title: string;
+  estimatedMinutes: number;
+  aiEstimatedMinutes: number;
+  microSteps: string[];
+}
+
+export interface GoalDraft {
+  title: string | null;
+  /** YYYY-MM-DD ou null quando o texto não traz prazo (IA2). */
+  deadline: string | null;
+  category: GoalCategory;
+  requirements: string[];
+  /** Informativo (IA2): a W30 mostra o campo vazio. */
+  missingFields: GoalDraftField[];
+  steps: GoalDraftStep[];
+  totalMinutes: number;
+}
+
+export interface DraftGoalResponse {
+  draft: GoalDraft;
+  engine: AssistantEngine;
 }
 
 export interface CreateGoalResponse {

@@ -3,7 +3,9 @@ import { ExampleActivationRepository } from "@/modules/activation/data/example-a
 import { HttpActivationRepository } from "@/modules/activation/data/http-activation.repository";
 import { ExampleAuthRepository } from "@/modules/auth/data/example-auth.repository";
 import { HttpAuthRepository } from "@/modules/auth/data/http-auth.repository";
+import { ExampleGoalAssistantRepository } from "@/modules/goals/data/example-goal-assistant.repository";
 import { ExampleGoalsRepository } from "@/modules/goals/data/example-goals.repository";
+import { HttpGoalAssistantRepository } from "@/modules/goals/data/http-goal-assistant.repository";
 import { HttpGoalsRepository } from "@/modules/goals/data/http-goals.repository";
 import { ExampleSchedulingRepository } from "@/modules/scheduling/data/example-scheduling.repository";
 import { HttpSchedulingRepository } from "@/modules/scheduling/data/http-scheduling.repository";
@@ -67,5 +69,12 @@ describe("composição: preferências (W26)", () => {
   it("settings usa o repositório de exemplo nas duas fontes: o contrato não tem tema nem e-mail diário", () => {
     expect(createRepositories("example").settings).toBeInstanceOf(ExampleSettingsRepository);
     expect(createRepositories("http").settings).toBeInstanceOf(ExampleSettingsRepository);
+  });
+});
+
+describe("composição: assistente do novo objetivo (IA1, W27–W30)", () => {
+  it("example monta o assistente de exemplo; http monta o assistente HTTP", () => {
+    expect(createRepositories("example").goalAssistant).toBeInstanceOf(ExampleGoalAssistantRepository);
+    expect(createRepositories("http").goalAssistant).toBeInstanceOf(HttpGoalAssistantRepository);
   });
 });

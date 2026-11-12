@@ -172,6 +172,7 @@
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes confetti{0%{opacity:1;transform:translateY(-20px) rotate(0)}100%{opacity:0;transform:translateY(360px) rotate(540deg)}}
 @keyframes dropFall{0%{opacity:0;transform:translateY(-30px)}40%{opacity:1}100%{opacity:0;transform:translateY(20px)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 @media (prefers-reduced-motion: reduce) {
   .broto-wave {

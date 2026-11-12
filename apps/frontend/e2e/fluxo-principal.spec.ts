@@ -103,6 +103,7 @@ test("fluxo principal: login demo → onboarding → objetivo → plano → ramp
     await page.getByRole("button", { name: "Novo objetivo" }).click();
     const dialog = page.getByRole("dialog", { name: "Novo objetivo" });
     await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Prefiro preencher à mão" }).click();
     await dialog.getByLabel("Objetivo", { exact: true }).fill(goalTitle);
     await dialog.getByLabel("Entrega", { exact: true }).fill(deadline);
     for (let i = 0; i < steps.length; i++) {

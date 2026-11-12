@@ -41,6 +41,7 @@ describe("Hoje: \"Novo objetivo\" abre o modal sempre (regressão)", () => {
     render(<TodayPage />);
     await novoObjetivo();
     expect(await screen.findByRole("dialog", { name: "Novo objetivo" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Prefiro preencher à mão" }));
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Voltar" })));
     expect(screen.queryByRole("dialog", { name: "Novo objetivo" })).toBeNull();
 
@@ -53,6 +54,7 @@ describe("Hoje: \"Novo objetivo\" abre o modal sempre (regressão)", () => {
     for (const title of ["Trabalho de Algoritmos", "Prova de Física"]) {
       await novoObjetivo();
       const dialog = await screen.findByRole("dialog", { name: "Novo objetivo" });
+      fireEvent.click(screen.getByRole("button", { name: "Prefiro preencher à mão" }));
       expect((screen.getByLabelText("Objetivo") as HTMLInputElement).value).toBe("");
       fireEvent.change(screen.getByLabelText("Objetivo"), { target: { value: title } });
       fireEvent.click(screen.getByRole("button", { name: "Adicionar etapa" }));
@@ -66,12 +68,14 @@ describe("Hoje: \"Novo objetivo\" abre o modal sempre (regressão)", () => {
   it("depois de cadastrar, voltar e fechar, o botão ainda abre o modal", async () => {
     render(<TodayPage />);
     await novoObjetivo();
+    fireEvent.click(await screen.findByRole("button", { name: "Prefiro preencher à mão" }));
     fireEvent.change(await screen.findByLabelText("Objetivo"), { target: { value: "Trabalho de Algoritmos" } });
     fireEvent.click(screen.getByRole("button", { name: "Adicionar etapa" }));
     fireEvent.change(screen.getByLabelText("Etapa 1"), { target: { value: "Começar" } });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Encaixar no meu calendário" })));
     // "Voltar" do navegador: a URL volta a ser /hoje?novo=1 e o modal reaparece; o usuário fecha.
     await novoObjetivo();
+    fireEvent.click(await screen.findByRole("button", { name: "Prefiro preencher à mão" }));
     await act(async () => fireEvent.click(await screen.findByRole("button", { name: "Voltar" })));
     expect(screen.queryByRole("dialog", { name: "Novo objetivo" })).toBeNull();
 
