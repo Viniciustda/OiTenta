@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 // Avaliação rápida do assistente do novo objetivo (docs/7-proposta-ia.md §e.3, tarefa 10).
 // Roda os textos de referência no motor configurado pelo .env (ou pelas variáveis da linha
 // de comando, que têm prioridade) e imprime uma tabela em Markdown para a decisão de sexta.
@@ -9,6 +8,7 @@
 //
 // Nunca imprime a chave. Não grava nada no banco.
 import 'dotenv/config';
+import { Logger } from '@nestjs/common';
 import {
   createGoalAssistant,
   readAiSettings,
@@ -33,6 +33,8 @@ const TIMEZONE = 'America/Sao_Paulo';
 const cell = (value: string) => value.replace(/\|/g, '\\|');
 
 async function main(): Promise<void> {
+  // A tabela vai para o stdout; as linhas de log do adaptador (um por chamada) sujariam o Markdown.
+  Logger.overrideLogger(['error']);
   const settings = readAiSettings((key) => process.env[key]);
   const rules = new RulesGoalAssistantProvider();
   const runner = new GoalDraftRunner(
@@ -94,4 +96,8 @@ async function main(): Promise<void> {
   console.log(details.join('\n'));
 }
 
-void main();
+main().catch((error: unknown) => {
+  // Erro de configuração (ex.: AI_PROVIDER inválido): só a mensagem, que nunca traz a chave.
+  console.error((error as Error).message);
+  process.exitCode = 1;
+});

@@ -24,9 +24,20 @@ export interface AiSettings {
 }
 
 export const DEFAULT_AI_TIMEOUT_MS = 15_000;
+/** Teto: acima de ~24 dias o setTimeout do Node dispara na hora; 2 min já é demais para o usuário esperar. */
+export const MAX_AI_TIMEOUT_MS = 120_000;
 
 const PROVIDERS: readonly AiProviderName[] = ['rules', 'openai-compatible'];
 const FALLBACKS: readonly AiFallback[] = ['rules', 'none'];
+
+function isHttpUrl(value: string): boolean {
+  try {
+    const { protocol } = new URL(value);
+    return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
 
 /** Lê e valida as variáveis AI_* (vazio conta como ausente). */
 export function readAiSettings(
@@ -48,13 +59,20 @@ export function readAiSettings(
       'AI_PROVIDER=openai-compatible exige AI_BASE_URL e AI_MODEL.',
     );
   }
+  if (provider === 'openai-compatible' && !isHttpUrl(baseUrl)) {
+    throw new Error('AI_BASE_URL inválida: use http:// ou https://.');
+  }
 
   const rawTimeout = read('AI_TIMEOUT_MS');
   const timeoutMs =
     rawTimeout === undefined ? DEFAULT_AI_TIMEOUT_MS : Number(rawTimeout);
-  if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) {
+  if (
+    !Number.isInteger(timeoutMs) ||
+    timeoutMs <= 0 ||
+    timeoutMs > MAX_AI_TIMEOUT_MS
+  ) {
     throw new Error(
-      'AI_TIMEOUT_MS deve ser um inteiro positivo (milissegundos).',
+      `AI_TIMEOUT_MS deve ser um inteiro entre 1 e ${MAX_AI_TIMEOUT_MS} (milissegundos).`,
     );
   }
 

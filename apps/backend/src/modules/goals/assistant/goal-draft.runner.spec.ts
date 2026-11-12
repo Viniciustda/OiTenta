@@ -152,9 +152,13 @@ describe('GoalDraftRunner', () => {
 
     await runner.run(INPUT);
 
-    expect(logger.warn.mock.calls[0][0]).toMatch(
-      /^assistant op=draft provider=openai-compatible model=m ms=\d+ outcome=assistant\.unavailable fallback=rules$/,
-    );
-    expect(logger.warn.mock.calls.flat().join(' ')).not.toContain('Algoritmos');
+    // Uma linha só; a âncora da regex garante que o texto do usuário não está nela.
+    expect(logger.warn.mock.calls).toEqual([
+      [
+        expect.stringMatching(
+          /^assistant op=draft provider=openai-compatible model=m ms=\d+ outcome=assistant\.unavailable fallback=rules$/,
+        ),
+      ],
+    ]);
   });
 });

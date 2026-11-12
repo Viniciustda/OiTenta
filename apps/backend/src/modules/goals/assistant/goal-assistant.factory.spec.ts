@@ -46,6 +46,12 @@ describe('readAiSettings', () => {
     });
   });
 
+  test('AI_TIMEOUT_MS no teto (120000) é aceito', () => {
+    expect(readAiSettings(env({ AI_TIMEOUT_MS: '120000' })).timeoutMs).toBe(
+      120_000,
+    );
+  });
+
   test('valores vazios contam como ausentes', () => {
     expect(
       readAiSettings(
@@ -70,24 +76,43 @@ describe('readAiSettings', () => {
     ).toThrow('AI_PROVIDER=openai-compatible exige AI_BASE_URL e AI_MODEL.');
   });
 
-  test('erro de configuração nunca mostra a chave', () => {
-    let message = '';
-    try {
+  test('erro de configuração com chave preenchida não mostra a chave', () => {
+    expect(() =>
       readAiSettings(
         env({ AI_PROVIDER: 'openai-compatible', AI_API_KEY: SECRET }),
-      );
-    } catch (error) {
-      message = (error as Error).message;
-    }
-
-    expect(message.includes(SECRET)).toBe(false);
+      ),
+    ).toThrow(/^AI_PROVIDER=openai-compatible exige AI_BASE_URL e AI_MODEL\.$/);
   });
 
-  test.each([['0'], ['-5'], ['abc'], ['1.5']])(
+  test.each([
+    [{ AI_BASE_URL: 'http://localhost:11434/v1' }],
+    [{ AI_MODEL: 'modelo-x' }],
+  ])('openai-compatible com só uma das duas (%p) → erro', (values) => {
+    expect(() =>
+      readAiSettings(env({ AI_PROVIDER: 'openai-compatible', ...values })),
+    ).toThrow('AI_PROVIDER=openai-compatible exige AI_BASE_URL e AI_MODEL.');
+  });
+
+  test.each([['localhost:11434/v1'], ['ftp://x/v1'], ['não é url']])(
+    'AI_BASE_URL %p → erro de URL inválida',
+    (url) => {
+      expect(() =>
+        readAiSettings(
+          env({
+            AI_PROVIDER: 'openai-compatible',
+            AI_BASE_URL: url,
+            AI_MODEL: 'modelo-x',
+          }),
+        ),
+      ).toThrow('AI_BASE_URL inválida: use http:// ou https://.');
+    },
+  );
+
+  test.each([['0'], ['-5'], ['abc'], ['1.5'], ['120001'], ['3000000000']])(
     'AI_TIMEOUT_MS %p → erro',
     (value) => {
       expect(() => readAiSettings(env({ AI_TIMEOUT_MS: value }))).toThrow(
-        'AI_TIMEOUT_MS deve ser um inteiro positivo (milissegundos).',
+        'AI_TIMEOUT_MS deve ser um inteiro entre 1 e 120000 (milissegundos).',
       );
     },
   );

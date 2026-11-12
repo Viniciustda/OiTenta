@@ -101,6 +101,10 @@ describe('goals: assistente do novo objetivo (integração)', () => {
     await app.close();
   });
 
+  it('a integração roda com o motor de regras, mesmo com outro AI_PROVIDER no .env (IA6)', () => {
+    expect(app.get<AiSettings>(AI_SETTINGS).provider).toBe('rules');
+  });
+
   it('texto de referência → 200 com o rascunho do modelo assignment (rules)', async () => {
     const res = await draft(app, token, { text: REFERENCE_TEXT });
     const body = res.body as DraftBody;
