@@ -61,12 +61,32 @@ npm --workspace apps/backend run db:reset-demo
 
 1. **Entrar:** clique em **Entrar direto como Arthur (demo)**. Sem grade cadastrada, você vai para o **onboarding**.
 2. **Onboarding:** pinte horários livres na grade, ajuste o limite diário e conclua. Você chega ao **Hoje**.
-3. **Novo objetivo:** no Hoje, abra o novo objetivo. A tela começa vazia (P20). Preencha título, prazo (cerca de 2 semanas à frente) e 2 etapas, e clique em **Encaixar no meu calendário**.
+3. **Novo objetivo:** no Hoje, abra o novo objetivo e clique em **Prefiro preencher à mão** (ou siga a seção "Novo objetivo com a IA" abaixo). A tela começa vazia (P20). Preencha título, prazo (cerca de 2 semanas à frente) e 2 etapas, e clique em **Encaixar no meu calendário**.
 4. **Plano:** os blocos aparecem no Hoje (se houver horário livre ainda hoje) e no **Calendário**.
 5. **Rampa:** no Hoje, faça o check-in de energia (Baixa, Média, Alta ou Elétrico) e clique em **Vamos começar?**. A rampa abre no degrau sugerido (P14).
    - Se o dia não tiver bloco, abra a rampa pela trilha do objetivo (**Começar próxima etapa**).
 6. **Registrar:** termine o foco e escolha **Concluí**, **Parcial** ou **Não rolou**. Aparece a celebração com o novo percentual e depois o modal "7 dias regados" (valores fixos, P18).
 7. **Plano recalculado:** no Hoje, o bloco aparece como **Concluída** e o percentual do objetivo sobe. Na trilha aparecem "1/2 concluídas" e o horário da próxima etapa.
+
+
+### Novo objetivo com a IA (W27 → W29 → W30)
+
+Desde 12/11/2026 o **Novo objetivo** abre na W27 (decisões IA1 e IA3):
+
+1. Escreva o objetivo (ex.: `Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11`) e clique em **Analisar com IA**. Aparece "IA analisando…" (W29) e depois as etapas sugeridas (W30 preenchida), editáveis.
+2. Clique em **Encaixar no meu calendário**. O objetivo é gravado com `source: "ai"` e a estimativa original de cada etapa.
+3. Para o caminho manual, clique em **Prefiro preencher à mão**, abaixo do botão: abre a W30 vazia, como antes.
+4. Se a IA falhar e o backend estiver com `AI_FALLBACK=none`, a W30 abre vazia (formulário manual, 4f).
+
+Quem responde é o backend: com `AI_PROVIDER=rules` (padrão) as etapas vêm do motor de regras; com o Ollama, do modelo local. **Para trocar o motor, só o `apps/backend/.env` muda** (ver `docs/backend/COMO-TESTAR.md`, seção 8b) e o backend é reiniciado; o web não muda. No modo `example`, o rascunho é o fixo do protótipo.
+
+Ponta a ponta do assistente (tarefa 11, usuário próprio, motor de regras; o Postgres precisa estar no ar):
+
+```bash
+npm --workspace @oitenta/frontend run test:e2e -- novo-objetivo-ia
+```
+
+O `npm --workspace @oitenta/frontend run test:e2e` sem filtro roda os dois specs (o fluxo principal e este). O Playwright sobe o backend com `AI_PROVIDER=rules AI_FALLBACK=rules`.
 
 Para usar só os dados de exemplo, sem backend:
 

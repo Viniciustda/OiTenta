@@ -192,3 +192,30 @@ Achados da sessão (todos no `afazeres.md`):
 - Comparações da rodada em `docs/frontend/comparacoes/` e `docs/mobile/comparacoes/` (só a última rodada, JPEG), com as diferenças no README de cada pasta.
 
 Worktrees `/Users/arthursetragni/Hackaton/wt-w1`, `wt-w2`, `wt-m1`, `wt-m2`: branches já integradas; podem ser removidas (`git worktree remove`).
+
+## Sessão 3 — 12/11/2026: IA no novo objetivo (decisões IA1–IA7, tarefas 0–11 da `docs/7` §g)
+
+Decisões registradas em `docs/2-decisoes-mvp.md` (IA1–IA7). Pendências, perguntas e problemas no `afazeres.md`. Verificação completa antes de cada merge, como na sessão 2; a partir desta sessão, o backend dos dois ponta a ponta sobe com `AI_PROVIDER=rules AI_FALLBACK=rules` (IA6).
+
+| Id | Branch | Status | Commit na developer | TDD (vermelho → verde) | Verificação | Revisor |
+|---|---|---|---|---|---|---|
+| 0 | `docs/ia-contrato` | integrada | `9006d3c` | n/a (docs) | verde | n/a (orquestrador) |
+| 1 | `feat/shared-service-unavailable` | integrada (pilha 1–3) | `f4041e7` | `ServiceUnavailableError is not a constructor` (1 falha) → 8/8; filtro → 1/1 | verde | APROVADO |
+| 2 | `feat/goals-assistente-dominio` | integrada (pilha 1–3) | `f4041e7` | 47 falhando (`GoalDraftNormalizer is not a constructor`) → 47/47; `goals` 100% | verde | APROVADO (achados 1, 2 e 4 corrigidos em `d4dabf1`) |
+| 3 | `feat/goals-origem-ia` | integrada (pilha 1–3) | `f4041e7` | 2 falhando (`Expected "ai", Received "manual"`; promessa resolvida em vez de rejeitada) → 13/13 | verde | APROVADO |
+| 4 | `feat/backend-ia-regras` (subagente) | integrada (com a 5) | `c02561b` | sem módulo → 109 falhando com stubs → 130/130; ajuste do revisor: 4 falhando → 132/132 (`f629fa8`, integrado com a 10) | verde | APROVADO; achados de data/categoria viraram [DECIDIR] |
+| 9 | `feat/backend-ia-openai-compativel` (subagente) | integrada (com a 5) | `c02561b` | 51 falhando ("não implementado") → 51/51; ajustes do revisor: 9 falhando → 61/61 (`93d161f`, integrado com a 10) | verde | APROVADO |
+| 6 | `feat/backend-goals-origem-ia` | integrada (com a 5) | `c02561b` | integração: 2 falhando (400 com `source`; `TypeError ... 'id'`) → 27/27 | verde | APROVADO |
+| 5 | `feat/backend-ia-rascunho` | integrada | `c02561b` | sem módulo → 10 falhando (rota inexistente) → 11/11 | verde (integração 136) | APROVADO |
+| 10 | `feat/backend-ia-fallback` | integrada | `f88bee8` | fábrica e runner: 11 falhando → 21/21; revisão: 9 + 1 falhando (integração com `AI_PROVIDER=openai-compatible` no ambiente: `Expected "rules", Received "openai-compatible"`) → verde | verde (integração 137) | 1º ciclo REPROVADO (teste com try/catch; integração sem forçar `rules`); 2º APROVADO |
+| 7 | `feat/mobile-ia-http` (subagente) | integrada | `4748903` | repositório HTTP sem arquivo → 12/12; controlador 3 falhando → 4/4; IA4 1 falhando → 1/1; modo http (orquestrador) `Expected HttpGoalAssistantRepository, Actual Sample...` → verde; ajuste do revisor 1 falhando → 2/2 | 1ª verificação FALHOU (ponta a ponta: título digitado no campo do chat durante a transição) → espera de 1 s → verde | APROVADO |
+| 8 | `feat/web-ia-novo-objetivo` (subagente) | integrada | `80d36ba` | 22 falhando (imports, `formFromDraft is not a function`, "Novo objetivo · 1 de 3" ausente) → 107/107; ajuste do revisor 1 falhando → verde | verde | APROVADO |
+| 11 | `feat/e2e-ia` (subagente) | integrada | `395a531` | os testes são o entregável: verdes; provas de falha com o draft interceptado (404), texto sem prazo, IA indisponível com `AI_FALLBACK=none` e `source` errado | verde (Playwright 2 specs; mobile 2 arquivos) | 1º ciclo REPROVADO (texto fixo "24/11" falharia de 22 a 24/11); 2º APROVADO |
+
+Achados da sessão (todos no `afazeres.md`):
+- O Ollama responde, mas não tem modelo (`ollama list` vazio): o teste manual e o `ai:eval` com ele caíram no motor de regras. Não há chave do Groq. Resultado em `docs/8-avaliacao-ia.md`.
+- O `scripts/` do `ai:eval` entrou no build do Nest e mudou o `dist` para `dist/src/main.js` (o `node dist/main` da verificação quebraria). Corrigido antes de integrar (`tsconfig.build.json`).
+- O orçamento e a reserva foram para o backend (`GoalDraftRunner`) e não para um decorador do provider: com duas chamadas separadas, só quem chama as duas refaz o rascunho inteiro (`docs/3` §2.6).
+- Testes existentes alterados: os 2 autorizados na IA4 (mobile), mais o do modo `http` do mobile e a espera de 1 s no ponta a ponta do mobile, e os do web pelo clique em "Prefiro preencher à mão" (três [DECIDIR] "Validar decisão já implementada").
+
+Worktrees `/Users/arthursetragni/Hackaton/wt-orq`, `wt-w1`, `wt-w2`, `wt-m1`, `wt-m2`: branches já integradas; podem ser removidas (`git worktree remove`).

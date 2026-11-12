@@ -68,7 +68,7 @@ npm --workspace apps/backend run db:reset-demo
 
 1. **Entrar direto como Arthur (demo).** Sem grade cadastrada, o app vai para o onboarding.
 2. **Onboarding:** marque os períodos livres (T02), escolha o limite (T03) e conclua. O app chega ao **Hoje**.
-3. **Novo objetivo:** a tela começa vazia (M15). Preencha título, prazo (cerca de 2 semanas à frente) e 2 etapas, e salve. Aparece o toast "2 etapas no calendário" e o app vai para a **Semana**.
+3. **Novo objetivo:** em Objetivos, toque em **Novo objetivo** e, no chat, em **Preencher à mão** (ou siga a seção "Novo objetivo com a IA" abaixo). A tela começa vazia (M15). Preencha título, prazo (cerca de 2 semanas à frente) e 2 etapas, e salve. Aparece o toast "2 etapas no calendário" e o app vai para a **Semana**.
 4. **Hoje:** a etapa aparece como **Próxima** se houver horário livre ainda hoje. Toque em **Vamos começar?**, escolha a energia e o tempo e siga a escada até o **Foco**.
 5. **Registrar:** encerre o foco, escolha **Concluí** e toque em **Registrar** e depois em **Voltar pra Hoje**.
 6. **Plano recalculado:**
@@ -77,6 +77,30 @@ npm --workspace apps/backend run db:reset-demo
    - a trilha mostra "1 de 2 etapas concluídas".
 
 **Limite conhecido:** no mobile, a rampa só abre pelo Hoje. Se o dia não tiver mais bloco (depois de cerca de 22h45, por exemplo), não dá para iniciar a rampa naquele dia.
+
+
+### Novo objetivo com a IA (M13 → M15)
+
+Desde 12/11/2026, **Novo objetivo** (em Objetivos) abre o **chat** (decisão IA4):
+
+1. Escreva o objetivo (ex.: `Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11`) e envie. Depois do "analisando", abre a M15 preenchida com as etapas.
+2. Salve. O objetivo é gravado com `source: "ai"` e a estimativa original de cada etapa.
+3. Para o caminho manual, toque em **Preencher à mão** no chat: abre a M15 vazia, como antes.
+4. Se a IA falhar e o backend estiver com `AI_FALLBACK=none`, a M15 abre vazia (formulário manual, 4f).
+
+No modo `http`, quem responde é o backend (`POST /goals/assistant/draft`): com `AI_PROVIDER=rules` (padrão), o motor de regras; com o Ollama, o modelo local. **Para trocar o motor, só o `apps/backend/.env` muda** (ver `docs/backend/COMO-TESTAR.md`, seção 8b) e o backend é reiniciado; o app não muda. No modo `sample`, o rascunho é o fixo do protótipo.
+
+Ponta a ponta do assistente (tarefa 11): com o backend no ar com `AI_PROVIDER=rules AI_FALLBACK=rules` (seção 2, passo 1) e o simulador ligado, zere o demo e rode:
+
+```bash
+npm --workspace apps/backend run db:reset-demo
+```
+
+```bash
+cd apps/mobile && flutter test integration_test/novo_objetivo_ia_test.dart -d <UDID> --dart-define-from-file=env/local-simulator.json
+```
+
+Esperado: `All tests passed!` em cerca de 30 s. O `db:reset-demo` é obrigatório antes de cada execução (o teste faz o onboarding do demo).
 
 Para sair, aperte `q` no terminal.
 
@@ -99,8 +123,10 @@ Esperado: `No issues found!` e `All tests passed!` (160 testes em 10/11).
    ```
 
    ```bash
-   cd apps/backend && node dist/main
+   cd apps/backend && AI_PROVIDER=rules AI_FALLBACK=rules node dist/main
    ```
+
+   As variáveis na frente garantem o motor de regras (determinístico, sem rede, IA6), mesmo que o seu `.env` aponte para o Ollama.
 
 2. Antes de **cada** execução, zere os dados do demo:
 

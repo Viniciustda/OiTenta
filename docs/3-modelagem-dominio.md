@@ -241,7 +241,7 @@ Fluxo: texto sem espaços nas pontas → valida (1–2000) → `today` = data lo
 
 **Mudança no `CreateGoal` (IA1):** a entrada ganha `source?: GoalSource` (padrão `manual`) e `steps[].aiEstimatedMinutes?: number | null` (padrão `null`). A entidade já valida os dois (`source` em `manual | ai`; `aiEstimatedMinutes` mínimo 15 e múltiplo de 15 → 422).
 
-**Orçamento e reserva (backend, não domínio):** o orquestrador `goal-draft.orchestrator` roda o `DraftGoal` com o provider configurado dentro do orçamento `AI_TIMEOUT_MS` (15 s, as duas chamadas). Se o provider lança `ServiceUnavailableError` ou o orçamento estoura: com `AI_FALLBACK=rules`, roda o `DraftGoal` de novo, **inteiro**, com o motor de regras (`engine: 'rules'`); com `AI_FALLBACK=none`, responde 503 `assistant.unavailable`. Isso substitui o "decorador de fallback" da `docs/7` §c.2: com duas chamadas separadas, só quem chama as duas consegue refazer o rascunho inteiro e controlar o orçamento total.
+**Orçamento e reserva (backend, não domínio):** o `GoalDraftRunner` (`apps/backend/src/modules/goals/assistant/goal-draft.runner.ts`), usado pelo orquestrador `goal-draft.orchestrator` e pelo script `ai:eval`, roda o `DraftGoal` com o provider configurado dentro do orçamento `AI_TIMEOUT_MS` (15 s, as duas chamadas). Se o provider lança `ServiceUnavailableError` ou o orçamento estoura: com `AI_FALLBACK=rules`, roda o `DraftGoal` de novo, **inteiro**, com o motor de regras (`engine: 'rules'`); com `AI_FALLBACK=none`, responde 503 `assistant.unavailable`. Isso substitui o "decorador de fallback" da `docs/7` §c.2: com duas chamadas separadas, só quem chama as duas consegue refazer o rascunho inteiro e controlar o orçamento total.
 
 ### 2.7 Cenários de teste — assistente (IA1)
 

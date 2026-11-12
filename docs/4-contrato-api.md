@@ -179,7 +179,7 @@ Resposta 200:
 
 - **Caso de uso:** `DraftGoal`.
 - **Telas:** web W27 → W29 → W30 preenchida; mobile M13 → M14 → M15 preenchida.
-- **Configuração (`apps/backend/.env`):** `AI_PROVIDER` (`rules` | `openai-compatible`, padrão `rules`), `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY`, `AI_TIMEOUT_MS` (padrão 15000, orçamento total), `AI_FALLBACK` (`rules` | `none`, padrão provisório `rules`, IA6), `AI_LOG_CONTENT` (padrão `false`). Valor desconhecido ou variável obrigatória faltando → o backend não sobe.
+- **Configuração (`apps/backend/.env`):** `AI_PROVIDER` (`rules` | `openai-compatible`, padrão `rules`), `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY`, `AI_TIMEOUT_MS` (padrão 15000, orçamento total, de 1 a 120000), `AI_FALLBACK` (`rules` | `none`, padrão provisório `rules`, IA6), `AI_LOG_CONTENT` (padrão `false`). Valor desconhecido, variável obrigatória faltando ou `AI_BASE_URL` sem `http://`/`https://` → o backend não sobe. Os testes de integração e de ponta a ponta forçam `AI_PROVIDER=rules` (IA6).
 - Sem limite de uso nesta fase (IA6).
 
 **Integração (supertest, com `AI_PROVIDER=rules`):**
@@ -206,7 +206,7 @@ Não há teste de posse: a rota não lê nem grava recurso de usuário.
 
 ### `GET /goals/:goalId`
 
-- **Resposta:** 200 `{ goal{…}, steps[{id, order, title, estimatedMinutes, progressPct, status, remainingMinutes, nextBlock?}], progressPct, done, total }`. `nextBlock` é `{id, start, end}` (ISO): o bloco `planned` de menor início a partir de agora. Só aparece em etapa pendente que tem bloco.
+- **Resposta:** 200 `{ goal{…, source}, steps[{id, order, title, estimatedMinutes, aiEstimatedMinutes, microSteps, progressPct, status, remainingMinutes, nextBlock?}], progressPct, done, total }`. `source` (`manual | ai`) e `aiEstimatedMinutes` (`number | null`) já vinham na resposta e foram listados aqui em 12/11/2026 (IA1). `nextBlock` é `{id, start, end}` (ISO): o bloco `planned` de menor início a partir de agora. Só aparece em etapa pendente que tem bloco.
 - **Erros:** 401; 404 (inexistente ou de outro usuário).
 - **Caso de uso:** `GetGoal` + `GetNextBlocks` (orquestrador `goals-view`).
 - **Telas:** web W22 (trilha); mobile M18 (trilha).

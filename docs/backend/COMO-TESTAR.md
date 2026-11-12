@@ -201,6 +201,95 @@ Esperado: status 201, `step.progressPct: 100` e o `plan` recalculado. No `GET /g
 
 Também dá para rodar tudo isso no VS Code com a extensão **REST Client**: abra `apps/backend/src/modules/auth/auth.integration.http` e clique em **Send Request** acima de cada requisição, de cima para baixo.
 
+## 8b. Assistente do novo objetivo (IA)
+
+O `POST /goals/assistant/draft` transforma um texto livre num rascunho de objetivo com etapas (decisões IA1–IA7, contrato em `docs/4-contrato-api.md` §3). **Não grava nada**; quem grava é o `POST /goals`. O motor é escolhido no `apps/backend/.env`:
+
+| Variável | Valores | Padrão |
+|---|---|---|
+| `AI_PROVIDER` | `rules` (motor de regras, sem rede) ou `openai-compatible` (Ollama, Groq, OpenRouter...) | `rules` |
+| `AI_BASE_URL`, `AI_MODEL` | endereço e modelo do fornecedor | obrigatórios com `openai-compatible` |
+| `AI_API_KEY` | chave do fornecedor (segredo; só no `.env`) | vazio (o Ollama não pede) |
+| `AI_TIMEOUT_MS` | orçamento total do rascunho, em ms | `15000` |
+| `AI_FALLBACK` | `rules` (a IA falhou ou demorou → rascunho do motor de regras) ou `none` (503 → o app abre o formulário manual) | `rules` (provisório até 13/11, IA6) |
+| `AI_LOG_CONTENT` | `true` põe o texto do usuário e a resposta no log (só desenvolvimento) | `false` |
+
+Valor desconhecido (ex.: `AI_PROVIDER=fake`) ou `openai-compatible` sem `AI_BASE_URL`/`AI_MODEL` → o backend **não sobe** e diz o que falta (sem mostrar a chave).
+
+**Se o seu `.env` é anterior a 12/11/2026**, ele não tem as variáveis `AI_*` (o `cp -n` do passo 2 não sobrescreve). Sem elas, vale o padrão `rules`. Para tê-las no arquivo, copie o bloco "Assistente do novo objetivo" do `apps/backend/.env.example` para o fim do `apps/backend/.env`.
+
+**Trocar o motor:** edite o `apps/backend/.env` e **reinicie o backend** (`Ctrl + C` e o passo 6 de novo). O `.env` só é lido na subida.
+
+### Testar no Swagger
+
+1. Rode `curl -s -X POST http://localhost:4000/auth/demo` e copie o `token`.
+2. Em http://localhost:4000/docs, clique em **Authorize** e cole o token.
+3. Abra **POST /goals/assistant/draft** → **Try it out**. O corpo de exemplo já traz o texto de referência; clique em **Execute**.
+4. Esperado com `AI_PROVIDER=rules`: 200, `draft.title` "Trabalho de Algoritmos", `draft.deadline` no próximo 24/11, `category` `assignment`, 5 etapas que somam 300 min (`totalMinutes`) e `engine` `rules`.
+5. Troque o texto por `Estudar para a prova de Cálculo` (sem data): `deadline` vem `null` e `missingFields` vem `["deadline"]`. Com `"   "`: 422.
+
+### Testar pelo terminal
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:4000/auth/demo | node -pe 'JSON.parse(require("fs").readFileSync(0)).token')
+```
+
+```bash
+curl -s -X POST http://localhost:4000/goals/assistant/draft -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"text":"Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11"}'
+```
+
+Esperado: `{"draft":{"title":"Trabalho de Algoritmos","deadline":"2026-11-24",...},"engine":"rules"}`.
+
+### Testar com o Ollama (IA local, nada sai da sua máquina)
+
+1. **Confira que o Ollama está no ar:**
+
+   ```bash
+   curl -s http://localhost:11434/api/tags
+   ```
+
+   Esperado: um JSON com `"models":[...]`. Se der "Connection refused", abra o app do Ollama (ou rode `ollama serve` em outro terminal).
+
+2. **Veja qual modelo usar:**
+
+   ```bash
+   ollama list
+   ```
+
+   Use o nome da coluna `NAME` (ex.: `llama3.2:3b`). Se houver mais de um, prefira o menor (coluna `SIZE`). **Se a lista estiver vazia**, não há modelo: baixar um é uma decisão em aberto no `afazeres.md` ("Ollama local sem modelo instalado"). Sem modelo, todo pedido cai no motor de regras.
+
+3. **Configure o `apps/backend/.env`** (troque `<modelo>` pelo nome do passo 2):
+
+   ```
+   AI_PROVIDER="openai-compatible"
+   AI_BASE_URL="http://localhost:11434/v1"
+   AI_MODEL="<modelo>"
+   AI_API_KEY=""
+   ```
+
+4. **Reinicie o backend** (passo 6) e repita o `curl` do rascunho acima.
+   - Esperado com o modelo respondendo bem: `"engine":"llm"`. No terminal do backend aparece `assistant op=parseGoal provider=openai-compatible model=<modelo> prompt=parse-goal@v1 ms=... outcome=ok` e o mesmo para `suggestSteps`.
+   - Se o modelo demorar mais de 15 s no total, devolver JSON inválido ou o modelo não existir, a resposta vem com `"engine":"rules"` e o log mostra `outcome=timeout`, `invalid_json`, `invalid_output` ou `http_404`, seguido de `assistant op=draft ... fallback=rules`. Isso é a reserva funcionando, não um erro.
+   - Para ver o texto e a resposta no log, acrescente `AI_LOG_CONTENT="true"` (só na sua máquina).
+
+5. **Comparar os motores** com os 10 textos de referência (não grava nada):
+
+   ```bash
+   npm --workspace apps/backend run ai:eval
+   ```
+
+   Ele usa o motor do `.env`. Para rodar outro motor sem editar o arquivo, ponha as variáveis na frente do comando (elas têm prioridade sobre o `.env`):
+
+   ```bash
+   AI_PROVIDER=openai-compatible AI_BASE_URL=http://localhost:11434/v1 AI_MODEL=<modelo> AI_API_KEY= npm --workspace apps/backend run ai:eval
+   ```
+
+   Resultado da rodada de 12/11/2026 em `docs/8-avaliacao-ia.md`.
+
+### Voltar para o motor de regras
+
+No `apps/backend/.env`, ponha `AI_PROVIDER="rules"` (ou apague as linhas `AI_*`) e reinicie o backend. Os testes automáticos (unitários, integração, Playwright e `integration_test`) usam sempre o motor de regras, sem rede.
+
 ## 9. Rodar os testes
 
 ```bash
@@ -245,3 +334,5 @@ Os dados do banco continuam guardados para a próxima vez.
 | `/auth/demo` responde 404 | Seed não rodado | Rode o passo 5 |
 | `POST /goals` ou `GET /scheduling/plan/day` responde 404 "Disponibilidade não encontrada." | Usuário sem onboarding (P12) | Faça o `PUT /scheduling/availability` antes |
 | Erro 500 logo depois de uma migration nova | Cliente do Prisma desatualizado | Rode `prisma:generate` e `npm run build` de novo |
+| O backend não sobe e diz `AI_PROVIDER inválido` ou `exige AI_BASE_URL e AI_MODEL` | Variável `AI_*` errada ou faltando | Corrija o `apps/backend/.env` (seção 8b) |
+| O rascunho sempre volta com `"engine":"rules"` com o Ollama | Modelo inexistente, Ollama fora do ar ou resposta lenta/inválida | Veja o `outcome=` no log do backend e confira `ollama list` (seção 8b) |
