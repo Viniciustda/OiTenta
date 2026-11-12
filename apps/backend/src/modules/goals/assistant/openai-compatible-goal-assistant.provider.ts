@@ -55,7 +55,8 @@ type Outcome =
   | 'network'
   | `http_${number}`
   | 'invalid_json'
-  | 'invalid_output';
+  | 'invalid_output'
+  | 'error';
 
 interface CallLog {
   outcome: Outcome;
@@ -119,7 +120,7 @@ export class OpenAiCompatibleGoalAssistantProvider implements GoalAssistantProvi
     );
 
     const title = output.title?.trim() ? output.title : null;
-    const deadline = output.deadline ?? null;
+    const deadline = output.deadline?.trim() ? output.deadline : null;
     const missingFields: GoalDraftField[] = [];
     if (title === null) missingFields.push('title');
     if (deadline === null) missingFields.push('deadline');
@@ -182,10 +183,14 @@ export class OpenAiCompatibleGoalAssistantProvider implements GoalAssistantProvi
 
       return await parseOutput(content, outputClass);
     } catch (error) {
-      if (!(error instanceof CallFailure)) throw error;
-      log.outcome = error.outcome;
-      log.error = error.detail;
-      throw error.domainError;
+      // Erro que não é de rede, HTTP nem formato (ex.: timeoutMs inválido) também vira 503.
+      const failure =
+        error instanceof CallFailure
+          ? error
+          : unavailable('error', errorMessage(error));
+      log.outcome = failure.outcome;
+      log.error = failure.detail;
+      throw failure.domainError;
     } finally {
       this.write(op, promptId, Date.now() - startedAt, user, log);
     }
@@ -199,24 +204,27 @@ export class OpenAiCompatibleGoalAssistantProvider implements GoalAssistantProvi
       headers.Authorization = `Bearer ${this.options.apiKey}`;
     }
 
+    // Montado fora do try: erro aqui é de configuração (outcome=error), não de rede.
+    const init: RequestInit = {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: this.options.model,
+        temperature: TEMPERATURE,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user },
+        ],
+      }),
+      signal: AbortSignal.timeout(this.options.timeoutMs),
+    };
+
     let status: number;
     let ok: boolean;
     let raw: string;
     try {
-      const response = await this.fetchFn(this.url, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          model: this.options.model,
-          temperature: TEMPERATURE,
-          response_format: { type: 'json_object' },
-          messages: [
-            { role: 'system', content: system },
-            { role: 'user', content: user },
-          ],
-        }),
-        signal: AbortSignal.timeout(this.options.timeoutMs),
-      });
+      const response = await this.fetchFn(this.url, init);
       status = response.status;
       ok = response.ok;
       raw = await response.text();
@@ -274,9 +282,23 @@ function fillToday(prompt: string, today: string): string {
   return prompt.split('{{today}}').join(today);
 }
 
-/** O texto do usuário vai entre delimitadores; o prompt de sistema manda ignorar instruções dentro dele. */
+/**
+ * O conteúdo do usuário vai entre delimitadores; o prompt de sistema manda ignorar instruções
+ * dentro dele. Delimitadores que já venham no conteúdo (qualquer caixa) viram [objetivo] e
+ * [/objetivo], para o texto não conseguir fechar o bloco.
+ */
 function delimit(content: string): string {
-  return `<objetivo>\n${content}\n</objetivo>`;
+  const neutral = content.replace(
+    /<\s*(\/?)\s*objetivo\s*>/gi,
+    (_tag, slash: string) => `[${slash}objetivo]`,
+  );
+  return `<objetivo>\n${neutral}\n</objetivo>`;
+}
+
+/** Tira cercas de markdown (```json ... ```), comuns no Ollama, antes do JSON.parse. */
+function stripCodeFence(content: string): string {
+  const fenced = /^\s*```[a-z]*\s*\n([\s\S]*?)\n?\s*```\s*$/i.exec(content);
+  return fenced ? fenced[1] : content;
 }
 
 /** Pelo nome, e não por instanceof: o DOMException do AbortSignal pode vir de outro realm. */
@@ -318,7 +340,7 @@ async function parseOutput<T extends object>(
 ): Promise<T> {
   let json: unknown;
   try {
-    json = JSON.parse(content);
+    json = JSON.parse(stripCodeFence(content));
   } catch {
     throw invalidOutput('invalid_json');
   }
