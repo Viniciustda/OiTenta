@@ -112,6 +112,63 @@ Content-Type: application/json
   ]
 }
 
+### Rascunho do assistente (IA1) → 200 { draft, engine }; não grava nada
+POST {{baseUrl}}/goals/assistant/draft
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "text": "Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11" }
+
+### Rascunho sem data → 200 com deadline null e missingFields ["deadline"]
+POST {{baseUrl}}/goals/assistant/draft
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "text": "Estudar para a prova de Cálculo" }
+
+### Rascunho com texto vazio → 422 goal-draft.text.required
+POST {{baseUrl}}/goals/assistant/draft
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "text": "   " }
+
+### Rascunho sem token → 401
+POST {{baseUrl}}/goals/assistant/draft
+Content-Type: application/json
+
+{ "text": "Prova de Cálculo na sexta" }
+
+### Objetivo vindo do rascunho da IA → 201, com source "ai" e as duas estimativas (IA1)
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "title": "Prova de Cálculo",
+  "deadline": "2026-11-27",
+  "kind": "goal",
+  "source": "ai",
+  "steps": [
+    { "title": "Revisar a teoria", "estimatedMinutes": 120, "aiEstimatedMinutes": 90, "microSteps": ["Abra o resumo do capítulo 1"] },
+    { "title": "Etapa que eu acrescentei", "estimatedMinutes": 30, "aiEstimatedMinutes": null }
+  ]
+}
+
+### Estimativa da IA que não é múltipla de 15 → 422 (IA1)
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "title": "Errado", "kind": "single", "source": "ai", "steps": [{ "title": "Etapa", "estimatedMinutes": 30, "aiEstimatedMinutes": 20 }] }
+
+### source inválido → 400 (IA1)
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "title": "Errado", "kind": "single", "source": "xyz", "steps": [{ "title": "Etapa", "estimatedMinutes": 30 }] }
+
 ### Objetivo sem etapas → 422
 POST {{baseUrl}}/goals
 Authorization: Bearer {{login.response.body.$.token}}

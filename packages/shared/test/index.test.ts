@@ -3,6 +3,7 @@ import {
   DomainError,
   ForbiddenError,
   NotFoundError,
+  ServiceUnavailableError,
   UnauthorizedError,
   ValidationError,
   ValidationException,
@@ -55,6 +56,15 @@ describe("shared errors", () => {
     expect(error).toBeInstanceOf(DomainError);
     expect(error.name).toBe("ConflictError");
     expect(error.statusCode).toBe(409);
+  });
+
+  test("deve criar ServiceUnavailableError com status 503", () => {
+    const error = new ServiceUnavailableError("assistant.unavailable");
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error.name).toBe("ServiceUnavailableError");
+    expect(error.statusCode).toBe(503);
+    expect(error.message).toBe("assistant.unavailable");
   });
 
   test("deve criar ValidationException com lista completa de erros", () => {

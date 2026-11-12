@@ -239,6 +239,54 @@
         ]
       }
     },
+    "/goals/assistant/draft": {
+      "post": {
+        "operationId": "GoalAssistantController_draft",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalDraftBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rascunho gerado. Não grava nada; quem grava é o POST /goals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftGoalResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "text ausente ou não string; campo não previsto."
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado."
+          },
+          "422": {
+            "description": "text vazio ou com mais de 2000 caracteres."
+          },
+          "503": {
+            "description": "IA indisponível, lenta ou com saída inválida e AI_FALLBACK=none."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "goals"
+        ]
+      }
+    },
     "/goals": {
       "post": {
         "operationId": "GoalsViewController_create",
@@ -856,6 +904,133 @@
           "plan"
         ]
       },
+      "GoalDraftBody": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11",
+            "description": "Texto livre do usuário, 1–2000 caracteres."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "GoalDraftStepResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Ler o enunciado e listar requisitos"
+          },
+          "estimatedMinutes": {
+            "type": "number",
+            "example": 30,
+            "description": "Múltiplo de 15, de 15 a 240."
+          },
+          "aiEstimatedMinutes": {
+            "type": "number",
+            "example": 30,
+            "description": "Estimativa da IA; vai no POST /goals como aiEstimatedMinutes."
+          },
+          "microSteps": {
+            "example": [
+              "Abra o enunciado"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "estimatedMinutes",
+          "aiEstimatedMinutes",
+          "microSteps"
+        ]
+      },
+      "GoalDraftResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "example": "Trabalho de Algoritmos"
+          },
+          "deadline": {
+            "type": "string",
+            "nullable": true,
+            "example": "2026-11-24"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "assignment",
+              "exam",
+              "project",
+              "generic"
+            ]
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missingFields": {
+            "type": "array",
+            "description": "Informativo (IA2): a tela mostra o campo vazio.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "title",
+                "deadline"
+              ]
+            }
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalDraftStepResponse"
+            }
+          },
+          "totalMinutes": {
+            "type": "number",
+            "example": 300
+          }
+        },
+        "required": [
+          "title",
+          "deadline",
+          "category",
+          "requirements",
+          "missingFields",
+          "steps",
+          "totalMinutes"
+        ]
+      },
+      "DraftGoalResponse": {
+        "type": "object",
+        "properties": {
+          "draft": {
+            "$ref": "#/components/schemas/GoalDraftResponse"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "llm",
+              "rules"
+            ],
+            "description": "Quem respondeu; nenhuma tela depende disso."
+          }
+        },
+        "required": [
+          "draft",
+          "engine"
+        ]
+      },
       "CreateGoalStepBody": {
         "type": "object",
         "properties": {
@@ -867,6 +1042,12 @@
             "type": "number",
             "example": 30,
             "description": "Mínimo 15, múltiplo de 15 (P5)."
+          },
+          "aiEstimatedMinutes": {
+            "type": "number",
+            "nullable": true,
+            "example": 30,
+            "description": "Estimativa original da IA (D 4f, IA1): mínimo 15, múltiplo de 15; null no objetivo manual."
           },
           "microSteps": {
             "description": "Textos do micro-passo (P6).",
@@ -900,6 +1081,15 @@
               "goal",
               "single"
             ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "ai"
+            ],
+            "default": "manual",
+            "description": "\"ai\" quando o objetivo veio do rascunho do assistente (IA1)."
           },
           "steps": {
             "type": "array",
