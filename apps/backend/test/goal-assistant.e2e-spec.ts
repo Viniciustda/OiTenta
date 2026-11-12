@@ -43,11 +43,12 @@ function next24Nov(): string {
   return candidate >= today ? candidate : `${year + 1}-11-24`;
 }
 
+// Código diferente do que a rota devolve: prova que o 503 é traduzido para assistant.unavailable.
 const failingAssistant: GoalAssistantProvider = {
   parseGoal: () =>
-    Promise.reject(new ServiceUnavailableError('assistant.unavailable')),
+    Promise.reject(new ServiceUnavailableError('assistant.invalid-output')),
   suggestSteps: () =>
-    Promise.reject(new ServiceUnavailableError('assistant.unavailable')),
+    Promise.reject(new ServiceUnavailableError('assistant.invalid-output')),
 };
 
 async function createApp(
@@ -98,6 +99,10 @@ describe('goals: assistente do novo objetivo (integração)', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  it('a integração roda com o motor de regras, mesmo com outro AI_PROVIDER no .env (IA6)', () => {
+    expect(app.get<AiSettings>(AI_SETTINGS).provider).toBe('rules');
   });
 
   it('texto de referência → 200 com o rascunho do modelo assignment (rules)', async () => {
@@ -181,16 +186,12 @@ describe('goals: assistente do novo objetivo (integração)', () => {
   });
 
   it('nenhum objetivo é gravado', async () => {
-    const before = await request(app.getHttpServer())
-      .get('/goals')
-      .set('Authorization', `Bearer ${token}`);
-
     await draft(app, token, { text: REFERENCE_TEXT });
-    const after = await request(app.getHttpServer())
+    const goals = await request(app.getHttpServer())
       .get('/goals')
       .set('Authorization', `Bearer ${token}`);
 
-    expect(after.body).toEqual(before.body);
+    expect([goals.status, goals.body]).toEqual([200, { goals: [] }]);
   });
 
   describe('provider que falha', () => {

@@ -162,26 +162,33 @@ class NewStep {
     required this.title,
     required this.estimatedMinutes,
     this.microSteps = const [],
+    this.aiEstimatedMinutes,
   });
 
   final String title;
   final int estimatedMinutes;
   final List<String> microSteps;
 
-  Map<String, dynamic> toJson() => {
+  /// Estimativa original da IA (IA1); `null` na etapa que o usuário criou.
+  /// Só vai no corpo do objetivo que veio da IA ([NewGoal.source] `'ai'`).
+  final int? aiEstimatedMinutes;
+
+  Map<String, dynamic> toJson({bool withAiEstimate = false}) => {
     'title': title,
     'estimatedMinutes': estimatedMinutes,
     'microSteps': microSteps,
+    if (withAiEstimate) 'aiEstimatedMinutes': aiEstimatedMinutes,
   };
 }
 
-/// Corpo de `POST /goals`: `{ title, deadline, kind, steps[] }`.
+/// Corpo de `POST /goals`: `{ title, deadline, kind, source?, steps[] }`.
 class NewGoal {
   const NewGoal({
     required this.title,
     required this.deadline,
     required this.kind,
     required this.steps,
+    this.source,
   });
 
   final String title;
@@ -191,11 +198,18 @@ class NewGoal {
   final String kind;
   final List<NewStep> steps;
 
+  /// `'ai'` quando veio do rascunho da IA (IA1). `null` não vai no corpo e o
+  /// backend grava `manual` (o objetivo manual continua igual).
+  final String? source;
+
   Map<String, dynamic> toJson() => {
     'title': title,
     'deadline': deadline,
     'kind': kind,
-    'steps': steps.map((s) => s.toJson()).toList(),
+    if (source != null) 'source': source,
+    'steps': steps
+        .map((s) => s.toJson(withAiEstimate: source == 'ai'))
+        .toList(),
   };
 }
 

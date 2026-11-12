@@ -42,8 +42,14 @@ class ApiClient {
     bool auth = true,
   }) => _send('GET', path, query: query, auth: auth);
 
-  Future<dynamic> post(String path, {Object? body, bool auth = true}) =>
-      _send('POST', path, body: body, auth: auth);
+  /// [timeout] troca o [defaultTimeout] só nesta chamada (ex.: o rascunho da
+  /// IA, que espera mais).
+  Future<dynamic> post(
+    String path, {
+    Object? body,
+    bool auth = true,
+    Duration? timeout,
+  }) => _send('POST', path, body: body, auth: auth, timeout: timeout);
 
   Future<dynamic> put(String path, {Object? body, bool auth = true}) =>
       _send('PUT', path, body: body, auth: auth);
@@ -54,7 +60,9 @@ class ApiClient {
     Map<String, String>? query,
     Object? body,
     required bool auth,
+    Duration? timeout,
   }) async {
+    final limit = timeout ?? _timeout;
     var uri = Uri.parse('$_baseUrl$path');
     if (query != null && query.isNotEmpty) {
       uri = uri.replace(queryParameters: query);
@@ -74,11 +82,11 @@ class ApiClient {
       response = await _client
           .send(request)
           .then(http.Response.fromStream)
-          .timeout(_timeout);
+          .timeout(limit);
     } on http.ClientException catch (e) {
       throw NetworkFailure(e.message);
     } on TimeoutException {
-      throw NetworkFailure('Sem resposta em ${_timeout.inSeconds} s.');
+      throw NetworkFailure('Sem resposta em ${limit.inSeconds} s.');
     }
 
     final status = response.statusCode;

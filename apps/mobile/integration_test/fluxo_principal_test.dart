@@ -137,7 +137,11 @@ void main() {
     await pumpUntil(tester, find.text('Objetivos'));
     await tapText(tester, 'Objetivos');
     await tapLabel(tester, 'Novo objetivo');
+    await tapText(tester, 'Preencher à mão');
     await pumpUntil(tester, find.text('0 min no total'));
+    // Espera a transição chat → M15 terminar: antes disso, o campo do chat
+    // ainda é o primeiro EditableText da tela e receberia o título.
+    await tester.pump(const Duration(seconds: 1));
     await tester.enterText(find.byType(EditableText).first, goalTitle);
     await tester.pump();
 

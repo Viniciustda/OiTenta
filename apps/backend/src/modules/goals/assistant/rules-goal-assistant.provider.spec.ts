@@ -62,10 +62,25 @@ describe('RulesGoalAssistantProvider', () => {
         expect((await provider.parseGoal(parseIn(text))).title).toBe(title);
       });
 
-      test('vazio antes do separador → o texto inteiro', async () => {
+      test('separador no início é ignorado: "— ler o livro" → "ler o livro"', async () => {
         expect((await provider.parseGoal(parseIn('— ler o livro'))).title).toBe(
-          '— ler o livro',
+          'ler o livro',
         );
+      });
+
+      test('separadores e espaços no início são ignorados antes de cortar', async () => {
+        expect(
+          (await provider.parseGoal(parseIn('  —, Prova de Cálculo, dia 20')))
+            .title,
+        ).toBe('Prova de Cálculo');
+      });
+
+      test('só pontuação → title null e missingFields com title', async () => {
+        const parsed = await provider.parseGoal(parseIn('— ... !!! ?'));
+        expect({
+          title: parsed.title,
+          missingFields: parsed.missingFields,
+        }).toEqual({ title: null, missingFields: ['title', 'deadline'] });
       });
 
       test('título longo é cortado em 120 na última palavra inteira', async () => {
@@ -99,10 +114,11 @@ describe('RulesGoalAssistantProvider', () => {
         );
       });
 
-      test('vazio antes do separador e texto longo → texto inteiro cortado em 120', async () => {
+      test('separador no início e texto longo → o resto cortado em 120', async () => {
         const text = `, ${'b'.repeat(200)}`;
-        // 120 primeiros = ", bbb…"; a última palavra inteira termina na vírgula.
-        expect((await provider.parseGoal(parseIn(text))).title).toBe(',');
+        expect((await provider.parseGoal(parseIn(text))).title).toBe(
+          'b'.repeat(120),
+        );
       });
 
       test('texto só com espaços → title null e missingFields com title', async () => {

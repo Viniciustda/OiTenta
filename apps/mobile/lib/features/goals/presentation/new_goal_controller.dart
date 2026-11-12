@@ -16,10 +16,19 @@ const stepDurations = <(String, int)>[
 ];
 
 class DraftStep {
-  const DraftStep(this.title, this.minutes);
+  const DraftStep(
+    this.title,
+    this.minutes, {
+    this.aiMinutes,
+    this.microSteps = const [],
+  });
 
   final String title;
   final int minutes;
+
+  /// Estimativa original da IA (IA1); `null` na etapa criada pelo usuário.
+  final int? aiMinutes;
+  final List<String> microSteps;
 }
 
 /// Novo objetivo com etapas (M15). Começa vazia no caminho manual (P20) ou
@@ -34,7 +43,13 @@ class NewGoalController extends ChangeNotifier {
         ? null
         : BoraFormat.parseDateKey(suggestion.deadline!);
     steps.addAll([
-      for (final s in suggestion.steps) DraftStep(s.title, s.estimatedMinutes),
+      for (final s in suggestion.steps)
+        DraftStep(
+          s.title,
+          s.estimatedMinutes,
+          aiMinutes: s.aiEstimatedMinutes ?? s.estimatedMinutes,
+          microSteps: s.microSteps,
+        ),
     ]);
   }
 
@@ -103,7 +118,8 @@ class NewGoalController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// `POST /goals` com `kind 'goal'`.
+  /// `POST /goals` com `kind 'goal'`. Quando veio da IA, manda também
+  /// `source: 'ai'`, a estimativa original da IA e os micro-passos (IA1).
   Future<CreateGoalResult?> submit() async {
     if (!canSubmit) return null;
     busy = true;
@@ -115,9 +131,15 @@ class NewGoalController extends ChangeNotifier {
           title: title.trim(),
           deadline: deadline == null ? null : BoraFormat.dateKey(deadline!),
           kind: 'goal',
+          source: suggested ? 'ai' : null,
           steps: [
             for (final s in steps)
-              NewStep(title: s.title, estimatedMinutes: s.minutes),
+              NewStep(
+                title: s.title,
+                estimatedMinutes: s.minutes,
+                microSteps: s.microSteps,
+                aiEstimatedMinutes: s.aiMinutes,
+              ),
           ],
         ),
       );
