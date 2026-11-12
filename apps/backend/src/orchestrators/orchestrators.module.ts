@@ -6,6 +6,8 @@ import { SchedulingModule } from '../modules/scheduling/scheduling.module';
 import { AvailabilityController } from './availability.controller';
 import { CreateGoalOrchestrator } from './create-goal.orchestrator';
 import { DayViewOrchestrator } from './day-view.orchestrator';
+import { GoalAssistantController } from './goal-assistant.controller';
+import { GoalDraftOrchestrator } from './goal-draft.orchestrator';
 import { GoalsViewController } from './goals-view.controller';
 import { GoalsViewOrchestrator } from './goals-view.orchestrator';
 import { PlanViewsController } from './plan-views.controller';
@@ -22,6 +24,7 @@ import { WeekViewOrchestrator } from './week-view.orchestrator';
   imports: [AuthModule, GoalsModule, SchedulingModule, ActivationModule],
   controllers: [
     AvailabilityController,
+    GoalAssistantController,
     GoalsViewController,
     PlanViewsController,
     RampController,
@@ -30,6 +33,7 @@ import { WeekViewOrchestrator } from './week-view.orchestrator';
   providers: [
     SetAvailabilityOrchestrator,
     CreateGoalOrchestrator,
+    GoalDraftOrchestrator,
     GoalsViewOrchestrator,
     DayViewOrchestrator,
     WeekViewOrchestrator,

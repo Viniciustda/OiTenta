@@ -171,4 +171,47 @@ describe("CreateGoal", () => {
     expect(goalRepository.goals[0].title).toBe("Portfólio");
     expect(goalRepository.goals[0].steps[0].title).toBe("Subir repo");
   });
+
+  test("cenario 5 (IA1): source ai grava a estimativa da IA separada da do usuario", async () => {
+    const { goalRepository, useCase } = makeSut();
+
+    const output = await useCase.execute(
+      makeInput({
+        source: "ai",
+        steps: [{ title: "Implementar", estimatedMinutes: 45, aiEstimatedMinutes: 30 }],
+      }),
+    );
+
+    const saved = goalRepository.goals[0];
+    expect(saved.source).toBe("ai");
+    expect(saved.steps[0].estimatedMinutes).toBe(45);
+    expect(saved.steps[0].aiEstimatedMinutes).toBe(30);
+    expect(output.goal.source).toBe("ai");
+    expect(output.goal.steps[0].aiEstimatedMinutes).toBe(30);
+  });
+
+  test("cenario 6 (IA1): sem os campos novos grava manual e aiEstimatedMinutes null", async () => {
+    const { goalRepository, useCase } = makeSut();
+
+    await useCase.execute(
+      makeInput({ steps: [{ title: "Implementar", estimatedMinutes: 45 }] }),
+    );
+
+    expect(goalRepository.goals[0].source).toBe("manual");
+    expect(goalRepository.goals[0].steps[0].aiEstimatedMinutes).toBeNull();
+  });
+
+  test("cenario 7 (IA1): aiEstimatedMinutes 20 lanca ValidationException e nao grava", async () => {
+    const { goalRepository, useCase } = makeSut();
+
+    await expect(
+      useCase.execute(
+        makeInput({
+          source: "ai",
+          steps: [{ title: "Implementar", estimatedMinutes: 45, aiEstimatedMinutes: 20 }],
+        }),
+      ),
+    ).rejects.toThrow(ValidationException);
+    expect(goalRepository.goals).toEqual([]);
+  });
 });

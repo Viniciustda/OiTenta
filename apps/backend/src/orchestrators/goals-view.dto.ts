@@ -4,6 +4,7 @@ import type {
   CreateGoalStepIn,
   GoalColorIndex,
   GoalKind,
+  GoalSource,
   GoalStatus,
   GoalView,
 } from '@oitenta/goals';
@@ -39,6 +40,17 @@ export class CreateGoalStepBody implements CreateGoalStepIn {
   estimatedMinutes!: number;
 
   @ApiPropertyOptional({
+    type: Number,
+    nullable: true,
+    example: 30,
+    description:
+      'Estimativa original da IA (D 4f, IA1): mínimo 15, múltiplo de 15; null no objetivo manual.',
+  })
+  @IsOptional()
+  @IsInt()
+  aiEstimatedMinutes?: number | null;
+
+  @ApiPropertyOptional({
     type: [String],
     description: 'Textos do micro-passo (P6).',
   })
@@ -68,6 +80,15 @@ export class CreateGoalBody implements Omit<CreateGoalIn, 'userId'> {
   @ApiProperty({ enum: ['goal', 'single'] })
   @IsIn(['goal', 'single'])
   kind!: GoalKind;
+
+  @ApiPropertyOptional({
+    enum: ['manual', 'ai'],
+    default: 'manual',
+    description: '"ai" quando o objetivo veio do rascunho do assistente (IA1).',
+  })
+  @IsOptional()
+  @IsIn(['manual', 'ai'])
+  source?: GoalSource;
 
   @ApiProperty({ type: [CreateGoalStepBody] })
   @IsArray()
