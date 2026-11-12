@@ -17,6 +17,8 @@ const TITLE_MAX_LENGTH = 120;
 
 /** O título é o texto até o primeiro destes separadores. */
 const TITLE_SEPARATOR = /[—–,:.\n]/;
+const LEADING_SEPARATORS = /^[\s—–,:.]+/;
+const HAS_LETTER_OR_DIGIT = /[\p{L}\p{N}]/u;
 
 /** Palavras-chave por categoria, já minúsculas e sem acento. */
 const CATEGORY_KEYWORDS: ReadonlyArray<[GoalCategory, readonly string[]]> = [
@@ -51,13 +53,14 @@ export class RulesGoalAssistantProvider implements GoalAssistantProvider {
 }
 
 /**
- * Texto até o primeiro separador, sem espaços nas pontas, cortado em 120 na
- * última palavra inteira; se ficar vazio, o texto inteiro cortado em 120.
+ * Sem os separadores e espaços do início, o texto até o primeiro separador,
+ * sem espaços nas pontas e cortado em 120 na última palavra inteira.
+ * Sem letra nem número (só pontuação) → `null`.
  */
 function extractTitle(text: string): string | null {
-  const head = truncateAtWord(text.split(TITLE_SEPARATOR)[0]);
-  const title = head || truncateAtWord(text);
-  return title || null;
+  const rest = text.replace(LEADING_SEPARATORS, '');
+  const title = truncateAtWord(rest.split(TITLE_SEPARATOR)[0]);
+  return HAS_LETTER_OR_DIGIT.test(title) ? title : null;
 }
 
 function truncateAtWord(value: string): string {
