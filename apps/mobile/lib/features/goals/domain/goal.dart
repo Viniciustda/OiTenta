@@ -206,7 +206,7 @@ class NewGoal {
     'title': title,
     'deadline': deadline,
     'kind': kind,
-    'source': source,
+    if (source != null) 'source': source,
     'steps': steps
         .map((s) => s.toJson(withAiEstimate: source == 'ai'))
         .toList(),
