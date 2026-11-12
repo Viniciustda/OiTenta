@@ -27,7 +27,10 @@ export class FakeGoalAssistantProvider implements GoalAssistantProvider {
       ],
       engine: "llm",
     },
+    /** Erro lançado pelo parseGoal. */
     public error: Error | null = null,
+    /** Erro lançado pelo suggestSteps (ex.: orçamento estourado na segunda chamada). */
+    public suggestError: Error | null = null,
   ) {}
 
   async parseGoal(input: ParseGoalIn): Promise<ParsedGoal> {
@@ -40,6 +43,9 @@ export class FakeGoalAssistantProvider implements GoalAssistantProvider {
 
   async suggestSteps(input: SuggestStepsIn): Promise<SuggestedSteps> {
     this.suggestCalls.push(input);
+    if (this.suggestError) {
+      throw this.suggestError;
+    }
     return this.suggested;
   }
 }

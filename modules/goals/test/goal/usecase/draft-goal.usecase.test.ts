@@ -127,6 +127,16 @@ describe("DraftGoal", () => {
     );
   });
 
+  test("cenario 7: erro do provider no suggestSteps tambem se propaga", async () => {
+    const provider = new FakeGoalAssistantProvider();
+    provider.suggestError = new ServiceUnavailableError("assistant.invalid-output");
+    const { useCase } = makeSut(provider);
+
+    await expect(useCase.execute(makeInput())).rejects.toThrow(
+      new ServiceUnavailableError("assistant.invalid-output"),
+    );
+  });
+
   test("cenario 8: caminho feliz devolve o rascunho normalizado e o engine", async () => {
     const provider = new FakeGoalAssistantProvider();
     provider.suggested = {

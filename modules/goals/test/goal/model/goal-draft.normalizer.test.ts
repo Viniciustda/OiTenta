@@ -42,11 +42,8 @@ describe("GoalDraftNormalizer", () => {
   });
 
   test("cenario 2: titulo longo com espacos e cortado na ultima palavra inteira ate 120", () => {
-    const title = normalize({ title: words(17) }).draft.title as string;
-
-    expect(title.length).toBeLessThanOrEqual(120);
-    expect(title.endsWith("palavra")).toBe(true);
-    expect(words(17).startsWith(title)).toBe(true);
+    // 17 palavras = 135 caracteres; 15 palavras = 119, a maior sequência inteira até 120.
+    expect(normalize({ title: words(17) }).draft.title).toBe(words(15));
   });
 
   test("cenario 2: titulo de 130 caracteres sem espaco fica com os 120 primeiros", () => {
@@ -124,10 +121,7 @@ describe("GoalDraftNormalizer", () => {
   });
 
   test("cenario 6: requisito longo e cortado ate 60", () => {
-    const [requirement] = normalize({ requirements: [words(10)] }).draft.requirements;
-
-    expect(requirement.length).toBeLessThanOrEqual(60);
-    expect(requirement.endsWith("palavra")).toBe(true);
+    expect(normalize({ requirements: [words(10)] }).draft.requirements).toEqual([words(7)]);
   });
 
   test.each([
@@ -160,8 +154,7 @@ describe("GoalDraftNormalizer", () => {
       suggested([step({ title: "  " }), step({ title: words(17) })]),
     );
 
-    expect(draft.steps).toHaveLength(1);
-    expect(draft.steps[0].title.length).toBeLessThanOrEqual(120);
+    expect(draft.steps.map((item) => item.title)).toEqual([words(15)]);
   });
 
   test("cenario 10: micro-passos sem vazio, no maximo 3", () => {
@@ -173,7 +166,7 @@ describe("GoalDraftNormalizer", () => {
   test("cenario 10: micro-passo longo e cortado ate 140", () => {
     const { draft } = normalize({}, suggested([step({ microSteps: [words(25)] })]));
 
-    expect(draft.steps[0].microSteps[0].length).toBeLessThanOrEqual(140);
+    expect(draft.steps[0].microSteps).toEqual([words(17)]);
   });
 
   test("cenario 11: zero etapas lanca ServiceUnavailableError assistant.empty-steps", () => {

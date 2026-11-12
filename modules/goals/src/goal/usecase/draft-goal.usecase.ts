@@ -1,5 +1,5 @@
 import { UseCase, ValidationError, ValidationException } from "@oitenta/shared";
-import { GOAL_DRAFT_LIMITS, GoalDraft, GoalDraftNormalizer } from "../model/goal-draft.normalizer";
+import { GOAL_DRAFT_LIMITS, GoalDraft, GoalDraftNormalizer } from "../model";
 import { AssistantEngine, GoalAssistantProvider } from "../provider";
 
 // Rascunho de objetivo a partir do texto do usuário (UC02, UC04, UC18; D 4f; IA1).
@@ -20,13 +20,16 @@ export interface DraftGoalOut {
 }
 
 function localDate(now: Date, timezone: string): string {
-  // en-CA formata como YYYY-MM-DD.
-  return new Intl.DateTimeFormat("en-CA", {
+  // formatToParts não depende do formato de texto do locale (mesma abordagem do zoned-time do scheduling).
+  const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: timezone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).format(now);
+  }).formatToParts(now);
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value as string;
+  return `${part("year")}-${part("month")}-${part("day")}`;
 }
 
 export class DraftGoal implements UseCase<DraftGoalIn, DraftGoalOut> {
