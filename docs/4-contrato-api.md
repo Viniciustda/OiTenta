@@ -110,6 +110,11 @@ Corpo:
 }
 ```
 
+Campos opcionais (IA1, 12/11/2026), para o objetivo que veio do rascunho da IA (4f: "`aiEstimate` e `estimate` ficam salvos separadamente"):
+
+- `source`: `manual | ai`, padrão `manual`. Outro valor → 400.
+- `steps[].aiEstimatedMinutes`: inteiro ≥ 15 e múltiplo de 15, ou `null`; padrão `null`. Inteiro fora da regra (ex.: 20) → 422; não inteiro → 400.
+
 Resposta 201:
 ```json
 {
@@ -132,6 +137,61 @@ Resposta 201:
 3. Zero etapas → 422.
 4. O corpo traz `userId` → 400 (P19).
 5. Usuário sem disponibilidade → 404 (P12).
+6. Com `source: "ai"` e `aiEstimatedMinutes` → 201, e o `GET /goals/:goalId` devolve `source: "ai"` e as duas estimativas separadas (IA1).
+7. `aiEstimatedMinutes: 20` → 422 (IA1).
+8. `source: "xyz"` → 400 (IA1).
+
+### `POST /goals/assistant/draft` (IA1, 12/11/2026)
+
+Gera um rascunho de objetivo com etapas a partir do texto. **Não grava nada**; quem grava é o `POST /goals`. Orquestrador: `goal-draft.orchestrator` (lê o fuso do usuário). Detalhes em `docs/7-proposta-ia.md` §d.1.
+
+Corpo:
+```json
+{ "text": "Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11" }
+```
+
+Resposta 200:
+```json
+{
+  "draft": {
+    "title": "Trabalho de Algoritmos",
+    "deadline": "2026-11-24",
+    "category": "assignment",
+    "requirements": [],
+    "missingFields": [],
+    "steps": [
+      { "title": "Ler o enunciado e listar requisitos", "estimatedMinutes": 30, "aiEstimatedMinutes": 30,
+        "microSteps": ["Abra o enunciado e copie os itens pedidos numa lista"] }
+    ],
+    "totalMinutes": 300
+  },
+  "engine": "rules"
+}
+```
+
+| Status | Quando |
+|---|---|
+| 200 | Rascunho gerado (pelo LLM ou pelo motor de regras) |
+| 400 | `text` ausente ou não string; campo não previsto (ex.: `userId`, P19) |
+| 401 | Sem token |
+| 422 | `text` vazio depois de remover espaços (`goal-draft.text.required`) ou com mais de 2000 caracteres (`goal-draft.text.max-length`) |
+| 503 | IA indisponível, lenta ou com saída inválida **e** `AI_FALLBACK=none` (`assistant.unavailable`). Web e mobile abrem o formulário manual (4f) |
+
+- **Caso de uso:** `DraftGoal`.
+- **Telas:** web W27 → W29 → W30 preenchida; mobile M13 → M14 → M15 preenchida.
+- **Configuração (`apps/backend/.env`):** `AI_PROVIDER` (`rules` | `openai-compatible`, padrão `rules`), `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY`, `AI_TIMEOUT_MS` (padrão 15000, orçamento total), `AI_FALLBACK` (`rules` | `none`, padrão provisório `rules`, IA6), `AI_LOG_CONTENT` (padrão `false`). Valor desconhecido ou variável obrigatória faltando → o backend não sobe.
+- Sem limite de uso nesta fase (IA6).
+
+**Integração (supertest, com `AI_PROVIDER=rules`):**
+1. Texto de referência → 200, `deadline` = o próximo 24/11, 5 etapas do modelo `assignment`, todas múltiplas de 15, `engine: 'rules'`.
+2. Texto sem data → 200, `deadline: null`, `missingFields: ['deadline']`.
+3. Sem token → 401.
+4. `text: "   "` → 422; `text` com 2001 caracteres → 422.
+5. Corpo com `userId` → 400; sem `text` → 400.
+6. Provider que falha (sobrescrito no módulo de teste): com `AI_FALLBACK=none` → 503; com `AI_FALLBACK=rules` → 200 e `engine: 'rules'`.
+7. Nenhum objetivo é gravado (o `GET /goals` continua igual).
+
+Não há teste de posse: a rota não lê nem grava recurso de usuário.
 
 ### `GET /goals`
 
@@ -264,6 +324,7 @@ Resposta 201:
 | `PUT /scheduling/availability` | `SetWeeklyAvailability` → `GeneratePlan` | W07–W10 | T02–T03 (+ placeholders dos passos sem design) |
 | `GET /scheduling/availability` | `GetWeeklyAvailability` | decisão W11 | decisão pós-login |
 | `POST /goals` | `CreateGoal` → `GeneratePlan` | W30 vazia (P20) | M15 vazia, M16 (P20) |
+| `POST /goals/assistant/draft` | `DraftGoal` (IA1) | W27 → W29 → W30 preenchida | M13 → M14 → M15 preenchida |
 | `GET /goals` | `ListGoals` + `GetGoalsFeasibility` | W12 | M02 |
 | `GET /goals/:goalId` | `GetGoal` | W22 | M18 |
 | `GET /scheduling/plan/day` | `GetDayPlan` + `ListGoals` | W12–W14 | M01 |
@@ -277,3 +338,4 @@ Resposta 201:
 |---|---|---|
 | P19 | 400 × 422 | `class-validator` + `class-transformer`; formato → 400, domínio → 422 |
 | P20 | Telas do objetivo manual | W30 / M15 começando vazias; M16 para a tarefa única |
+| IA1 | Assistente do novo objetivo | `POST /goals/assistant/draft`; `POST /goals` com `source` e `aiEstimatedMinutes` |

@@ -201,7 +201,9 @@ Siglas: W = tela do protótipo web (`design/web/SCREENS.md`); M = tela do mobile
 
 ### Proposta de IA (11/11/2026)
 
-- [ ] [DECIDIR] Entrada do caminho manual no web quando o Novo objetivo tiver IA — (origem: `docs/7-proposta-ia.md` §d.4, 11/11/2026)
+- [ ] [EXECUTAR] Entrada do caminho manual no web quando o Novo objetivo tiver IA — (origem: `docs/7-proposta-ia.md` §d.4, 11/11/2026; decidido em 12/11/2026, IA3, **provisório**)
+  - **Decisão (IA3):** alternativa 1 com o texto do mobile: link discreto **"Prefiro preencher à mão"** na W27, abaixo do "Analisar com IA", com a mesma intenção do M16, usando só os tokens existentes. Abre a W30 vazia. Tarefa 8 do `docs/7` §g.
+  - **Pronto quando:** o link aparece na W27, abre a W30 vazia, tem teste da lógica do modal e o ponta a ponta do web continua verde.
   - **Contexto:** hoje o "Novo objetivo" do web abre direto a W30 vazia (objetivo manual com etapas, P20). Com a IA, o modal passa a abrir na W27 (Escrever / Colar link, "Analisar com IA"), como no protótipo. O design web não tem "Preencher à mão" (`design/web/SCREENS.md`, notas); o mobile tem (M16).
   - **Problema:** sem uma entrada, o objetivo manual com etapas (mínimo obrigatório, 4a) só fica acessível quando a IA falha.
   - **Alternativas:**
@@ -209,6 +211,10 @@ Siglas: W = tela do protótipo web (`design/web/SCREENS.md`); M = tela do mobile
     2. **"Analisar com IA" com o texto vazio abre a W30 vazia.** Código: 30 min. Telas: nenhuma nova. Vantagem: nada fora do design. Desvantagem: comportamento escondido.
     3. **Manter a W30 vazia como entrada e a IA atrás de um botão "Usar IA" na W30.** Código: 2 h. Telas: inverte o protótipo. Vantagem: o manual continua o padrão. Desvantagem: foge do fluxo do design (F §4: o chat com IA é o padrão).
   - **Recomendação:** 1, igual ao "Preencher à mão" do mobile.
+
+- [ ] [EXECUTAR] Desenhar no Claude Design o link "Prefiro preencher à mão" da W27 — (origem: IA3, 12/11/2026)
+  - **O que fazer:** desenhar o estado da W27 com o link abaixo do "Analisar com IA" (posição, estilo e texto), para substituir a versão provisória feita só com os tokens existentes.
+  - **Pronto quando:** o design estiver em `design/web/` e a tela implementada seguir o desenho.
 
 - Ver também no Backend: "Aprovar a proposta de IA", "O que fazer quando a IA falha", "Leitura de link e anexo (UC03)" (aba "Colar link" da W28) e "Perguntas de esclarecimento no chat". Ver também no Frontend (acima): "Título 'Quebrei em etapas pra você' no objetivo manual", que fica verdadeiro quando a IA preencher a W30.
 
@@ -313,7 +319,9 @@ Siglas: W = tela do protótipo web (`design/web/SCREENS.md`); M = tela do mobile
 - [x] [EXECUTAR] Rampa: a tag "Sugerido pra você" ficava coberta pelos degraus — (origem: pedido do usuário, tarefa M1, 11/11/2026) — a tag passou para uma camada acima dos degraus, como o `z-index` do protótipo; fechado em `fe71502` (branch `feat/mobile-chat-objetivo`).
 - [ ] [EXECUTAR] Chat do novo objetivo (M13–M15) com a "IA" de exemplo — (origem: pedido do usuário, tarefa M1, 11/11/2026) — **parcial**: o chat, o repositório de exemplo (`SampleGoalAssistantRepository`, atrás de `GoalAssistantRepository`) e a M15 preenchida estão integrados em `fe71502`, na rota `/objetivos/chat`, mas o botão "Novo objetivo" ainda abre a M15 direto. Falta o item abaixo.
 
-- [ ] [DECIDIR] Ligar "Novo objetivo" (M02) ao chat: exige alterar 2 testes existentes — (origem: M1 e revisor, 11/11/2026)
+- [ ] [EXECUTAR] Ligar "Novo objetivo" (M02) ao chat: exige alterar 2 testes existentes — (origem: M1 e revisor, 11/11/2026; decidido em 12/11/2026, IA4)
+  - **Decisão (IA4):** alternativa 1. O botão "Novo objetivo" abre o chat. Autorizado alterar `test/features/goals/goals_screens_test.dart` e `integration_test/fluxo_principal_test.dart` (tocar em "Preencher à mão" depois de "Novo objetivo"). O relatório mostra o antes e o depois. Feito junto com a tarefa 7 do `docs/7` §g.
+  - **Pronto quando:** "Novo objetivo" abre o chat; um teste novo prova isso; os dois testes alterados e o ponta a ponta passam.
   - **Contexto:** você pediu que o botão abra o chat antes das etapas. Trocar o destino (1 linha em `goals_pages.dart`) muda o fluxo que dois testes existentes verificam: `test/features/goals/goals_screens_test.dart` ("Novo objetivo (M15 vazia)…") e o ponta a ponta `integration_test/fluxo_principal_test.dart:139-140`, que tocam "Novo objetivo" e esperam a M15 vazia ("0 min no total").
   - **Problema:** a regra da rodada proíbe alterar teste para passar; por isso o subagente parou e a entrada não foi ligada.
   - **Alternativas:**
@@ -561,6 +569,7 @@ Siglas: W = tela do protótipo web (`design/web/SCREENS.md`); M = tela do mobile
   - **Recomendação:** 1 assim que a lista sair, escolhendo um parceiro com saída JSON estruturada; 2 se nenhum parceiro tiver LLM. Em qualquer caso, a falha da IA continua abrindo o formulário manual (4f).
   - **Atualização (proposta de IA, 11/11/2026):** decisão marcada para sexta (13/11). A `docs/7-proposta-ia.md` §f compara as opções gratuitas para testar antes (Ollama, Groq, Gemini, GitHub Models, OpenRouter, com os limites "a confirmar") e propõe o script `ai:eval` (tarefa 10) para levar números de qualidade e latência à reunião. Qualquer fornecedor no formato OpenAI entra só pelo `.env`; outro formato é um adaptador novo. Ver a subseção "Proposta de IA (11/11/2026)" abaixo.
 
+  - **Atualização (12/11/2026, IA6):** continua para a reunião de sexta. Os números de qualidade e latência estão em `docs/8-avaliacao-ia.md`.
 - [ ] [EXECUTAR] Endpoint do assistente de novo objetivo — (origem: M1, `apps/mobile/lib/features/goals/data/goal_assistant_repository.dart`, 11/11/2026) — depende do [DECIDIR] "Provedor de LLM" para a implementação real; dá para começar com o provider fake
   - **O que fazer:**
     - Domínio: `GoalAssistantProvider` (`modules/goals/src/goal/provider/`) com `extractGoal(text)` e `suggestSteps(goal)`; um caso de uso que encadeia os dois **sem gravar** (o usuário confere e depois chama `POST /goals`); fake em `test/mock`.
@@ -572,6 +581,7 @@ Siglas: W = tela do protótipo web (`design/web/SCREENS.md`); M = tela do mobile
   - **Critério de pronto:** testes de domínio com o fake (100%); integração (feliz, 400, 401, 422, 503 com provider que falha); contrato e OpenAPI atualizados; teste do repositório HTTP do mobile.
   - **Atualização (proposta de IA, 11/11/2026):** a `docs/7-proposta-ia.md` detalha e ajusta este item, **pendente do [DECIDIR] "Aprovar a proposta de IA"**: rota `POST /goals/assistant/draft`; métodos com os nomes da 4f (`parseGoal`, não `extractGoal`); a saída ganha `category`, `requirements`, `missingFields`, `engine` e, por etapa, `microSteps` e `aiEstimatedMinutes`; o `POST /goals` passa a aceitar `source` e `aiEstimatedMinutes`; motor de regras (`AI_PROVIDER=rules`) para testar o fluxo antes do fornecedor. O trabalho foi quebrado nas tarefas 1–11 do §g.
 
+  - **Atualização (12/11/2026):** proposta aprovada (IA1). Este item é executado pelas tarefas 1–11 do `docs/7` §g, com o contrato de `docs/4` §3 (`POST /goals/assistant/draft`).
 - [ ] [DECIDIR] Tipo do prazo e nome curto do objetivo — (origem: W1, W2, M2 e revisores, 11/11/2026) — afeta Frontend (W17–W19, W21, prévia do e-mail na W26) e Mobile (M21)
   - **Contexto:** os protótipos mostram o tipo da entrega ("Entrega", "Prova", "Publicar") e um nome curto do objetivo ("Eng. Software") além do completo ("Trabalho de Engenharia de Software"). O contrato (`GET /goals`) só tem `title`. Os apps usam "Entrega" fixo e o título inteiro (no web, títulos longos quebram por sílaba na coluna estreita ou cortam com "…").
   - **Alternativas:**
@@ -607,9 +617,11 @@ Siglas: W = tela do protótipo web (`design/web/SCREENS.md`); M = tela do mobile
 
 ### Proposta de IA (11/11/2026)
 
-Origem comum: `docs/7-proposta-ia.md` (rodada de análise, sem implementação). Os itens marcados "sexta" vão para a reunião do time de 13/11; os outros são seus. O fornecedor e o modelo estão no [DECIDIR] "Provedor de LLM do assistente de novo objetivo", acima.
+Origem comum: `docs/7-proposta-ia.md` (rodada de análise, sem implementação). **Decisões de 12/11/2026 em `docs/2-decisoes-mvp.md` (IA1–IA7).** Os itens marcados "sexta" vão para a reunião do time de 13/11; os outros são seus. O fornecedor e o modelo estão no [DECIDIR] "Provedor de LLM do assistente de novo objetivo", acima.
 
-- [ ] [DECIDIR] Aprovar a proposta de IA (arquitetura, contrato e plano) — (origem: `docs/7-proposta-ia.md` §c, §d, §e.2 e §g, 11/11/2026) — afeta Frontend e Mobile
+- [ ] [EXECUTAR] Aprovar a proposta de IA (arquitetura, contrato e plano) — (origem: `docs/7-proposta-ia.md` §c, §d, §e.2 e §g, 11/11/2026; decidido em 12/11/2026, IA1) — afeta Frontend e Mobile
+  - **Decisão (IA1):** alternativa 1, aprovada com todas as divergências do §e.2: `rules` em vez de "fake"; 15 s de orçamento total; normalizador no domínio; `category`; `today` e `timezone` na entrada; `POST /goals` com `source` e `aiEstimatedMinutes`; máximo de 240 min por etapa no rascunho. Prompts em `.prompt.ts` (IA5). Tarefas 0–11 do §g; a 12 fica fora (IA7). Contrato em `docs/3` §2.6–2.7 e `docs/4` §3.
+  - **Pronto quando:** as tarefas 0–11 estiverem integradas na `developer` com a verificação completa verde.
   - **Contexto:** a 4f define a IA do novo objetivo (`parseGoal` + `suggestSteps`, confirmação do usuário, formulário manual se falhar), mas não a arquitetura, o contrato nem como testar sem fornecedor. Você pediu um substituto da IA até sexta e a troca para a IA real só por configuração.
   - **Problema:** sem aprovação, nenhuma das tarefas do §g pode começar (a regra do processo proíbe endpoint ou campo fora do plano aprovado). A proposta muda o contrato aprovado (`POST /goals` ganha `source` e `aiEstimatedMinutes`) e a modelagem (porta, `DraftGoal`, `GoalDraftNormalizer`).
   - **Alternativas:**
@@ -619,6 +631,7 @@ Origem comum: `docs/7-proposta-ia.md` (rodada de análise, sem implementação).
   - **Recomendação:** 1. Os pontos que mais mudam a sua proposta original estão no §e.2 (renomear "fake" para "rules", validação em duas camadas, um endpoint só, orçamento total de 15 s, `source`/`aiEstimatedMinutes` no `POST /goals`, web precisa de telas).
 
 - [ ] [DECIDIR] Chave, custo e limites de uso da IA (sexta) — (origem: `docs/7-proposta-ia.md` §c.6, §c.8 e §h, 11/11/2026)
+  - **Atualização (12/11/2026, IA6):** continua para a reunião de sexta. Até lá, o limite de uso **não** é implementado.
   - **Contexto:** a chave do fornecedor fica só no `.env` do backend e no segredo da hospedagem (que também é pendência de sexta). O repositório é público até a apresentação (4j), e a demo pode ser aberta por qualquer pessoa logada.
   - **Problema:** sem dono da conta, teto de gasto e limite por usuário, uma demo pública pode esgotar a cota gratuita (ou gerar custo) no meio da apresentação.
   - **Alternativas:**
@@ -628,6 +641,7 @@ Origem comum: `docs/7-proposta-ia.md` (rodada de análise, sem implementação).
   - **Recomendação:** 1, com a conta no nome de quem for apresentar e a chave guardada só no segredo da hospedagem. Definir também quem pode ver a chave.
 
 - [ ] [DECIDIR] Privacidade dos textos enviados à IA (sexta) — (origem: `docs/7-proposta-ia.md` §c.6 e §f, 11/11/2026)
+  - **Atualização (12/11/2026, IA6):** continua para a reunião de sexta.
   - **Contexto:** a proposta manda ao fornecedor só o texto do objetivo e a data de hoje (nunca nome, e-mail, id ou fuso). Alguns planos gratuitos podem usar o conteúdo para treino ou revisão humana: os termos do Gemini gratuito dizem isso (conferir a versão atual); para Groq, GitHub Models e OpenRouter, "a confirmar".
   - **Problema:** um estudante pode colar o enunciado com o próprio nome, matrícula ou dados de terceiros. O app não avisa que o texto vai para um terceiro.
   - **Alternativas:**
@@ -637,6 +651,7 @@ Origem comum: `docs/7-proposta-ia.md` (rodada de análise, sem implementação).
   - **Recomendação:** 1 para a demo, usando só textos inventados enquanto o fornecedor não estiver confirmado; 2 quando houver usuários reais.
 
 - [ ] [DECIDIR] O que fazer quando a IA falha: motor de regras, formulário manual ou os dois (sexta) — (origem: `docs/7-proposta-ia.md` §c.5, 11/11/2026) — cruza com o Mobile "Aviso quando a IA falha no chat"
+  - **Atualização (12/11/2026, IA6):** continua para a reunião de sexta. Até lá, o padrão provisório do `.env.example` é `AI_FALLBACK=rules` (alternativa 1); `AI_FALLBACK=none` dá o comportamento da 4f (alternativa 2) sem mudar código.
   - **Contexto:** a 4f diz "se a IA falhar, abre o formulário manual". A proposta acrescenta a opção de cair no motor de regras (instantâneo, sem rede), controlada por `AI_FALLBACK=rules|none`. A resposta traz `engine: 'llm' | 'rules'`.
   - **Problema:** cair nas regras dá ao usuário um rascunho de qualidade menor sem ele saber; não cair deixa a demo à mercê da rede e da cota.
   - **Alternativas:**
@@ -654,7 +669,9 @@ Origem comum: `docs/7-proposta-ia.md` (rodada de análise, sem implementação).
     3. **Nada no MVP;** só texto. Vantagem: foco no mínimo. Desvantagem: a W28 e o clipe ficam sem efeito na demo.
   - **Recomendação:** 3 até o texto estar no ar; depois 1, se o Firecrawl estiver entre os parceiros. Áudio fica para depois do hackathon.
 
-- [ ] [DECIDIR] Perguntas de esclarecimento no chat (prazo faltando) — (origem: `docs/7-proposta-ia.md` §b, 11/11/2026) — afeta Mobile (M13–M15) e Frontend (W27–W30)
+- [ ] [EXECUTAR] Perguntas de esclarecimento no chat (prazo faltando) — (origem: `docs/7-proposta-ia.md` §b, 11/11/2026; decidido em 12/11/2026, IA2) — afeta Mobile (M13–M15) e Frontend (W27–W30)
+  - **Decisão (IA2):** alternativa 1. Um turno, sem estado, **sem perguntas**. `missingFields` é informativo; a M15/W30 mostra o campo vazio.
+  - **Pronto quando:** o rascunho sem prazo chega às telas com o prazo vazio e o objetivo pode ser salvo (tarefas 5, 7 e 8).
   - **Contexto:** você pediu a conversa do chat com perguntas de esclarecimento. Nenhum design mostra a IA perguntando. O prazo é opcional (P3), então a falta dele não impede salvar.
   - **Problema:** escolher entre um turno só (o que falta aparece vazio na tela de etapas) e uma conversa de verdade, e onde guardar o histórico.
   - **Alternativas:**
@@ -662,6 +679,15 @@ Origem comum: `docs/7-proposta-ia.md` (rodada de análise, sem implementação).
     2. **Uma pergunta, sem estado** (`type: 'question'`; o app reenvia rascunho + resposta). Código: 1 dia (backend, os dois apps e testes). Telas: balão de pergunta e resposta curta, sem design. Vantagem: conversa de verdade sem tabela; o motor de regras responde de forma determinística. Desvantagem: estados sem design.
     3. **Sessão no backend** (tabela de conversas). Código: 2 dias (migration, posse, expiração, endpoints). Vantagem: histórico guardado. Desvantagem: o mais caro, sem ganho para a demo.
   - **Recomendação:** 1 no MVP; 2 depois que o design do balão existir. A 3 não compensa.
+
+- [ ] [DECIDIR] Ollama local sem modelo instalado — (origem: rodada de execução da IA, 12/11/2026)
+  - **Contexto:** você pediu o teste manual do adaptador e a linha (b) do `ai:eval` com o Ollama do seu Mac. Ele responde em `http://localhost:11434` (`curl http://localhost:11434/api/tags` → `{"models":[]}`), mas `ollama list` está vazio. A instrução foi não baixar nem instalar nada.
+  - **Problema:** sem modelo, toda chamada do adaptador ao Ollama falha; o rascunho cai no motor de regras (`engine: 'rules'`) e o `ai:eval` não mede a qualidade de um LLM local.
+  - **Alternativas:**
+    1. **Baixar um modelo pequeno** (`ollama pull <modelo>`, 2–5 GB; ex.: um modelo de 3–4B de parâmetros com saída JSON; nome exato a conferir no catálogo do Ollama) e rodar de novo o teste manual e o `ai:eval` (comandos em `docs/backend/COMO-TESTAR.md`). Vantagem: números de um LLM antes de sexta, sem mandar nada para fora. Desvantagem: download e espaço em disco; modelo pequeno erra mais.
+    2. **Usar o Groq** (chave no `apps/backend/.env`; hoje não há). Vantagem: modelo grande e rápido. Desvantagem: o texto sai da máquina; conta e chave.
+    3. **Levar só o motor de regras para sexta.** Vantagem: nada a fazer. Desvantagem: a reunião decide o fornecedor sem número de LLM.
+  - **Recomendação:** 1 (e 2 se alguém do time já tiver a chave), antes da reunião.
 
 - Ver também: "Tipo do prazo e nome curto do objetivo" (acima): a `category` do rascunho (`exam`, `assignment`, `project`) poderia alimentar o tipo do prazo ("Prova", "Entrega", "Publicar") nos objetivos criados pela IA; não faz parte da proposta.
 

@@ -81,6 +81,7 @@ Aceito como proposto: estrutura própria `{ diasDaSemana[], horaInicio, duracaoM
 - **Estimativa:** a IA sugere e o usuário confirma; `aiEstimate` e `estimate` ficam salvos separadamente.
 - **O motor do calendário nunca usa IA.**
 - O fornecedor está em aberto (5.8). O `GoalAssistantProvider` é neutro.
+- Detalhada em **IA1–IA7** (12/11/2026, abaixo): arquitetura, contrato, motor de regras e o que fica para sexta.
 
 ## 4g. Motor do calendário
 
@@ -464,12 +465,98 @@ Dependências técnicas indispensáveis para as aprovadas funcionarem (ex.: `@vi
 
 ---
 
+## Decisões da proposta de IA (IA1–IA7) — 12/11/2026
+
+**Origem:** a `docs/7-proposta-ia.md` (11/11/2026) propôs como a IA entra no projeto e abriu [DECIDIR] no `afazeres.md`. O dono do produto respondeu em 12/11/2026. Os pontos de fornecedor, chave, custo, limite de uso, privacidade e política de falha ficam para a reunião do time de sexta, 13/11 (IA6).
+
+### IA1 — Aprovação da proposta de IA
+
+- **Contexto:** a 4f define o papel da IA no novo objetivo (`parseGoal` + `suggestSteps`, confirmação do usuário, formulário manual se a IA falhar), mas não a arquitetura, o contrato nem como testar o fluxo antes de escolher o fornecedor. A `docs/7` propôs tudo isso e listou, no §e.2, 12 mudanças em relação à proposta inicial do dono do produto.
+- **Opções:** (a) aprovar a proposta com as mudanças do §e.2; (b) aprovar a proposta inicial sem as mudanças; (c) esperar a reunião de sexta.
+- **Decisão:** (a). Proposta **aprovada**, com todas as divergências do §e.2:
+  - motor de regras (`AI_PROVIDER=rules`, `RulesGoalAssistantProvider`) em vez de "fake"; o `FakeGoalAssistantProvider` existe só como dublê de teste em `modules/goals/test/mock`;
+  - **15 s de orçamento total** do rascunho (as duas chamadas), com o rascunho refeito inteiro pelo motor de regras quando a IA falha e `engine: 'llm' | 'rules'` na resposta;
+  - validação em duas camadas: formato no adaptador e regras do domínio no `GoalDraftNormalizer`, classe pura em `goals`;
+  - `category` (`assignment | exam | project | generic`) em vez de "tipo";
+  - `today` e `timezone` na entrada do motor;
+  - `POST /goals` aceita `source` e `steps[].aiEstimatedMinutes`;
+  - **limite de 240 min por etapa** no rascunho (P5 só define mínimo 15 e múltiplo de 15).
+- **Motivo:** permite testar os fluxos de ponta a ponta antes de sexta e trocar para a IA real só pelo `.env`, sem mexer no domínio, nos casos de uso nem nas telas do mobile.
+- **Consequências:**
+  - plano de execução do §g, tarefas 0 a 11 (a 12 fica fora, IA7);
+  - o contrato está em `docs/3-modelagem-dominio.md` §2.6 e `docs/4-contrato-api.md` §3;
+  - o web precisa das telas W27, W29 e W30 preenchida uma vez (tarefa 8);
+  - o limite de 240 min vale só para o rascunho da IA; o `POST /goals` continua aceitando etapas maiores (P5 não muda).
+- **Status:** definitiva.
+- **Data:** 12/11/2026.
+
+### IA2 — Conversa do chat: um turno, sem perguntas
+
+- **Contexto:** o chat do novo objetivo (M13–M15, W27–W30) pode faltar dados (sobretudo o prazo). Nenhum design mostra a IA perguntando (`docs/7` §b).
+- **Opções:** (1) sem estado, um turno; (2) sem estado, com pergunta; (2b) sem estado, com histórico; (3) sessão no backend.
+- **Decisão:** (1). Um pedido, uma resposta, **sem perguntas**. `missingFields` é **informativo**: a tela de etapas (M15/W30) mostra o campo vazio e o usuário completa se quiser (o prazo é opcional, P3).
+- **Motivo:** nada novo no backend nem no design; funciona igual com o motor de regras e com o LLM.
+- **Consequências:** o backend não guarda conversa; o [DECIDIR] "Perguntas de esclarecimento no chat" fecha. Perguntas ficam para depois, com design (opção 2).
+- **Status:** definitiva para o MVP.
+- **Data:** 12/11/2026.
+
+### IA3 — Entrada do caminho manual no web
+
+- **Contexto:** com a IA, o "Novo objetivo" do web passa a abrir na W27 (Escrever / Colar link, "Analisar com IA"). O design web não tem "Preencher à mão"; o mobile tem (M16). Sem uma entrada, o objetivo manual com etapas (P20, mínimo obrigatório) só apareceria quando a IA falhasse.
+- **Opções:** (1) link na W27 que abre a W30 vazia; (2) "Analisar com IA" com o texto vazio abre a W30 vazia; (3) W30 vazia como entrada e a IA atrás de um botão.
+- **Decisão:** (1), com o texto do mobile: um link discreto **"Prefiro preencher à mão"** na W27, **abaixo** do botão "Analisar com IA", com a mesma intenção do M16, usando **só os tokens existentes**. Ele abre a **W30 vazia**.
+- **Motivo:** o caminho manual fica a um clique e igual nos dois apps.
+- **Consequências:** elemento fora do protótipo web, registrado como adaptação intencional; [EXECUTAR] no `afazeres.md` para desenhar esse estado no Claude Design.
+- **Status:** **provisória** até o desenho no Claude Design.
+- **Data:** 12/11/2026.
+
+### IA4 — Mobile: "Novo objetivo" abre o chat
+
+- **Contexto:** o chat do novo objetivo (M13–M15) foi integrado na rodada de 11/11 na rota `/objetivos/chat`, mas o botão "Novo objetivo" (M02) ainda abre a M15 vazia. Trocar o destino muda o fluxo que dois testes existentes verificam.
+- **Opções:** (1) autorizar a mudança dos testes; (2) manter o botão abrindo a M15 vazia.
+- **Decisão:** (1). O botão "Novo objetivo" abre o chat. **Autorizada a alteração** de `test/features/goals/goals_screens_test.dart` ("Novo objetivo (M15 vazia)…") e do ponta a ponta `integration_test/fluxo_principal_test.dart`, que passam a tocar em **"Preencher à mão"** depois de "Novo objetivo".
+- **Motivo:** é o fluxo pedido; o que os testes provam (o objetivo manual com etapas) continua igual.
+- **Consequências:** o relatório mostra o antes e o depois de cada teste alterado; o [DECIDIR] "Ligar 'Novo objetivo' (M02) ao chat" fecha.
+- **Status:** definitiva.
+- **Data:** 12/11/2026.
+
+### IA5 — Formato dos prompts do LLM
+
+- **Contexto:** o Nest não copia arquivos que não são `.ts` para o `dist` (`docs/7` §c.7).
+- **Opções:** (a) `.md` com `assets` no `nest-cli.json`; (b) `.prompt.ts` exportando uma string.
+- **Decisão:** (b). Cada prompt é um arquivo **`<nome>.v<versão>.prompt.ts`** que exporta uma string (ex.: `parse-goal.v1.prompt.ts`). **Não** usar `.md` nem `assets` no `nest-cli.json`.
+- **Motivo:** funciona no build sem configuração extra; continua versionado e fora da lógica.
+- **Consequências:** a versão está no nome do arquivo e vai para o log de cada chamada (`prompt=parse-goal@v1`).
+- **Status:** definitiva.
+- **Data:** 12/11/2026.
+
+### IA6 — O que fica para a reunião de sexta (13/11)
+
+- **Contexto:** fornecedor, chave e política de falha dependem do time e dos parceiros do hackathon (5.8).
+- **Decisão:** **não** são decididos agora: fornecedor e modelo de produção; chave e custo; limite de uso; privacidade; política de falha (`AI_FALLBACK`). Até a reunião:
+  - o padrão do `apps/backend/.env.example` é `AI_PROVIDER=rules` e `AI_FALLBACK=rules`;
+  - o limite de uso **não** é implementado;
+  - os testes automáticos (unitários, integração, Playwright e `integration_test`) rodam sempre com `AI_PROVIDER=rules`, sem rede.
+- **Motivo:** a escolha sai com os números do `ai:eval` (`docs/8-avaliacao-ia.md`).
+- **Consequências:** `AI_FALLBACK=rules` como padrão provisório diverge da 4f ("falhou → formulário manual") até sexta; com `AI_FALLBACK=none` o comportamento da 4f volta (503 → formulário manual).
+- **Status:** provisória até 13/11/2026.
+- **Data:** 12/11/2026.
+
+### IA7 — Respostas gravadas (`AI_PROVIDER=recorded`)
+
+- **Contexto:** a tarefa 12 do §g (opcional) gravaria respostas reais do LLM para a demo offline.
+- **Decisão:** fora por enquanto.
+- **Status:** adiada.
+- **Data:** 12/11/2026.
+
+---
+
 ## Pendências para sexta, 13/11
 
 1. Hospedagem da landing e do web (provavelmente Vercel).
 2. Hospedagem do backend e do banco, e como fazer o deploy do monorepo (5.1, 5.2).
 3. CI (5.12).
-4. Provedor de LLM entre os parceiros (5.8).
+4. Provedor de LLM entre os parceiros (5.8), com chave, custo, limite de uso, privacidade e política de falha (IA6).
 5. Escopo do web app: o export web traz o app completo (ver `design/web/SCREENS.md`); confirmar quais telas entram no MVP.
 6. Divergências de tokens (`design/tokens.md`): decidir a cor de fundo do mobile (`#FFFFFF` × `#F6FAF8`), a cor do 4º objetivo (roxo na web × verde no mobile), os estágios do Broto e o check-in de 3 × 4 níveis na web.
 7. Mobile: login, cadastro e os blocos 2 e 3 do onboarding não têm design; ficam como placeholder (4i) até o design ser feito no Claude Design.

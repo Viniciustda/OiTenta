@@ -12,7 +12,7 @@
 - progresso com %;
 - recálculo do plano.
 
-Fora desta fase: IA, gamificação, notificações e tudo o que está fora em `docs/2-decisoes-mvp.md`.
+Fora desta fase: IA (exceto o assistente do novo objetivo, §2.6, acrescentado em 12/11/2026), gamificação, notificações e tudo o que está fora em `docs/2-decisoes-mvp.md`.
 
 **Siglas de origem** (onde cada regra foi definida):
 
@@ -123,7 +123,8 @@ Arquivo: `modules/goals/src/goal/model/goal-progress.calculator.ts`.
 
 | Caso de uso | Entrada | Saída | Origem |
 |---|---|---|---|
-| `CreateGoal` | `userId`, `title`, `deadline?`, `kind`, `steps[{title, estimatedMinutes, microSteps?}]` | `{ goal }` | UC30, UC04 (sem IA), D 4d |
+| `CreateGoal` | `userId`, `title`, `deadline?`, `kind`, `source?` (IA1), `steps[{title, estimatedMinutes, aiEstimatedMinutes?, microSteps?}]` | `{ goal }` | UC30, UC04, D 4d, 4f |
+| `DraftGoal` (IA1) | `userId`, `text`, `now`, `timezone` | `{ draft, engine }` (não grava) | UC02, UC04, UC18, D 4f |
 | `ListGoals` | `userId` | `{ goals[{id, title, deadline, colorIndex, progressPct, done, total, status, createdAt}] }` (`createdAt` acrescentado na C4: o `PlanCalculator` desempata por ele) | UC12, M02, W21 |
 | `GetGoal` | `userId`, `goalId` | `{ goal, steps[{…, remainingMinutes}], progressPct }` | UC10, M18, W22 |
 | `UpdateStepProgress` | `userId`, `goalId`, `stepId`, `progressPct` | `{ goalProgressPct, step }` | UC08, D 4h |
@@ -172,6 +173,112 @@ Arquivo: `modules/goals/src/goal/model/goal-progress.calculator.ts`.
 4. **Posse:** dado um objetivo de A, quando B tenta atualizar, então lança `NotFoundError` e não grava.
 5. Dado um `stepId` que não é do objetivo, então lança `NotFoundError`.
 6. Dado uma etapa `superseded`, quando atualizar, então lança `ValidationException`.
+
+### 2.6 Assistente do novo objetivo (IA1, 12/11/2026)
+
+Detalhes e motivos em `docs/7-proposta-ia.md` (§a, §c) e `docs/2-decisoes-mvp.md` (IA1–IA7). O domínio só declara a porta e as regras; as implementações (motor de regras, adaptador compatível com OpenAI) moram em `apps/backend/src/modules/goals/assistant/`.
+
+**Porta** (`goal/provider/goal-assistant.provider.ts`):
+
+```ts
+export type GoalCategory = "assignment" | "exam" | "project" | "generic"; // não confundir com Goal.kind
+export type GoalDraftField = "title" | "deadline";                       // informativo (IA2, P3)
+export type AssistantEngine = "llm" | "rules";
+
+export interface ParseGoalIn { text: string; today: string; timezone: string; } // today = YYYY-MM-DD local
+export interface ParsedGoal {
+  title: string | null; deadline: string | null; category: GoalCategory;
+  requirements: string[]; missingFields: GoalDraftField[]; engine: AssistantEngine;
+}
+export interface SuggestStepsIn {
+  title: string; deadline: string | null; category: GoalCategory;
+  requirements: string[]; text: string; today: string;
+}
+export interface SuggestedStep { title: string; estimatedMinutes: number; microSteps: string[]; }
+export interface SuggestedSteps { steps: SuggestedStep[]; engine: AssistantEngine; }
+
+/** Falha (indisponível, lento, saída inválida) → ServiceUnavailableError (shared, 503). */
+export interface GoalAssistantProvider {
+  parseGoal(input: ParseGoalIn): Promise<ParsedGoal>;
+  suggestSteps(input: SuggestStepsIn): Promise<SuggestedSteps>;
+}
+```
+
+O id, o nome, o e-mail e o fuso do usuário **não** vão para o provider além do `timezone` do `ParseGoalIn` (que o adaptador LLM não repassa ao fornecedor).
+
+**Erro novo no `shared`:** `ServiceUnavailableError extends DomainError` (503). Códigos usados: `assistant.unavailable`, `assistant.invalid-output`, `assistant.empty-steps`.
+
+**Classe pura `GoalDraftNormalizer`** (`goal/model/goal-draft.normalizer.ts`): aplica as regras do domínio a qualquer saída (LLM ou regras). Limites exportados em `GOAL_DRAFT_LIMITS`.
+
+| Campo | Regra |
+|---|---|
+| título | espaços repetidos viram um; sem espaços nas pontas; mais de 120 caracteres → cortado na última palavra inteira até 120 (P2); vazio ou `null` → `null` |
+| prazo | `YYYY-MM-DD` de uma data que existe e ≥ `today`; senão `null` |
+| categoria | fora das 4 → `generic` |
+| requisitos | sem espaços nas pontas, sem vazios, sem repetidos (ignorando maiúsculas), cada um até 60 caracteres (corte na palavra), no máximo 6 |
+| etapas | sem as de título vazio; título até 120 (corte na palavra); no máximo 12 (as primeiras) |
+| minutos da etapa | arredondados ao múltiplo de 15 mais próximo; mínimo 15, **máximo 240** (IA1); valor que não é número finito → 15 |
+| micro-passos | sem vazios, cada um até 140 caracteres (corte na palavra), no máximo 3 |
+| zero etapas depois da limpeza | lança `ServiceUnavailableError('assistant.empty-steps')` |
+| `missingFields` | calculado dos valores finais, na ordem `title`, `deadline` (o que o motor disse é ignorado) |
+| `aiEstimatedMinutes` | igual ao `estimatedMinutes` normalizado (o usuário só edita o `estimatedMinutes`) |
+| `totalMinutes` | soma dos `estimatedMinutes` |
+| `engine` | `rules` se qualquer uma das duas respostas veio do motor de regras; senão `llm` |
+
+**Caso de uso `DraftGoal`** (`goal/usecase/draft-goal.usecase.ts`). Não grava nada e não tem recurso de usuário (sem teste de posse).
+
+```ts
+export interface DraftGoalIn { userId: string; text: string; now: Date; timezone: string; }
+export interface GoalDraftStep { title: string; estimatedMinutes: number; aiEstimatedMinutes: number; microSteps: string[]; }
+export interface GoalDraft {
+  title: string | null; deadline: string | null; category: GoalCategory; requirements: string[];
+  missingFields: GoalDraftField[]; steps: GoalDraftStep[]; totalMinutes: number;
+}
+export interface DraftGoalOut { draft: GoalDraft; engine: AssistantEngine; }
+```
+
+Fluxo: texto sem espaços nas pontas → valida (1–2000) → `today` = data local de `now` no `timezone` → `parseGoal` → `suggestSteps` (título = título normalizado do `parseGoal` ou, se `null`, o texto cortado em 120; prazo e requisitos já normalizados) → `GoalDraftNormalizer` → saída.
+
+**Mudança no `CreateGoal` (IA1):** a entrada ganha `source?: GoalSource` (padrão `manual`) e `steps[].aiEstimatedMinutes?: number | null` (padrão `null`). A entidade já valida os dois (`source` em `manual | ai`; `aiEstimatedMinutes` mínimo 15 e múltiplo de 15 → 422).
+
+**Orçamento e reserva (backend, não domínio):** o orquestrador `goal-draft.orchestrator` roda o `DraftGoal` com o provider configurado dentro do orçamento `AI_TIMEOUT_MS` (15 s, as duas chamadas). Se o provider lança `ServiceUnavailableError` ou o orçamento estoura: com `AI_FALLBACK=rules`, roda o `DraftGoal` de novo, **inteiro**, com o motor de regras (`engine: 'rules'`); com `AI_FALLBACK=none`, responde 503 `assistant.unavailable`. Isso substitui o "decorador de fallback" da `docs/7` §c.2: com duas chamadas separadas, só quem chama as duas consegue refazer o rascunho inteiro e controlar o orçamento total.
+
+### 2.7 Cenários de teste — assistente (IA1)
+
+**`ServiceUnavailableError` (shared)**
+1. Dado a mensagem `assistant.unavailable`, quando criar o erro, então `statusCode` 503, `name` `ServiceUnavailableError` e é `DomainError`.
+
+**`GoalDraftNormalizer`** (hoje = `2026-11-11`)
+1. Título `"  Trabalho   de  Algoritmos "` → `"Trabalho de Algoritmos"`.
+2. Título de 130 caracteres com espaços → até 120, terminando numa palavra inteira; título de 130 caracteres sem espaço → os 120 primeiros.
+3. Título vazio, só espaços ou `null` → `null` e `missingFields` contém `title`.
+4. Prazo `2026-11-24` → mantido; `2026-11-11` (hoje) → mantido; `2026-11-10` → `null` e `deadline` em `missingFields`; `2026-02-31` → `null`; `24/11` → `null`.
+5. Categoria `"homework"` → `generic`.
+6. Requisitos `[" 3 algoritmos ", "", "3 Algoritmos", …8 itens]` → sem vazio, sem repetido, no máximo 6, cada um até 60.
+7. Minutos 20 → 15; 23 → 30; 250 → 240; 5 → 15; 0, −30 e `NaN` → 15; 240 → 240.
+8. 13 etapas → as 12 primeiras.
+9. Etapa de título vazio é descartada; título de 130 → até 120.
+10. Micro-passos `["a", " ", "b", "c", "d"]` → `["a", "b", "c"]`; um de 200 caracteres → até 140.
+11. Zero etapas (ou todas de título vazio) → `ServiceUnavailableError('assistant.empty-steps')`.
+12. `aiEstimatedMinutes` = `estimatedMinutes`; `totalMinutes` = soma.
+13. `engine`: `llm` + `llm` → `llm`; `llm` + `rules` → `rules`.
+
+**`DraftGoal`** (com o `FakeGoalAssistantProvider` de `test/mock`)
+1. Texto só com espaços → `ValidationException` `goal-draft.text.required`, e o provider não é chamado.
+2. Texto de 2001 caracteres → `goal-draft.text.max-length`; de 2000 → aceito (limite exato).
+3. `now = 2026-11-12T02:00:00Z`: com `America/Sao_Paulo` o provider recebe `today = 2026-11-11`; com `Asia/Tokyo`, `2026-11-12`.
+4. O provider recebe o texto sem espaços nas pontas.
+5. `parseGoal` devolve título `null` → o `suggestSteps` recebe o texto cortado em 120 como título, e o rascunho sai com `title: null` e `missingFields` com `title`.
+6. O `suggestSteps` recebe o prazo e os requisitos já normalizados.
+7. O provider lança `ServiceUnavailableError` → o erro se propaga.
+8. Caminho feliz (texto de referência de F §4) → rascunho normalizado com etapas, `totalMinutes` e o `engine` das respostas.
+
+**`CreateGoal`** (acréscimos)
+5. Com `source: 'ai'` e uma etapa `estimatedMinutes 45`, `aiEstimatedMinutes 30` → grava `source 'ai'` e os dois valores separados.
+6. Sem os campos → grava `source 'manual'` e `aiEstimatedMinutes null` (comportamento anterior).
+7. `aiEstimatedMinutes = 20` → `ValidationException` e não grava.
+
+**Motor de regras e adaptador (backend, testes unitários `*.spec.ts`)**: a tabela de datas e as categorias da `docs/7` §a.3 com "hoje" fixo em 11/11/2026; o adaptador com `fetch` simulado (ok, tempo esgotado, 429, JSON inválido, formato inválido, a chave nunca aparece no log).
 
 ---
 
@@ -490,7 +597,7 @@ O `GeneratePlan` sempre recebe do orquestrador:
 
 - **`gamification`:** gotas, XP, nível, sequência, conquistas e estágios do Broto (D "Fora do MVP"). Os designs mostram a barra gamificada (M01, W12) e a celebração (M12, W41) com números. Decidido (P18): as telas mostram os valores fixos do protótipo, sem lógica e sem endpoint.
 - **`notifications`:** e-mails (UC23, UC24). Nada nesta fase.
-- **IA (`GoalAssistantProvider` em `goals`):** contrato neutro definido na Fase 7 do passo a passo, quando o fornecedor for escolhido entre os parceiros.
+- **IA (`GoalAssistantProvider` em `goals`):** contrato definido em 12/11/2026 (§2.6, IA1). O fornecedor e o modelo saem na reunião de sexta (IA6).
 
 ---
 

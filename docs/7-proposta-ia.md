@@ -1,6 +1,6 @@
 # Proposta: como a IA entra no projeto
 
-**Status:** proposta para aprovação (11/11/2026). Nada aqui está implementado. Os pontos em aberto viraram [DECIDIR] no `afazeres.md`, seção "Backend", subseção "Proposta de IA (11/11/2026)".
+**Status:** **aprovada em 12/11/2026** (`docs/2-decisoes-mvp.md`, IA1–IA7), com dois ajustes: prompts em `.prompt.ts` (IA5) e o orçamento e a reserva no orquestrador, não num decorador (`docs/3` §2.6). Proposta original de 11/11/2026. Os pontos em aberto viraram [DECIDIR] no `afazeres.md`, seção "Backend", subseção "Proposta de IA (11/11/2026)".
 
 **Leia antes:** `docs/2-decisoes-mvp.md` (4b, 4f, 4h, 5.8), `docs/3-modelagem-dominio.md` (§2 e §6), `docs/4-contrato-api.md`.
 
