@@ -87,7 +87,10 @@ function setup(
   respond: () => Promise<Response>,
   options: Partial<OpenAiCompatibleGoalAssistantOptions> = {},
 ) {
-  const fetchMock: FetchMock = jest.fn(respond);
+  const fetchMock: FetchMock = jest.fn<
+    Promise<Response>,
+    Parameters<typeof fetch>
+  >(() => respond());
   const logger = {
     log: jest.fn<void, [string]>(),
     warn: jest.fn<void, [string]>(),
