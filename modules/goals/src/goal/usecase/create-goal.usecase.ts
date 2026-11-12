@@ -1,11 +1,13 @@
 import { UseCase } from "@oitenta/shared";
-import { Goal, GOAL_COLOR_INDEXES, GoalColorIndex, GoalKind, Step } from "../model";
+import { Goal, GOAL_COLOR_INDEXES, GoalColorIndex, GoalKind, GoalSource, Step } from "../model";
 import { GoalRepository } from "../provider";
 import { GoalView, toGoalView } from "./goal-view";
 
 export interface CreateGoalStepIn {
   title: string;
   estimatedMinutes: number;
+  /** Estimativa original da IA (D 4f, IA1); null ou ausente no objetivo manual. */
+  aiEstimatedMinutes?: number | null;
   microSteps?: string[];
 }
 
@@ -14,6 +16,8 @@ export interface CreateGoalIn {
   title: string;
   deadline?: string | null;
   kind: GoalKind;
+  /** Padrão "manual"; "ai" quando o objetivo veio do rascunho do assistente (IA1). */
+  source?: GoalSource;
   steps: CreateGoalStepIn[];
 }
 
@@ -33,7 +37,7 @@ export class CreateGoal implements UseCase<CreateGoalIn, CreateGoalOut> {
       deadline: input.deadline ?? null,
       kind: input.kind,
       colorIndex,
-      source: "manual",
+      source: input.source ?? "manual",
       status: "active",
       steps: [],
     });
@@ -45,7 +49,7 @@ export class CreateGoal implements UseCase<CreateGoalIn, CreateGoalOut> {
           order: index + 1,
           title: step.title.trim(),
           estimatedMinutes: step.estimatedMinutes,
-          aiEstimatedMinutes: null,
+          aiEstimatedMinutes: step.aiEstimatedMinutes ?? null,
           progressPct: 0,
           status: "pending",
           microSteps: step.microSteps ?? [],
