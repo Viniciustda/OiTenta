@@ -12,6 +12,7 @@ import '../../features/gamification/data/gamification_repository.dart';
 import '../../features/gamification/data/sample_gamification_repository.dart';
 import '../../features/goals/data/goal_assistant_repository.dart';
 import '../../features/goals/data/goals_repository.dart';
+import '../../features/goals/data/http_goal_assistant_repository.dart';
 import '../../features/goals/data/http_goals_repository.dart';
 import '../../features/goals/data/sample_goal_assistant_repository.dart';
 import '../../features/goals/data/sample_goals_repository.dart';
@@ -70,8 +71,7 @@ class AppDependencies {
 
   /// Backend real em [baseUrl] (padrão `API_URL`). O token fica só em memória
   /// na [SessionStore]; um 401 de rota autenticada expira a sessão.
-  /// A gamificação continua fixa (P18) e o assistente do novo objetivo é o
-  /// de exemplo (sem endpoint).
+  /// A gamificação continua fixa (P18).
   factory AppDependencies.http({String? baseUrl, http.Client? client}) {
     final session = SessionStore();
     final api = ApiClient(
@@ -87,10 +87,7 @@ class AppDependencies {
       activation: HttpActivationRepository(api),
       gamification: SampleGamificationRepository(),
       clock: const SystemClock(),
-      // EXAMPLE: ainda não há endpoint do assistente (provedor de LLM
-      // pendente, decisões 4f e 5.8); o modo http também usa a fonte de
-      // exemplo. Trocar por `HttpGoalAssistantRepository(api)` quando existir.
-      goalAssistant: SampleGoalAssistantRepository(clock: const SystemClock()),
+      goalAssistant: HttpGoalAssistantRepository(api),
       session: session,
     );
   }
@@ -102,10 +99,9 @@ class AppDependencies {
   final GamificationRepository gamification;
   final Clock clock;
 
-  /// Assistente do novo objetivo (chat). Sem provedor de LLM nem endpoint no
-  /// contrato, os dois modos (`sample` e `http`) usam a fonte de EXEMPLO
-  /// [SampleGoalAssistantRepository]. Quando o backend tiver o endpoint, o
-  /// modo `http` passa a montar a implementação HTTP aqui.
+  /// Assistente do novo objetivo (chat): `POST /goals/assistant/draft` no
+  /// modo `http` (IA1) e a fonte de EXEMPLO [SampleGoalAssistantRepository]
+  /// no modo `sample`.
   final GoalAssistantRepository goalAssistant;
   final SessionStore session;
   final RampSession rampSession;
