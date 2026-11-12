@@ -23,7 +23,7 @@ describe("ExampleGoalAssistantRepository — POST /goals/assistant/draft", () =>
       ["Escrever o relatório comparativo", 105],
     ]);
     expect(draft.totalMinutes).toBe(495);
-    expect(engine).toBe("llm");
+    expect(engine).toBe("rules");
   });
 
   it("cada etapa traz a estimativa da IA igual à estimativa e a lista de micro-passos", async () => {

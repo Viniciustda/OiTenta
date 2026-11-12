@@ -31,7 +31,7 @@ const DRAFT: DraftGoalResponse = {
     steps,
     totalMinutes: steps.reduce((a, s) => a + s.estimatedMinutes, 0),
   },
-  engine: "llm",
+  engine: "rules",
 };
 
 export class ExampleGoalAssistantRepository implements GoalAssistantRepository {

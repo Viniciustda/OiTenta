@@ -25,6 +25,12 @@ import {
 // Adaptações intencionais na W30: "A IA achou" só com requisitos (o contrato não traz o chip "entrega");
 // sem a prévia "Cabe até…", que depende do motor do plano; o prazo é um campo de data opcional (P3).
 // A aba "Colar link" (W28) é só visual até a decisão sobre o UC03.
+// Outras adaptações:
+// - o "Voltar" da W30 fecha o modal (no protótipo, volta à W27); há [DECIDIR] aberto no afazeres;
+// - "Analisar com IA" fica desabilitado com o texto vazio e na aba "Colar link", sem estilo próprio
+//   de desabilitado (o protótipo não define esse estado);
+// - a W30 manual também mostra "Novo objetivo · 3 de 3" (o passo "result" do protótipo); cruza com o
+//   [DECIDIR] do título "Quebrei em etapas pra você" no objetivo manual.
 interface NewGoalModalProps {
   onClose: () => void;
   onCreated: (res: CreateGoalResponse) => void;
