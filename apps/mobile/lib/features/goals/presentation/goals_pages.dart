@@ -32,7 +32,9 @@ class GoalsPage extends StatelessWidget {
     builder: (context, c) => GoalsScreen(
       state: c,
       onOpen: (id) => context.push(AppRoutes.trailOf(id)),
-      onNew: () => context.push(AppRoutes.newGoal),
+      // IA4: "Novo objetivo" abre o chat (M13); o caminho manual (M15 vazia)
+      // é o "Preencher à mão" dele.
+      onNew: () => context.push(AppRoutes.goalChat),
     ),
   );
 }

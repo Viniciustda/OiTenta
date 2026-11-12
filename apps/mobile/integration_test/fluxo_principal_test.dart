@@ -137,6 +137,7 @@ void main() {
     await pumpUntil(tester, find.text('Objetivos'));
     await tapText(tester, 'Objetivos');
     await tapLabel(tester, 'Novo objetivo');
+    await tapText(tester, 'Preencher à mão');
     await pumpUntil(tester, find.text('0 min no total'));
     await tester.enterText(find.byType(EditableText).first, goalTitle);
     await tester.pump();

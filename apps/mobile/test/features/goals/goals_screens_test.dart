@@ -26,6 +26,8 @@ void main() {
       final deps = await pumpApp(tester, location: '/objetivos');
       await tester.tap(find.text('Novo objetivo'));
       await tester.pumpAndSettle();
+      await tester.tap(find.text('Preencher à mão'));
+      await tester.pumpAndSettle();
       expect(find.text('0 min no total'), findsOneWidget);
 
       await tester.enterText(
