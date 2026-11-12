@@ -62,9 +62,11 @@ export class GoalsViewController {
       title: body.title,
       deadline: body.deadline ?? null,
       kind: body.kind,
+      source: body.source,
       steps: body.steps.map((step) => ({
         title: step.title,
         estimatedMinutes: step.estimatedMinutes,
+        aiEstimatedMinutes: step.aiEstimatedMinutes,
         microSteps: step.microSteps,
       })),
     });

@@ -112,6 +112,36 @@ Content-Type: application/json
   ]
 }
 
+### Objetivo vindo do rascunho da IA → 201, com source "ai" e as duas estimativas (IA1)
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "title": "Prova de Cálculo",
+  "deadline": "2026-11-27",
+  "kind": "goal",
+  "source": "ai",
+  "steps": [
+    { "title": "Revisar a teoria", "estimatedMinutes": 120, "aiEstimatedMinutes": 90, "microSteps": ["Abra o resumo do capítulo 1"] },
+    { "title": "Etapa que eu acrescentei", "estimatedMinutes": 30, "aiEstimatedMinutes": null }
+  ]
+}
+
+### Estimativa da IA que não é múltipla de 15 → 422 (IA1)
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "title": "Errado", "kind": "single", "source": "ai", "steps": [{ "title": "Etapa", "estimatedMinutes": 30, "aiEstimatedMinutes": 20 }] }
+
+### source inválido → 400 (IA1)
+POST {{baseUrl}}/goals
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{ "title": "Errado", "kind": "single", "source": "xyz", "steps": [{ "title": "Etapa", "estimatedMinutes": 30 }] }
+
 ### Objetivo sem etapas → 422
 POST {{baseUrl}}/goals
 Authorization: Bearer {{login.response.body.$.token}}

@@ -256,6 +256,111 @@ describe('goals: orquestradores (integração)', () => {
       expect(res.status).toBe(400);
     });
 
+    it('source ai e aiEstimatedMinutes → 201 e o detalhe guarda as duas estimativas (IA1)', async () => {
+      const { token } = await onboarded();
+
+      const created = await postGoal(
+        token,
+        goalBody({
+          source: 'ai',
+          steps: [
+            {
+              title: 'Implementar',
+              estimatedMinutes: 45,
+              aiEstimatedMinutes: 30,
+              microSteps: ['Abra o editor'],
+            },
+            {
+              title: 'Revisar',
+              estimatedMinutes: 30,
+              aiEstimatedMinutes: null,
+            },
+          ],
+        }),
+      );
+      const goalId = (created.body as CreateGoalBody).goal.id;
+      const detail = await request(app.getHttpServer())
+        .get(`/goals/${goalId}`)
+        .set('Authorization', `Bearer ${token}`);
+      const body = detail.body as {
+        goal: { source: string };
+        steps: {
+          estimatedMinutes: number;
+          aiEstimatedMinutes: number | null;
+          microSteps: string[];
+        }[];
+      };
+
+      expect({
+        status: created.status,
+        source: body.goal.source,
+        steps: body.steps.map((step) => [
+          step.estimatedMinutes,
+          step.aiEstimatedMinutes,
+          step.microSteps,
+        ]),
+      }).toEqual({
+        status: 201,
+        source: 'ai',
+        steps: [
+          [45, 30, ['Abra o editor']],
+          [30, null, []],
+        ],
+      });
+    });
+
+    it('sem source → o objetivo é manual (IA1)', async () => {
+      const { token } = await onboarded();
+
+      const created = await postGoal(token, goalBody());
+      const detail = await request(app.getHttpServer())
+        .get(`/goals/${(created.body as CreateGoalBody).goal.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect((detail.body as { goal: { source: string } }).goal.source).toBe(
+        'manual',
+      );
+    });
+
+    it('aiEstimatedMinutes 20 → 422 e nada é gravado (IA1)', async () => {
+      const { token, user } = await onboarded();
+
+      const res = await postGoal(
+        token,
+        goalBody({
+          source: 'ai',
+          steps: [
+            { title: 'Ler', estimatedMinutes: 30, aiEstimatedMinutes: 20 },
+          ],
+        }),
+      );
+
+      expect([res.status, (await goalsOf(user.id)).length]).toEqual([422, 0]);
+    });
+
+    it('aiEstimatedMinutes string → 400 (IA1)', async () => {
+      const { token } = await onboarded();
+
+      const res = await postGoal(
+        token,
+        goalBody({
+          steps: [
+            { title: 'Ler', estimatedMinutes: 30, aiEstimatedMinutes: '30' },
+          ],
+        }),
+      );
+
+      expect(res.status).toBe(400);
+    });
+
+    it('source inválido → 400 (IA1)', async () => {
+      const { token } = await onboarded();
+
+      const res = await postGoal(token, goalBody({ source: 'xyz' }));
+
+      expect(res.status).toBe(400);
+    });
+
     it('sem disponibilidade → 404 (P12) e nada é gravado', async () => {
       const { token, user } = await registerAndLogin();
 
