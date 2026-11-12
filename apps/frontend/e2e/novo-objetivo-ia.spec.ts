@@ -11,7 +11,6 @@ const API = "http://localhost:4000";
 const TZ = "America/Sao_Paulo";
 const PASSWORD = "Senha@123";
 
-const REFERENCE_TEXT = "Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega 24/11";
 const GOAL_TITLE = "Trabalho de Algoritmos";
 // Modelo "assignment" do motor de regras (apps/backend/src/modules/goals/assistant/step-templates.ts).
 const STEPS = [
@@ -27,11 +26,20 @@ function localToday(date = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 }
 
-/** O próximo 24/11 a partir de hoje (o próprio dia conta), como o parser de datas do backend. */
-function next24Nov(today: string) {
-  const year = Number(today.slice(0, 4));
-  const candidate = `${year}-11-24`;
-  return candidate >= today ? candidate : `${year + 1}-11-24`;
+function addDays(ymd: string, days: number) {
+  const d = new Date(`${ymd}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * O texto de referência com a entrega em hoje + 14 dias (como o fluxo-principal), para o plano sempre caber:
+ * com uma data fixa, perto dela os 300 min não cabem até prazo − 1. O parser do backend lê "dd/mm" como a
+ * próxima ocorrência a partir de hoje, que com +14 dias é sempre a própria data.
+ */
+function referenceText(deadline: string) {
+  const [, mm, dd] = deadline.split("-");
+  return `Trabalho de Algoritmos — implementar e comparar 3 algoritmos de ordenação, entrega ${dd}/${mm}`;
 }
 
 test("novo objetivo com IA (motor de regras): texto → W30 preenchida → Encaixar → objetivo no calendário", async ({ page, request }) => {
@@ -44,15 +52,16 @@ test("novo objetivo com IA (motor de regras): texto → W30 preenchida → Encai
     if (r.status() >= 400) browserErrors.push(`http ${r.status()}: ${r.request().method()} ${r.url()}`);
   });
 
-  const deadline = next24Nov(localToday());
+  const deadline = addDays(localToday(), 14);
   const email = `e2e.ia.${Date.now().toString(36)}@bora.app`;
+  let token = "";
 
   await test.step("usuário próprio com disponibilidade (pela API)", async () => {
     const reg = await request.post(`${API}/auth/register`, { data: { name: "Ana Souza", email, password: PASSWORD, timezone: TZ } });
     expect(reg.status()).toBe(201);
     const login = await request.post(`${API}/auth/login`, { data: { email, password: PASSWORD } });
     expect(login.status()).toBe(200);
-    const { token } = (await login.json()) as { token: string };
+    token = ((await login.json()) as { token: string }).token;
     // Todo dia das 08:00 às 23:00: há horário livre até o prazo qualquer que seja a hora da execução.
     const windows = [0, 1, 2, 3, 4, 5, 6].map((weekday) => ({ weekday, startMinute: 480, endMinute: 1380 }));
     const put = await request.put(`${API}/scheduling/availability`, {
@@ -76,7 +85,7 @@ test("novo objetivo com IA (motor de regras): texto → W30 preenchida → Encai
   await test.step("W27: escrever o objetivo e Analisar com IA", async () => {
     await page.getByRole("button", { name: "Novo objetivo" }).click();
     await expect(dialog).toBeVisible();
-    await dialog.getByLabel("O que você precisa entregar?").fill(REFERENCE_TEXT);
+    await dialog.getByLabel("O que você precisa entregar?").fill(referenceText(deadline));
     const draftResponse = page.waitForResponse((r) => new URL(r.url()).pathname === "/goals/assistant/draft" && r.request().method() === "POST");
     await dialog.getByRole("button", { name: "Analisar com IA" }).click();
     const res = await draftResponse;
@@ -136,6 +145,23 @@ test("novo objetivo com IA (motor de regras): texto → W30 preenchida → Encai
       await expect(row).toContainText(new RegExp(`\\d{2}:\\d{2} · ${s.label}$`));
     }
     await expect(page.getByText(/Ainda sem horário/)).toHaveCount(0);
+  });
+
+  await test.step("gravado como objetivo da IA (GET /goals/:id)", async () => {
+    const goalId = new URL(page.url()).pathname.split("/").pop();
+    const res = await request.get(`${API}/goals/${goalId}`, { headers: { Authorization: `Bearer ${token}` } });
+    expect(res.status()).toBe(200);
+    const detail = (await res.json()) as {
+      goal: { title: string; deadline: string; source: string };
+      steps: { order: number; title: string; estimatedMinutes: number; aiEstimatedMinutes: number | null }[];
+    };
+    const saved = [...detail.steps].sort((a, b) => a.order - b.order);
+    expect({ ...detail.goal, steps: saved.map((s) => [s.title, s.estimatedMinutes, s.aiEstimatedMinutes]) }).toMatchObject({
+      title: GOAL_TITLE,
+      deadline,
+      source: "ai",
+      steps: STEPS.map((s) => [s.title, s.minutes, s.minutes]),
+    });
   });
 
   expect(browserErrors, "erros no navegador (console, exceções e HTTP)").toEqual([]);

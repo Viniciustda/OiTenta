@@ -6,32 +6,60 @@
 // backend no ar com o motor de regras (IA6), determinístico e sem rede:
 // `cd apps/backend && AI_PROVIDER=rules AI_FALLBACK=rules node dist/main`.
 //
-// login demo → (onboarding) → Objetivos → Novo objetivo → chat → texto →
+// A entrega do texto é hoje + 14 dias no fuso do demo (America/Sao_Paulo),
+// para o plano sempre caber; o parser lê "dd/mm" como a próxima ocorrência a
+// partir de hoje, que com +14 dias é sempre a própria data.
+//
+// login demo → onboarding → Objetivos → Novo objetivo → chat → texto →
 // M15 preenchida → "Distribuir no calendário" → toast e Semana → trilha com as
-// 5 etapas encaixadas.
+// 5 etapas encaixadas → o objetivo gravado com source 'ai' (GET /goals/:id).
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:integration_test/integration_test.dart';
 import 'package:oitenta/app.dart';
+import 'package:oitenta/core/config/app_config.dart';
 import 'package:oitenta/core/di/app_dependencies.dart';
 import 'package:oitenta/core/format/bora_format.dart';
 import 'package:oitenta/features/goals/presentation/deadline_field.dart';
 import 'package:oitenta/features/goals/presentation/new_goal_screen.dart';
 
-const referenceText =
+String referenceText(DateTime deadline) =>
     'Trabalho de Algoritmos — implementar e comparar 3 algoritmos de '
-    'ordenação, entrega 24/11';
+    'ordenação, entrega ${BoraFormat.dayMonth(deadline)}';
 const goalTitle = 'Trabalho de Algoritmos';
 
 /// Modelo "assignment" do motor de regras
 /// (apps/backend/src/modules/goals/assistant/step-templates.ts).
-const steps = <(String, String)>[
-  ('Ler o enunciado e listar requisitos', '30 min'),
-  ('Pesquisar e separar o material', '1h'),
-  ('Fazer a primeira versão de $goalTitle', '2h'),
-  ('Revisar e completar', '1h'),
-  ('Formatar e enviar', '30 min'),
+const steps = <(String, String, int)>[
+  ('Ler o enunciado e listar requisitos', '30 min', 30),
+  ('Pesquisar e separar o material', '1h', 60),
+  ('Fazer a primeira versão de $goalTitle', '2h', 120),
+  ('Revisar e completar', '1h', 60),
+  ('Formatar e enviar', '30 min', 30),
 ];
+
+/// Hoje no fuso do demo (America/Sao_Paulo, UTC−3 fixo, sem horário de
+/// verão), independente do fuso do simulador.
+DateTime todayInSaoPaulo() {
+  final sp = DateTime.now().toUtc().subtract(const Duration(hours: 3));
+  return DateTime(sp.year, sp.month, sp.day);
+}
+
+/// GET autenticado no backend como o demo; devolve o JSON da resposta 200.
+Future<Map<String, dynamic>> getAsDemo(String path) async {
+  final login = await http.post(Uri.parse('${AppConfig.apiUrl}/auth/demo'));
+  expect(login.statusCode, 200, reason: 'POST /auth/demo');
+  final token = (jsonDecode(login.body) as Map<String, dynamic>)['token'];
+  final res = await http.get(
+    Uri.parse('${AppConfig.apiUrl}$path'),
+    headers: {'Authorization': 'Bearer $token'},
+  );
+  expect(res.statusCode, 200, reason: 'GET $path');
+  return jsonDecode(res.body) as Map<String, dynamic>;
+}
 
 /// Repete `pump` até [finder] aparecer (as chamadas HTTP são assíncronas de
 /// verdade; `pumpAndSettle` pode voltar antes da resposta chegar).
@@ -100,7 +128,7 @@ Finder inCardOf(
 
 /// Os títulos das outras etapas (para [inCardOf] não pegar a linha errada).
 List<Finder> otherSteps(String title) => [
-  for (final (t, _) in steps)
+  for (final (t, _, _) in steps)
     if (t != title) find.text(t),
 ];
 
@@ -110,14 +138,8 @@ void main() {
   testWidgets('novo objetivo com IA (motor de regras): chat → M15 preenchida '
       '→ Distribuir no calendário → Semana e trilha', (tester) async {
     final deps = AppDependencies.fromConfig();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    // O próximo 24/11 a partir de hoje (o próprio dia conta), como o parser
-    // de datas do backend.
-    final thisYear = DateTime(today.year, 11, 24);
-    final deadline = thisYear.isBefore(today)
-        ? DateTime(today.year + 1, 11, 24)
-        : thisYear;
+    final today = todayInSaoPaulo();
+    final deadline = DateTime(today.year, today.month, today.day + 14);
 
     await tester.pumpWidget(BoraApp(deps: deps));
     await tester.pump();
@@ -154,15 +176,15 @@ void main() {
     await tapLabel(tester, 'Novo objetivo');
     await pumpUntil(
       tester,
-      find.text(
-        'Me conta o que você precisa fazer e até quando. Pode escrever, '
-        'mandar áudio ou anexar o enunciado.',
-      ),
+      find.textContaining('Me conta o que você precisa fazer'),
       reason: 'chat M13',
     );
     // Espera a transição Objetivos → chat terminar antes de digitar.
     await tester.pump(const Duration(seconds: 1));
-    await tester.enterText(find.byType(EditableText).first, referenceText);
+    await tester.enterText(
+      find.byType(EditableText).first,
+      referenceText(deadline),
+    );
     await tester.pump();
     await tapLabel(tester, 'Enviar');
 
@@ -192,7 +214,7 @@ void main() {
       find.descendant(of: m15, matching: find.text('5h no total')),
       findsOneWidget,
     );
-    for (final (title, duration) in steps) {
+    for (final (title, duration, _) in steps) {
       expect(
         inCardOf(
           find.descendant(of: m15, matching: find.text(title)),
@@ -228,7 +250,7 @@ void main() {
       find.textContaining('0 de ${steps.length} etapas concluídas'),
       reason: 'trilha',
     );
-    for (final (title, duration) in steps) {
+    for (final (title, duration, _) in steps) {
       final row = find.text(title);
       expect(row, findsOneWidget, reason: 'etapa "$title" na trilha');
       // Meta da linha: "<data> · <hora> ·" (etapa com horário no plano).
@@ -248,5 +270,33 @@ void main() {
       );
     }
     expect(find.textContaining('Sem data'), findsNothing);
+
+    // --- Gravado como objetivo da IA (IA1) ----------------------------------
+    final list = await getAsDemo('/goals');
+    final ids = [
+      for (final g in (list['goals'] as List).cast<Map<String, dynamic>>())
+        if (g['title'] == goalTitle) g['id'] as String,
+    ];
+    expect(ids, hasLength(1), reason: 'um objetivo "$goalTitle"');
+    final detail = await getAsDemo('/goals/${ids.single}');
+    final saved = (detail['steps'] as List).cast<Map<String, dynamic>>()
+      ..sort((a, b) => (a['order'] as int).compareTo(b['order'] as int));
+    expect(
+      {
+        'source': (detail['goal'] as Map<String, dynamic>)['source'],
+        'deadline': (detail['goal'] as Map<String, dynamic>)['deadline'],
+        'steps': [
+          for (final s in saved)
+            [s['title'], s['estimatedMinutes'], s['aiEstimatedMinutes']],
+        ],
+      },
+      {
+        'source': 'ai',
+        'deadline': BoraFormat.dateKey(deadline),
+        'steps': [
+          for (final (title, _, minutes) in steps) [title, minutes, minutes],
+        ],
+      },
+    );
   });
 }
